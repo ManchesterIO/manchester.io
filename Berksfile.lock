@@ -1,10 +1,36 @@
 {
   "sources": {
+    "firewall": {
+      "locked_version": "0.11.0"
+    },
+    "memcached": {
+      "locked_version": "1.5.0"
+    },
+    "mongodb": {
+      "locked_version": "0.13.2",
+      "git": "https://github.com/edelight/chef-mongodb.git",
+      "ref": "202ed123084081ea38bbfffa8fbea20c7a62212c"
+    },
+    "python": {
+      "locked_version": "1.4.0"
+    },
     "ssh-keys": {
       "locked_version": "1.0.0"
     },
     "sudo": {
       "locked_version": "2.2.0"
+    },
+    "runit": {
+      "locked_version": "1.2.0"
+    },
+    "build-essential": {
+      "locked_version": "1.4.2"
+    },
+    "yum": {
+      "locked_version": "2.3.2"
+    },
+    "apt": {
+      "locked_version": "2.1.1"
     }
   }
 }
