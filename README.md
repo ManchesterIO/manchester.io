@@ -1,5 +1,5 @@
-mancheter.io
-============
+manchester.io
+=============
 
 This project allows you to deploy manchester.io.
 
@@ -22,8 +22,7 @@ Well manchester.io hasn't quite reached production yet, but you can deploy to th
 
     chef solo cook beta.manchester.io
 
-Getting permission to deploy to production
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Getting permission to deploy to production ###
 
 Make a fork of the project and check it out, then run:
 
