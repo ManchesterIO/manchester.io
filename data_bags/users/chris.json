@@ -1,0 +1,10 @@
+{
+  "name": "data_bag_item_users_chris",
+  "json_class": "Chef::DataBagItem",
+  "chef_type": "data_bag_item",
+  "data_bag": "users",
+  "raw_data": {
+    "id": "chris",
+    "ssh_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCzoukRtEtbhyCYFsftfwFYEcRFYKjHD24T+9s9fXOIQ8eqB7UMmCmEUUxBS/RHtmbXi+MgrYjjMNXWWGDygubVB5V3KhEoQu8rIpHmzE8J88YnNbkx2juArVQw95EjbyUk372hX1Lj64Q8wrfZBUDgvxhvLQn6805ahC4FFnOiZWBbKDzTsez7YYMzq6mMHKwo5Diqxf3GQf8o17wIG1xWou2gEldyri9uA3gWjdR9Pk7LYmdTP1w7ej5SJfYKVAL0Xk3YiA8GJteRrdV8GMEU87nVOnTEOE+H27pjvr0Ych9UBQ/+5w63WNwuA63ASUK4kCq1xDuaRWEMav6fmAj3 chris@granny-smith.mw.pling.org.uk"
+  }
+}
