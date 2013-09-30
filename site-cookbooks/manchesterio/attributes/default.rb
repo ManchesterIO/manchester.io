@@ -1,0 +1,1 @@
+default['manchesterio']['root'] = '/srv/manchester.io'
