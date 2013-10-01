@@ -1,10 +1,9 @@
-template "/etc/default/mollyd" do
-  source "env-vars.erb"
-  variables "root" => node.manchesterio.root
-end
-
 directory node.manchesterio.root
 directory "#{node.manchesterio.root}/conf"
+directory "#{node.manchesterio.root}/compiled_media" do
+  user node.mollyproject.user
+  group node.mollyproject.user
+end
 
 %w(manchesterio.conf uisettings.py).each do | config_file |
   cookbook_file "#{node.manchesterio.root}/conf/#{config_file}" do

@@ -8,7 +8,14 @@ default_attributes 'ssh_keys' => { 'manchesterio' => %w(chris)},
             'passwordless' => true
         }
     },
- 'nginx' => { 'default_site_enabled' => false }
+ 'nginx' => { 'default_site_enabled' => false },
+ 'mollyproject' => {
+     'config' => '/srv/manchester.io/conf/manchesterio.conf',
+     'ui' => {
+         'settings' => '/srv/manchester.io/conf/uisettings.py'
+     }
+ },
+ 'rabbitmq' => { 'local_erl_networking' => true }
 
 run_list 'recipe[sudo]',
          'recipe[ssh-keys]',
@@ -22,4 +29,5 @@ run_list 'recipe[sudo]',
          'recipe[nginx]',
          'recipe[rabbitmq]',
          'recipe[manchesterio::molly]',
+         'recipe[supervisor]',
          'recipe[mollyproject]'

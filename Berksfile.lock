@@ -26,6 +26,9 @@
     "sudo": {
       "locked_version": "2.2.0"
     },
+    "supervisor": {
+      "locked_version": "0.4.8"
+    },
     "runit": {
       "locked_version": "1.2.0"
     },
