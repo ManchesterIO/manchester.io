@@ -1,3 +1,5 @@
+include_recipe "mollyproject::install_git_master"
+
 directory node.manchesterio.root
 directory "#{node.manchesterio.root}/conf"
 directory "#{node.manchesterio.root}/compiled_media" do
@@ -10,3 +12,5 @@ end
     source config_file
   end
 end
+
+include_recipe "mollyproject"

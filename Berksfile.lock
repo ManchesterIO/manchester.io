@@ -6,6 +6,11 @@
     "memcached": {
       "locked_version": "1.5.0"
     },
+    "mollyproject": {
+      "locked_version": "0.0.0",
+      "git": "https://github.com/ManchesterIO/cookbook-molly.git",
+      "ref": "daa9b97dd3dd5e8cc4da0c552f373aadcb1365d2"
+    },
     "mongodb": {
       "locked_version": "0.13.2",
       "git": "https://github.com/edelight/chef-mongodb.git",
@@ -13,9 +18,6 @@
     },
     "nginx": {
       "locked_version": "1.8.0"
-    },
-    "python": {
-      "locked_version": "1.4.0"
     },
     "rabbitmq": {
       "locked_version": "2.3.0"
@@ -26,9 +28,6 @@
     "sudo": {
       "locked_version": "2.2.0"
     },
-    "supervisor": {
-      "locked_version": "0.4.8"
-    },
     "runit": {
       "locked_version": "1.2.0"
     },
@@ -37,6 +36,12 @@
     },
     "yum": {
       "locked_version": "2.3.2"
+    },
+    "python": {
+      "locked_version": "1.4.0"
+    },
+    "supervisor": {
+      "locked_version": "0.4.8"
     },
     "apt": {
       "locked_version": "2.1.1"
