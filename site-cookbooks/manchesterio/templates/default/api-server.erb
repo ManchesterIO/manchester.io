@@ -5,7 +5,7 @@ upstream api_server {
 server {
     listen 80;
     client_max_body_size 4G;
-    server_name api.beta.manchester.io;
+    server_name <%= @api_hostname %>;
 
     keepalive_timeout 5;
 

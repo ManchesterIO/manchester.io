@@ -1,1 +1,13 @@
-{"run_list":["role[manchesterio]"]}
+{
+    "run_list": [
+        "role[manchesterio]",
+        "recipe[sudo]",
+        "recipe[ssh-keys]",
+        "recipe[manchesterio::firewall]"
+    ],
+
+    "manchesterio": {
+        "ui_hostname": "beta.manchester.io",
+        "api_hostname": "api.beta.manchester.io"
+    }
+}

@@ -8,8 +8,12 @@ directory "#{node.manchesterio.root}/compiled_media" do
 end
 
 %w(manchesterio.conf uisettings.py).each do | config_file |
-  cookbook_file "#{node.manchesterio.root}/conf/#{config_file}" do
-    source config_file
+  template "#{node.manchesterio.root}/conf/#{config_file}" do
+    source "#{config_file}.erb"
+    mode 0644
+    variables "root" => node.manchesterio.root,
+              "api_hostname" => node.manchesterio.api_hostname,
+              "ui_hostname" => node.manchesterio.ui_hostname
   end
 end
 

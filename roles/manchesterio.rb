@@ -17,14 +17,9 @@ default_attributes 'ssh_keys' => { 'manchesterio' => %w(chris)},
  },
  'rabbitmq' => { 'local_erl_networking' => true }
 
-run_list 'recipe[sudo]',
-         'recipe[ssh-keys]',
-         'recipe[manchesterio::firewall]',
-         'recipe[mongodb::10gen_repo]',
+run_list 'recipe[mongodb::10gen_repo]',
          'recipe[mongodb::default]',
          'recipe[memcached]',
          'recipe[manchesterio::nginx]',
          'recipe[rabbitmq]',
-         'recipe[manchesterio::molly]',
-         'recipe[mollyproject::install_git_master]',
-         'recipe[mollyproject]'
+         'recipe[manchesterio::molly]'
