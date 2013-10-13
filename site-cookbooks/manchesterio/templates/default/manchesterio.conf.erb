@@ -8,6 +8,7 @@ statsd = flask.ext.statsd:StatsD
 
 [global]
 CACHE_TYPE = "memcached"
+CELERYBEAT_SCHEDULE_FILENAME = "<%= @molly_root %>/celery-schedule"
 SENTRY_DSN = "<%= @sentry_dsn %>"
 STATSD_HOST = "localhost"
 

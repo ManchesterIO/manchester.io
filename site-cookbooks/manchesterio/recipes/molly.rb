@@ -19,7 +19,7 @@ end
   template "#{node.manchesterio.root}/conf/#{config_file}" do
     source "#{config_file}.erb"
     mode 0644
-    variables node.manchesterio
+    variables node.manchesterio.to_hash.merge({'molly_root' => node.mollyproject.install_root })
   end
 end
 
