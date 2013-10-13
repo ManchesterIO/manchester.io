@@ -9,12 +9,12 @@ tasks = molly.services.tasks
 #sentry = raven.contrib.flask:Sentry
 
 # To enable statsd on this install, simply uncomment this and the STATSD_HOST below
-#statsd = flask.ext.statsd:StatsD
+statsd = flask.ext.statsd:StatsD
 
 [global]
 CACHE_TYPE = "memcached"
 #SENTRY_DSN = ""
-#STATSD_HOST = "localhost"
+STATSD_HOST = "localhost"
 
 [places]
 module = molly.apps.places

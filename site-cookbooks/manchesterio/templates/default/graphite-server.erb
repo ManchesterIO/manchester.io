@@ -1,0 +1,12 @@
+server {
+    listen 80;
+    client_max_body_size 4G;
+    server_name <%= @graphite_hostname %>;
+
+    keepalive_timeout 5;
+
+    location / {
+        uwsgi_pass unix://<%= @graphite_sock %>;
+        include uwsgi_params;
+    }
+}

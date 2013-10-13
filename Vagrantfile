@@ -10,6 +10,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :private_network, ip: "192.168.33.12"
 
+  config.vm.provision :shell, :inline => "gem install chef --version 11.6.0 --no-rdoc --no-ri --conservative"
+
   config.vm.provision :chef_solo do |chef|
      chef.cookbooks_path = "site-cookbooks"
      chef.roles_path = "roles"
@@ -21,7 +23,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
        },
        "manchesterio" => {
            'ui_hostname' => 'www.sandbox.manchester.io',
-           'api_hostname' => 'api.sandbox.manchester.io'
+           'api_hostname' => 'api.sandbox.manchester.io',
+           'graphite_hostname' => 'graphite.sandbox.manchester.io'
        }
      }
   end
