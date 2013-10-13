@@ -22,6 +22,7 @@ DATABASES = {
 
 # You MUST configure the absolute URI root for Sentry:
 SENTRY_URL_PREFIX = 'http://<%= @sentry_hostname %>'  # No trailing slash!
+ALLOWED_HOSTS = ("<%= @sentry_hostname %>", "localhost")
 
 # If you're using a reverse proxy, you should enable the X-Forwarded-Proto
 # header, and uncomment the following setting
