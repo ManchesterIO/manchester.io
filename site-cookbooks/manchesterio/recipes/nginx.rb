@@ -1,6 +1,6 @@
 include_recipe "nginx"
 
-%w(ui-server api-server graphite-server).each do | server_config |
+%w(ui-server api-server graphite-server sentry-server).each do | server_config |
   template "#{node.nginx.dir}/sites-available/#{server_config}" do
     source "#{server_config}.erb"
     mode "0644"
@@ -8,6 +8,7 @@ include_recipe "nginx"
               "api_hostname" => node.manchesterio.api_hostname,
               "ui_hostname" => node.manchesterio.ui_hostname,
               "graphite_hostname" => node.manchesterio.graphite_hostname,
+              "sentry_hostname" => node.sentry.hostname,
               "graphite_sock" => node.graphite.uwsgi_socket
   end
 

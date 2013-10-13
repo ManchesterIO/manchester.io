@@ -28,6 +28,7 @@ run_list 'recipe[mongodb::10gen_repo]',
          'recipe[memcached]',
          'recipe[statsd]',
          'recipe[graphite]',
+         'recipe[manchesterio::sentry]',
          'recipe[manchesterio::nginx]',
          'recipe[rabbitmq]',
          'recipe[manchesterio::molly]'

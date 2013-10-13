@@ -3,17 +3,12 @@ cache = flask.ext.cache:Cache
 i18n = flask.ext.babel:Babel
 kv = flask.ext.pymongo:PyMongo
 tasks = molly.services.tasks
-
-# To enable Sentry on this install, simply uncomment this and the SENTRY_DSN line below,
-# and add your DSN for Sentry to the config value
-#sentry = raven.contrib.flask:Sentry
-
-# To enable statsd on this install, simply uncomment this and the STATSD_HOST below
+sentry = raven.contrib.flask:Sentry
 statsd = flask.ext.statsd:StatsD
 
 [global]
 CACHE_TYPE = "memcached"
-#SENTRY_DSN = ""
+SENTRY_DSN = "<%= @sentry_dsn %>"
 STATSD_HOST = "localhost"
 
 [places]

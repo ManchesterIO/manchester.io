@@ -6,6 +6,9 @@ server {
     keepalive_timeout 5;
 
     location / {
+        auth_basic "<%= @graphite_hostname %>";
+        auth_basic_user_file "/opt/sentry/htpasswd";
+
         uwsgi_pass unix://<%= @graphite_sock %>;
         include uwsgi_params;
     }

@@ -60,6 +60,9 @@
     "firewall": {
       "locked_version": "0.11.0"
     },
+    "htpasswd": {
+      "locked_version": "0.0.3"
+    },
     "nginx": {
       "locked_version": "1.8.0"
     },

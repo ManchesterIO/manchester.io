@@ -11,9 +11,7 @@ end
   template "#{node.manchesterio.root}/conf/#{config_file}" do
     source "#{config_file}.erb"
     mode 0644
-    variables "root" => node.manchesterio.root,
-              "api_hostname" => node.manchesterio.api_hostname,
-              "ui_hostname" => node.manchesterio.ui_hostname
+    variables node.manchesterio
   end
 end
 
