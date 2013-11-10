@@ -27,10 +27,12 @@ end
 template "/etc/sentry.conf.py" do
   source "sentry.conf.py.erb"
   mode "0644"
+  secret_key = node.sentry.secret_key
+  secret_key = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['secret_key'] if secret_key.nil?
   variables "sentry_db" => node.sentry.db_file,
             "sentry_hostname" => node.sentry.hostname,
             "sentry_email" => node.sentry.email,
-            "secret_key" => node.sentry.secret_key
+            "secret_key" => secret_key
 end
 
 bash "running db upgrade for sentry" do
@@ -39,7 +41,16 @@ bash "running db upgrade for sentry" do
   group node.sentry.user
 end
 
-node.sentry.superusers.each do | user |
+if node.sentry.superusers.empty?
+  sentry_superusers = []
+  data_bag('sentry_users').each do |item|
+    sentry_superusers << Chef::EncryptedDataBagItem.load('sentry_users', item)
+  end
+else
+  sentry_superusers = node.sentry.superusers
+end
+
+sentry_superusers.each do | user |
   bash "set up superuser for #{user['username']}" do
     code "#{node.sentry.root}/bin/sentry --config=/etc/sentry.conf.py createsuperuser --username=#{user['username']} --email=#{user['username']}@manchester.io --noinput || true"
     user node.sentry.user
@@ -52,9 +63,17 @@ node.sentry.superusers.each do | user |
   end
 end
 
-
-cookbook_file "/tmp/sentry-fixtures.json" do
-  source node.sentry.fixturefile
+template "/tmp/sentry-fixtures.json" do
+  source "sentry-fixtures.json.erb"
+  api_dsn = node.manchesterio.sentry_dsn
+  api_dsn = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['api_dsn'] if api_dsn.nil?
+  ui_dsn = node.manchesterio.ui_sentry_dsn
+  ui_dsn = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['ui_dsn'] if ui_dsn.nil?
+  url_regex = /http:\/\/([^:]+):([^@]+)@.+/
+  variables "api_secret" => url_regex.match(api_dsn)[2],
+            "api_key" => url_regex.match(api_dsn)[1],
+            "ui_secret" => url_regex.match(ui_dsn)[2],
+            "ui_key" => url_regex.match(ui_dsn)[1]
 end
 
 bash "import sentry fixtures" do

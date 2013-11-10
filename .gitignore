@@ -1,3 +1,4 @@
 /cookbooks/
 .idea
 *.iml
+encrypted_data_bag_secret

@@ -1,0 +1,21 @@
+{
+  "name": "data_bag_item_sentry_users_chris",
+  "json_class": "Chef::DataBagItem",
+  "chef_type": "data_bag_item",
+  "data_bag": "sentry_users",
+  "raw_data": {
+    "id": "chris",
+    "username": {
+      "encrypted_data": "0hIByqoxPcSG+Iz8izfI/E1kTbNLwPS2DBJEzQ2Ue90=\n",
+      "iv": "OE5LSEA5k1zEgBh9hw+oXQ==\n",
+      "version": 1,
+      "cipher": "aes-256-cbc"
+    },
+    "password": {
+      "encrypted_data": "Z0qNuwvKnP0rgI/7m+h/XP1Wvkm9RvfCR/kyZ/sH7mlXX1gIK0+tDIx9u1J5\nox5U\n",
+      "iv": "H5J9ipLvz58R8Xlpzrxt3g==\n",
+      "version": 1,
+      "cipher": "aes-256-cbc"
+    }
+  }
+}

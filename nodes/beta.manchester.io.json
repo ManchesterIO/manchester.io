@@ -8,6 +8,7 @@
 
     "manchesterio": {
         "ui_hostname": "beta.manchester.io",
-        "api_hostname": "api.beta.manchester.io"
+        "api_hostname": "api.beta.manchester.io",
+        "graphite_hostname": "graphite.manchester.io"
     }
 }

@@ -21,7 +21,8 @@ default_attributes 'ssh_keys' => {'manchesterio' => %w(chris)},
                            'settings' => '/srv/manchester.io/conf/uisettings.py'
                        }
                    },
-                   'rabbitmq' => {'local_erl_networking' => true}
+                   'rabbitmq' => {'local_erl_networking' => true},
+                   'sentry' => {'fixturefile' => 'sentry-fixtures.json.erb'}
 
 run_list 'recipe[mongodb::10gen_repo]',
          'recipe[mongodb::default]',

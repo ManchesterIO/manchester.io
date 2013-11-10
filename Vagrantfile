@@ -30,8 +30,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             'ui_sentry_dsn' => 'http://3f76c69909cb4191a5fc02cc32d283e6:770bfa446b59413da819804958a60448@localhost:9000/2'
         },
         "sentry" => {
-            'fixturefile' => 'sentry-fixtures-sandbox.json',
             'hostname' => 'sentry.sandbox.manchester.io',
+            'secret_key' => 'UgXYwX5NEMDtyIIHGVjM7oeSJzG7PSeFyyipEu2CUJUJDCQb17W1zA==',
             'superusers' => [{'username' => 'sandbox', 'password' => 'sandbox'}]
         }
     }
