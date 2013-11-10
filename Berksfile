@@ -1,7 +1,9 @@
 site :opscode
 
 cookbook 'chef-client'
+cookbook 'elasticsearch'
 cookbook 'graphite'
+cookbook 'java'
 cookbook 'memcached'
 cookbook 'manchesterio', path: './site-cookbooks/manchesterio'
 cookbook 'mollyproject', git: 'https://github.com/ManchesterIO/cookbook-molly.git'

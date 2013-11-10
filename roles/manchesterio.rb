@@ -25,6 +25,8 @@ default_attributes 'ssh_keys' => {'manchesterio' => %w(chris)},
 
 run_list 'recipe[mongodb::10gen_repo]',
          'recipe[mongodb::default]',
+         'recipe[java]',
+         'recipe[elasticsearch]',
          'recipe[memcached]',
          'recipe[statsd]',
          'recipe[graphite]',
