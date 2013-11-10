@@ -39,16 +39,6 @@ bash "running db upgrade for sentry" do
   group node.sentry.user
 end
 
-cookbook_file "/tmp/sentry-fixtures.json" do
-  source node.sentry.fixturefile
-end
-
-bash "import sentry fixtures" do
-  code "#{node.sentry.root}/bin/sentry --config=/etc/sentry.conf.py loaddata /tmp/sentry-fixtures.json"
-  user node.sentry.user
-  group node.sentry.user
-end
-
 node.sentry.superusers.each do | user |
   bash "set up superuser for #{user['username']}" do
     code "#{node.sentry.root}/bin/sentry --config=/etc/sentry.conf.py createsuperuser --username=#{user['username']} --email=#{user['username']}@manchester.io --noinput || true"
@@ -62,6 +52,16 @@ node.sentry.superusers.each do | user |
   end
 end
 
+
+cookbook_file "/tmp/sentry-fixtures.json" do
+  source node.sentry.fixturefile
+end
+
+bash "import sentry fixtures" do
+  code "#{node.sentry.root}/bin/sentry --config=/etc/sentry.conf.py loaddata /tmp/sentry-fixtures.json"
+  user node.sentry.user
+  group node.sentry.user
+end
 supervisor_service 'sentry' do
   directory node['sentry']['root']
   command "#{node['sentry']['root']}/bin/sentry --config=/etc/sentry.conf.py run_gunicorn -b #{node['sentry']['host']}:#{node['sentry']['port']}"
