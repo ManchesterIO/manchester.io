@@ -3,6 +3,7 @@ cache = flask.ext.cache:Cache
 i18n = flask.ext.babel:Babel
 kv = flask.ext.pymongo:PyMongo
 tasks = molly.services.tasks
+search = molly.services.search
 sentry = raven.contrib.flask:Sentry
 statsd = flask.ext.statsd:StatsD
 
@@ -17,6 +18,7 @@ module = molly.apps.places
 provider.openstreetmap = molly.apps.places.importers.openstreetmap
 provider.openstreetmap.url = http://osm-extracted-metros.s3.amazonaws.com/manchester.osm.pbf
 provider.naptan = molly.apps.places.importers.naptan
+provider.naptan.codes = 180,910,920,930,940
 
 [weather]
 module = molly.apps.weather
