@@ -19,7 +19,11 @@ end
   template "#{node.manchesterio.root}/conf/#{config_file}" do
     source "#{config_file}.erb"
     mode 0644
-    variables node.manchesterio.to_hash.merge({'molly_root' => node.mollyproject.install_root })
+    config = node.manchesterio.to_hash
+    config['molly_root'] = node.mollyproject.install_root
+    config['sentry_dsn'] = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['api_dsn'] if config['sentry_dsn'].nil?
+    config['ui_sentry_dsn'] = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['ui_dsn'] if config['ui_sentry_dsn'].nil?
+    variables config
   end
 end
 
