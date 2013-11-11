@@ -41,6 +41,9 @@ Deploying to production
 Well manchester.io hasn't quite reached production yet, but you can deploy to the beta server (if you have permission):
 
     knife solo cook beta.manchester.io
+    ssh manchesterio@beta.manchester.io sudo supervisorctl restart all
+
+(at the moment this always deploys the master of mollyproject-next, but in future that should change)
 
 ### Getting permission to deploy to production ###
 
