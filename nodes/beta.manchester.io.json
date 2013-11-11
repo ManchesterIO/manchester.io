@@ -6,6 +6,10 @@
         "recipe[manchesterio::firewall]"
     ],
 
+    "elasticsearch": {
+        "allocated_memory": "256m"
+    },
+
     "manchesterio": {
         "ui_hostname": "beta.manchester.io",
         "api_hostname": "api.beta.manchester.io",
