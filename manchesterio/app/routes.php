@@ -1,3 +1,3 @@
 <?php
 
-Route::get('/', 'ManchesterIo\DefaultController@defaultAction');
+Route::get('/{path?}', 'ManchesterIo\DefaultController@defaultAction')->where('path', '/.+');

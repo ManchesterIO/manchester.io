@@ -4,6 +4,7 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
+        "guzzle/guzzle": "3.8.*",
 		"laravel/framework": "4.1.*"
 	},
     "require-dev": {
@@ -13,6 +14,7 @@
 	"autoload": {
 		"classmap": [
 			"app/controllers",
+			"app/models",
 			"app/tests"
 		]
 	},

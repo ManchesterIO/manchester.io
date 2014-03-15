@@ -40,6 +40,7 @@ Deploying to sandbox
 Vagrant is used to manage pre-production environments. Simply install vagrant, and then use the following commands
 to start up a local machine:
 
+    cd deploy
     vagrant up
 
 You will then be able to access manchester.io via the URLs: http://api.sandbox.manchester.io and http://www.sandbox.manchester.io

@@ -34,5 +34,4 @@ run_list 'recipe[mongodb::10gen_repo]',
          'recipe[manchesterio::sentry]',
          'recipe[manchesterio::nginx]',
          'recipe[rabbitmq]',
-         'recipe[manchesterio::molly]',
-         'recipe[manchesterio::app]'
+         'recipe[manchesterio::molly]'

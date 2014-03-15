@@ -8,7 +8,7 @@ apt_repository "ondrej-php5" do
   key "4F4EA0AAE5267A6C"
 end
 
-%w(php5-fpm php5-json php5-mcrypt).each { | package | package package }
+%w(php5-fpm php5-curl php5-json php5-mcrypt).each { | package | package package }
 
 cookbook_file "php.ini" do
   path "/etc/php5/fpm/conf.d/manchesterio.ini"

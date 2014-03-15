@@ -1,6 +1,7 @@
 {
     "run_list": [
         "role[manchesterio]",
+        "recipe[manchesterio::app]",
         "recipe[sudo]",
         "recipe[ssh-keys]",
         "recipe[manchesterio::firewall]"

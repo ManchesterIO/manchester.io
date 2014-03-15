@@ -2,11 +2,29 @@
 
 namespace ManchesterIo;
 
+use Guzzle\Http\Exception\ClientErrorResponseException;
+
 class DefaultController extends \Controller
 {
+    /** @var \ManchesterIo\MollyAdapter */
+    private $molly;
 
-    public function defaultAction()
+    public function __construct(MollyAdapter $molly)
     {
-        return \View::make('default');
+        $this->molly = $molly;
+    }
+
+    public function defaultAction($path = '')
+    {
+        try {
+            $data = $this->molly->fetchData($path);
+        } catch (ClientErrorResponseException $ex) {
+            if ($ex->getResponse()) {
+                \App::abort($ex->getResponse()->getStatusCode());
+            } else {
+                throw $ex;
+            }
+        }
+        return \View::make('default', array('data' => $data));
     }
 }
