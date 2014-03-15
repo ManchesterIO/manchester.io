@@ -1,0 +1,10 @@
+language: php
+php:
+  - 5.5
+install:
+  - npm install
+  - cd manchesterio
+  - composer install
+  - cd ..
+script:
+  - node_modules/grunt-cli/bin/grunt dev

@@ -1,5 +1,6 @@
-/cookbooks/
+deploy/cookbooks/
 .idea
 *.iml
 encrypted_data_bag_secret
 node_modules
+.vagrant

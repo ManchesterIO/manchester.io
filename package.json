@@ -12,7 +12,7 @@
   "devDependencies": {
     "grunt": "^0.4.4",
     "grunt-cli": "^0.1.13",
-    "grunt-composer": "git+ssh://git@github.com/BBC-Knowlearn/grunt-composer#0.3.2",
+    "grunt-composer": "git://github.com/BBC-Knowlearn/grunt-composer.git",
     "grunt-contrib-copy": "^0.5.0",
     "grunt-contrib-watch": "^0.6.0",
     "grunt-phpunit": "^0.3.3",
