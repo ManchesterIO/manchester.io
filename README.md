@@ -55,6 +55,7 @@ Deploying to production
 
 Well manchester.io hasn't quite reached production yet, but you can deploy to the beta server (if you have permission):
 
+    cd deploy
     knife solo cook beta.manchester.io
     ssh manchesterio@beta.manchester.io sudo supervisorctl restart all
 

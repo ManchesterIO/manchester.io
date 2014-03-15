@@ -14,8 +14,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :chef_solo do |chef|
     chef.node_name = 'sandbox.manchester.io'
-    chef.cookbooks_path = "site-cookbooks"
-    chef.roles_path = "roles"
+    chef.cookbooks_path = "deploy/site-cookbooks"
+    chef.roles_path = "deploy/roles"
     chef.add_role "manchesterio"
 
     chef.json = {
@@ -36,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         }
     }
 
-    config.vm.synced_folder "site-cookbooks/manchesterio/files/default/static", "/srv/manchester.io/static"
+    config.vm.synced_folder "deploy/site-cookbooks/manchesterio/files/default/static", "/srv/manchester.io/static"
     config.vm.synced_folder "manchesterio", "/srv/manchester.io/app"
   end
 

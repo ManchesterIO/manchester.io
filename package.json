@@ -1,0 +1,19 @@
+{
+  "name": "manchester.io",
+  "version": "1.0.0",
+  "description": "Points of interest for Greater Manchester",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ManchesterIO/manchester.io"
+  },
+  "author": "Chris Northwood <chris@pling.org.uk>",
+  "license": "Apache 2.0",
+  "homepage": "http://manchester.io",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-cli": "^0.1.13",
+    "grunt-composer": "git+ssh://git@github.com/BBC-Knowlearn/grunt-composer#0.3.2",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-watch": "^0.6.0"
+  }
+}
