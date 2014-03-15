@@ -2,6 +2,7 @@ language: php
 php:
   - 5.5
 install:
+  - bundle
   - npm install
   - cd manchesterio
   - composer install

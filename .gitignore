@@ -4,3 +4,4 @@ deploy/cookbooks/
 encrypted_data_bag_secret
 node_modules
 .vagrant
+.sass-cache
