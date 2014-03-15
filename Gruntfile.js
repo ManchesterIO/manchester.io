@@ -83,6 +83,16 @@ module.exports = function(grunt) {
             all: ['manchesterio/assets/js/manchesterio/**']
         },
 
+        karma: {
+            dev: {
+                options: {
+                    configFile: 'manchesterio/assets/js-test/karma.conf.js',
+                    browsers: ['PhantomJS'],
+                    singleRun: true
+                }
+            }
+        },
+
         watch: {
             composer: {
                 files: 'manchesterio/composer.json',
@@ -97,14 +107,14 @@ module.exports = function(grunt) {
                 tasks: 'compass:dev'
             },
             js: {
-                files: 'manchesterio/assets/js/**',
-                tasks: ['requirejs:dev', 'jshint']
+                files: ['manchesterio/assets/js/**', 'manchesterio/assets/js-test/**'],
+                tasks: ['requirejs:dev', 'karma:dev', 'jshint']
             }
         }
     });
 
     grunt.registerTask('dist', ['composer:install:no-dev:optimize-autoloader', 'copy:app', 'compass:dist', 'requirejs:dist']);
-    grunt.registerTask('dev', ['composer:install', 'phpunit', 'phpcs', 'compass:dev', 'requirejs:dev', 'jshint']);
+    grunt.registerTask('dev', ['composer:install', 'phpunit', 'phpcs', 'compass:dev', 'requirejs:dev', 'karma:dev', 'jshint']);
 
     grunt.loadNpmTasks('grunt-composer');
     grunt.loadNpmTasks('grunt-contrib-compass');
@@ -112,6 +122,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-phpcs');
     grunt.loadNpmTasks('grunt-phpunit');
 
