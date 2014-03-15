@@ -12,12 +12,27 @@ Dependencies
 Prepping
 --------
 
-manchester.io uses Chef to manage deployments. If you've got RVM installed, then you should be able to go into the
-folder and run:
+manchester.io uses Chef to manage deployments, and Grunt/Compass to manage building of the static assets. If you've got
+RVM and NPM installed, then you should be able to go into the folder and run:
 
     bundle
+    npm install
+    npm install -g grunt-cli
 
 This will set up an environment ready for deployment or local development.
+
+Building assets
+---------------
+
+### On the sandbox ###
+
+In order to build the development version of the assets, and then automatically recompile them on change, run:
+
+    grunt dev watch
+
+In order to build production-ready versions of the assets, then run:
+
+    grunt dist
 
 Deploying to sandbox
 --------------------

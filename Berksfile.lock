@@ -21,12 +21,12 @@
     "mollyproject": {
       "locked_version": "2.0.0",
       "git": "https://github.com/ManchesterIO/cookbook-molly.git",
-      "ref": "b0703bb60348b63c9438075522f972918a494fde"
+      "ref": "c210eb4e2411295a26741cc0f1dbe95aba41a742"
     },
     "mongodb": {
-      "locked_version": "0.13.2",
+      "locked_version": "0.15.0",
       "git": "https://github.com/edelight/chef-mongodb.git",
-      "ref": "202ed123084081ea38bbfffa8fbea20c7a62212c"
+      "ref": "d2586717e7fde4e8807767298bbc48f4fbda2308"
     },
     "rabbitmq": {
       "locked_version": "2.3.0"
@@ -64,7 +64,7 @@
       "locked_version": "1.4.0"
     },
     "yum": {
-      "locked_version": "2.3.2"
+      "locked_version": "3.0.2"
     },
     "apache2": {
       "locked_version": "1.8.4"

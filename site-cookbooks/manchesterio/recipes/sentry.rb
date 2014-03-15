@@ -81,6 +81,7 @@ bash "import sentry fixtures" do
   user node.sentry.user
   group node.sentry.user
 end
+
 supervisor_service 'sentry' do
   directory node['sentry']['root']
   command "#{node['sentry']['root']}/bin/sentry --config=/etc/sentry.conf.py run_gunicorn -b #{node['sentry']['host']}:#{node['sentry']['port']}"
