@@ -35,6 +35,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             'superusers' => [{'username' => 'sandbox', 'password' => 'sandbox'}]
         }
     }
+
+    config.vm.synced_folder "site-cookbooks/manchesterio/files/default/static", "/srv/manchester.io/static"
+    config.vm.synced_folder "manchesterio", "/srv/manchester.io/app"
   end
 
 end

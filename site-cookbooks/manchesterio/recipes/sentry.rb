@@ -18,6 +18,7 @@ end
 
 python_pip "sentry" do
   virtualenv node['sentry']['root']
+  version "6.4.4"
 end
 
 python_pip "django-nginx-remote-user-middleware" do
