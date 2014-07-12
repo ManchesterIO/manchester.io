@@ -19,6 +19,16 @@ module.exports = function(grunt) {
                         expand: true
                     }
                 ]
+            },
+            images: {
+                files: [
+                    {
+                        cwd: 'manchesterio/assets',
+                        src: 'images/**',
+                        dest: 'deploy/site-cookbooks/manchesterio/files/default/static/',
+                        expand: true
+                    }
+                ]
             }
         },
 
@@ -108,12 +118,16 @@ module.exports = function(grunt) {
             js: {
                 files: ['manchesterio/assets/js/**', 'manchesterio/assets/js-test/**'],
                 tasks: ['requirejs:dev', 'karma:dev', 'jshint']
+            },
+            images: {
+                files: ['manchesterio/assets/images/**'],
+                tasks: ['copy:images']
             }
         }
     });
 
-    grunt.registerTask('dist', ['composer:install:no-dev:optimize-autoloader', 'copy:app', 'compass:dist', 'requirejs:dist']);
-    grunt.registerTask('dev', ['composer:install', 'phpunit', 'phpcs', 'compass:dev', 'requirejs:dev', 'karma:dev', 'jshint']);
+    grunt.registerTask('dist', ['composer:install:no-dev:optimize-autoloader', 'copy:app', 'copy:images', 'compass:dist', 'requirejs:dist']);
+    grunt.registerTask('dev', ['composer:install', 'phpunit', 'phpcs', 'copy:images', 'compass:dev', 'requirejs:dev', 'karma:dev', 'jshint']);
 
     grunt.loadNpmTasks('grunt-composer');
     grunt.loadNpmTasks('grunt-contrib-compass');

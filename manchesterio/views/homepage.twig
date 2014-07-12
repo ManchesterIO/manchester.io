@@ -1,4 +1,24 @@
 {% extends "base.twig" %}
+
+{% block title %}manchester.io - places to go with bus, tram and train timetables and more in Great Manchester{% endblock %}
+
+{% block extra_body_classes %}homepage{% endblock %}
+
 {% block body %}
-Hello world!
+    <h1 class="homepage-title">manchester.io</h1>
+
+    {% for application in applications %}
+        {% for link in application.links %}
+
+            {% if link.self == 'http://mollyproject.org/apps/places/nearby' %}{% include 'homepage/places-nearby.twig' %}{% endif %}
+            {% if link.self == 'http://mollyproject.org/apps/places/search' %}{% include 'homepage/places-search.twig' %}{% endif %}
+            {% if link.self == 'http://mollyproject.org/apps/weather' %}{% include 'homepage/weather.twig' %}{% endif %}
+
+        {% endfor %}
+    {% endfor %}
+
+    <div class="homepage-image-credit">
+        Image by <a href="https://www.flickr.com/photos/jontintinjordan/358810370/">Jon Jordan</a>
+        (<a href="https://creativecommons.org/licenses/by-nc-sa/2.0/">BY-NC-SA</a>)
+    </div>
 {% endblock %}
