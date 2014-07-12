@@ -14,7 +14,7 @@ module.exports = function(grunt) {
                 files: [
                     {
                         cwd: 'manchesterio',
-                        src: ['app/**', 'bootstrap/**', 'public/**', 'vendor/**'],
+                        src: ['public/**', 'src/**', 'vendor/**', 'views/**'],
                         dest: 'deploy/site-cookbooks/manchesterio/files/default/app/',
                         expand: true
                     }
@@ -24,10 +24,10 @@ module.exports = function(grunt) {
 
         phpunit: {
             classes: {
-                dir: 'manchesterio/app/tests'
+                dir: 'manchesterio/tests'
             },
             options: {
-                configuration: 'manchesterio/app/tests/phpunit.xml',
+                configuration: 'manchesterio/tests/phpunit.xml',
                 colors: true,
                 bin: 'manchesterio/vendor/bin/phpunit'
             }
@@ -35,12 +35,11 @@ module.exports = function(grunt) {
 
         phpcs: {
             application: {
-                dir: ['manchesterio/app/**/*.php']
+                dir: ['manchesterio/src/**/*.php', 'manchesterio/tests/**/*.php']
             },
             options: {
                 bin: 'manchesterio/vendor/bin/phpcs',
-                standard: 'PSR2',
-                ignore: 'views/*.php'
+                standard: 'PSR2'
             }
         },
 
@@ -99,7 +98,7 @@ module.exports = function(grunt) {
                 tasks: 'composer:update'
             },
             php: {
-                files: 'manchesterio/app/**',
+                files: ['manchesterio/src/**/*.php', 'manchesterio/tests/**/*.php'],
                 tasks: ['phpunit', 'phpcs']
             },
             sass: {

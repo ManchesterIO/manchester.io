@@ -1,3 +1,5 @@
 define(function() {
-    console.log("I'm now loaded!");
+    return function() {
+        console.log("I'm now loaded!");
+    };
 });

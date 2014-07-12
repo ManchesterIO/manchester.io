@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/stylesheets/manchesterio.css" />
+    <title>{% block title %}{% endblock %} - manchester.io</title>
+</head>
+<body>
+{% block body %}
+{% endblock %}
+<script src="/static/js/manchesterio.js"></script>
+<script>require(['manchesterio/main'],function(m){m()})</script>
+</body>
+</html>
