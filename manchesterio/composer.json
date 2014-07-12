@@ -1,11 +1,11 @@
 {
-	"name": "laravel/laravel",
-	"description": "The Laravel Framework.",
-	"keywords": ["framework", "laravel"],
-	"license": "MIT",
+	"name": "manchesterio/manchester.io",
+	"description": "Manchester.IO",
+	"license": "Apache 2.0",
 	"require": {
-        "guzzle/guzzle": "3.8.*",
-		"laravel/framework": "4.1.*"
+        "silex/silex": "~1.2",
+        "twig/twig": "1.*",
+        "guzzlehttp/guzzle": "4.*"
 	},
     "require-dev": {
         "squizlabs/php_codesniffer": "1.*",
@@ -13,22 +13,7 @@
     },
 	"autoload": {
 		"classmap": [
-			"app/controllers",
-			"app/models",
-			"app/tests"
-		]
-	},
-	"scripts": {
-		"post-install-cmd": [
-			"php artisan clear-compiled",
-			"php artisan optimize"
-		],
-		"post-update-cmd": [
-			"php artisan clear-compiled",
-			"php artisan optimize"
-		],
-		"post-create-project-cmd": [
-			"php artisan key:generate"
+			"src"
 		]
 	},
 	"config": {
