@@ -7,15 +7,17 @@
 {% block body %}
     <h1 class="homepage-title">manchester.io</h1>
 
-    {% for application in applications %}
-        {% for link in application.links %}
+    <div class="homepage-actions">
+        {% for application in applications %}
+            {% for link in application.links %}
 
-            {% if link.self == 'http://mollyproject.org/apps/places/nearby' %}{% include 'homepage/places-nearby.twig' %}{% endif %}
-            {% if link.self == 'http://mollyproject.org/apps/places/search' %}{% include 'homepage/places-search.twig' %}{% endif %}
-            {% if link.self == 'http://mollyproject.org/apps/weather' %}{% include 'homepage/weather.twig' %}{% endif %}
+                {% if link.self == 'http://mollyproject.org/apps/places/nearby' %}{% include 'homepage/places-nearby.twig' %}{% endif %}
+                {% if link.self == 'http://mollyproject.org/apps/places/search' %}{% include 'homepage/places-search.twig' %}{% endif %}
+                {% if link.self == 'http://mollyproject.org/apps/weather/observation' %}{% include 'homepage/weather.twig' %}{% endif %}
 
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+    </div>
 
     <div class="homepage-image-credit">
         Image by <a href="https://www.flickr.com/photos/jontintinjordan/358810370/">Jon Jordan</a>

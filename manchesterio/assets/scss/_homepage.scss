@@ -36,3 +36,31 @@ html {
     right: 0;
     bottom: 0;
 }
+
+.homepage-actions {
+    @include span-columns(10);
+    @include shift();
+}
+
+%homepage-card {
+    @include span-columns(6);
+
+    background-color: $background-colour;
+    border-bottom: golden-ratio(1rem, -2) solid $accent-colour;
+    box-shadow: 0px 0px golden-ratio(1rem, -1) 0px $base-colour;
+    margin-bottom: golden-ratio(1rem, 0);
+    margin-top: golden-ratio(1rem, 0);
+    padding: golden-ratio(1rem, 0);
+}
+
+.places-nearby {
+    @extend %homepage-card;
+}
+
+.places-search {
+    @extend %homepage-card;
+}
+
+.weather-homepage {
+    @extend %homepage-card;
+}
