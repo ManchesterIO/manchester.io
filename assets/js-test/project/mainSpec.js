@@ -1,4 +1,4 @@
-define(function() {
+define(['project/main'], function(main) {
     "use strict";
 
     describe("my first test", function() {

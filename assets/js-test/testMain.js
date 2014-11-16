@@ -12,7 +12,7 @@
     }
 
     requirejs.config({
-        baseUrl: '/base/src/js',
+        baseUrl: '/base/assets/js',
         deps: tests,
         callback: window.__karma__.start
     });
