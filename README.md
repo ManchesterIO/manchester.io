@@ -40,6 +40,24 @@ Getting Started
 * Run `grunt dev` to output unminified artifacts (useful for dev). This also
   starts watching for changes and reruns jobs as appropriate.
 
+To see the output files in action, you could create a simple HTML file such as
+the one below as `dist/index.html`, and then open that in your browser:
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Hello World</title>
+        <link href="static/styles/project.css" rel="stylesheet">
+    </head>
+    <body>
+        <script src="static/scripts/project.js"></script>
+        <script>
+            require(['project/main'], function(main) { main() });
+        </script>
+    </body>
+    </html>
+
 Customising your project
 ------------------------
 
