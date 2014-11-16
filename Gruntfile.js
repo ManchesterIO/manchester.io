@@ -26,7 +26,8 @@ module.exports = function(grunt) {
             compile: {
                 options: {
                     optimize: 'uglify2',
-                    generateSourceMaps: true
+                    generateSourceMaps: true,
+                    preserveLicenseComments: false
                 }
             },
             dev: {
@@ -41,9 +42,7 @@ module.exports = function(grunt) {
                 paths: {
                     requireLib: '../../bower_components/requirejs/require'
                 },
-                include: ['requireLib'],
-                preserveLicenseComments: false,
-                wrap: true
+                include: ['requireLib']
             }
         },
         scsslint: {
