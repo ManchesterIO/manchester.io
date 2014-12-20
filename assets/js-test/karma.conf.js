@@ -6,6 +6,7 @@ module.exports = function (config) {
         browsers: ['PhantomJS'],
         files: [
             'assets/js-test/testMain.js',
+            'assets/js-test/mockModules.js',
             {pattern: 'assets/js/**/*.js', included: false},
             {pattern: 'assets/js-test/**/*.js', included: false},
             {pattern: 'bower_components/**', included: false}

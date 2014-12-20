@@ -49,7 +49,7 @@ module.exports = function(grunt) {
             all: ['assets/scss/**/*.scss'],
             options: {
                 bundleExec: true,
-                config: undefined
+                exclude: 'assets/scss/base/**/*.scss'
             }
         },
         watch: {

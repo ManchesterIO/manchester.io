@@ -1,3 +1,5 @@
+require 'neat'
+
 http_path = '/'
 css_path = 'deploy/site-cookbooks/manchesterio/files/default/static/styles'
 css_dir = 'assets/scss'

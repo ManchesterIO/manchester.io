@@ -26,7 +26,7 @@ end
 
 supervisor_service "manchesterio" do
   extra_args = "--reload" if node.manchesterio.debug
-  command "#{node.manchesterio.root}/bin/manchesterio/bin/gunicorn manchesterio:app -b 127.0.0.1:8000 -e DEBUG=#{node.manchesterio.debug} #{extra_args}"
+  command "#{node.manchesterio.root}/bin/manchesterio/bin/gunicorn manchesterio.app:app -b 127.0.0.1:8000 -e DEBUG=#{node.manchesterio.debug} #{extra_args}"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/manchesterio"
 end

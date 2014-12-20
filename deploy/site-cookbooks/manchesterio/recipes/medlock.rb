@@ -22,7 +22,7 @@ end
 
 supervisor_service "medlock" do
   extra_args = "--reload" if node.manchesterio.debug
-  command "#{node.manchesterio.root}/bin/medlock/bin/gunicorn medlock:app -b 127.0.0.1:8010 -e DEBUG=#{node.manchesterio.debug} #{extra_args}"
+  command "#{node.manchesterio.root}/bin/medlock/bin/gunicorn medlock.app:app -b 127.0.0.1:8010 -e DEBUG=#{node.manchesterio.debug} #{extra_args}"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock"
 end

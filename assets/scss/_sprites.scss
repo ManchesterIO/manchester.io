@@ -1,0 +1,27 @@
+$sprites: sprite-map('sprites/*.png');
+
+@mixin sprite($sprite) {
+  $sprite-image: sprite-file($sprites, $sprite);
+
+  background-image: sprite-url($sprites);
+  background-position: sprite-position($sprites, $sprite);
+  background-repeat: no-repeat;
+  height: image-height($sprite-image);
+  width: image-width($sprite-image);
+}
+
+@mixin sprite-greater-manchester {
+  @include sprite('greater-manchester');
+}
+
+@mixin sprite-greater-manchester-small {
+  @include sprite('greater-manchester-small');
+}
+
+@mixin sprite-rail-station {
+  @include sprite('rail-station');
+}
+
+@mixin sprite-rail-station-small {
+  @include sprite('rail-station-small');
+}

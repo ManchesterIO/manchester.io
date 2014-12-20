@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="utf-8">
+    <title>{% block page_title %}manchester.io{% endblock %}</title>
+    <meta name="viewport" content="initial-scale=1">
+    <link href="/static/styles/manchesterio.css" rel="stylesheet">
+</head>
+<body>
+
+<script>
+    if ('geolocation' in navigator && 'querySelector' in document && 'classList' in document.createElement('a')) {
+        document.body.classList.add('js');
+    }
+</script>
+
+<header class="site-header">
+    <h1 class="site-title"><a href="/" class="site-logo">manchester.io</a> {% block page_header %}{% endblock %}</h1>
+</header>
+
+<div class="container" role="main">
+    {% block body %}
+    {% endblock %}
+</div>
+
+<footer class="footer">
+    <p class="additional-attribution">{% block additional_attribution %}{% endblock %}</p>
+    <ul class="footer-links">
+        <li><a href="/about">About Manchester.io</a></li>
+        <li><a href="https://github.com/ManchesterIO">See us on GitHub</a></li>
+    </ul>
+</footer>
+
+<script src="/static/scripts/manchesterio.js"></script>
+<script>
+    require(['manchesterio/main'], function(main) { main(document.body) });
+</script>
+
+</body>
+</html>
