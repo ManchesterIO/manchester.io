@@ -1,142 +1,102 @@
+var shelljs = require('shelljs');
+
 module.exports = function(grunt) {
-
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
-
-        composer: {
-            options: {
-                cwd: 'manchesterio'
-            }
-        },
-
-        copy: {
-            app: {
-                files: [
-                    {
-                        cwd: 'manchesterio',
-                        src: ['public/**', 'src/**', 'vendor/**', 'views/**'],
-                        dest: 'deploy/site-cookbooks/manchesterio/files/default/app/',
-                        expand: true
-                    }
-                ]
-            },
-            images: {
-                files: [
-                    {
-                        cwd: 'manchesterio/assets',
-                        src: 'images/**',
-                        dest: 'deploy/site-cookbooks/manchesterio/files/default/static/',
-                        expand: true
-                    }
-                ]
-            }
-        },
-
-        phpunit: {
-            classes: {
-                dir: 'manchesterio/tests'
-            },
-            options: {
-                configuration: 'manchesterio/tests/phpunit.xml',
-                colors: true,
-                bin: 'manchesterio/vendor/bin/phpunit'
-            }
-        },
-
-        phpcs: {
-            application: {
-                dir: ['manchesterio/src/**/*.php', 'manchesterio/tests/**/*.php']
-            },
-            options: {
-                bin: 'manchesterio/vendor/bin/phpcs',
-                standard: 'PSR2'
-            }
-        },
-
         compass: {
-            dist: {
+            compile: { },
+            dev: {
                 options: {
-                    config: 'manchesterio/assets/config.rb',
-                    outputStyle: 'compressed',
-                    bundleExec: true
+                    outputStyle: 'expanded'
+                }
+            },
+            options: {
+                bundleExec: true,
+                config: 'assets/scss/compass_config.rb'
+            }
+        },
+        jshint: {
+            all: ['assets/js/**/*.js', 'assets/js-test/**/*.js']
+        },
+        karma: {
+            unit: {
+                configFile: 'assets/js-test/karma.conf.js'
+            }
+        },
+        requirejs: {
+            compile: {
+                options: {
+                    optimize: 'uglify2',
+                    generateSourceMaps: true,
+                    preserveLicenseComments: false
                 }
             },
             dev: {
                 options: {
-                    config: 'manchesterio/assets/config.rb',
-                    bundleExec: true
+                    optimize: 'none'
                 }
-            }
-        },
-
-        requirejs: {
+            },
             options: {
-                baseUrl: "manchesterio/assets/js",
-                keepBuildDir: true,
-                name: "manchesterio/main",
-                out: "deploy/site-cookbooks/manchesterio/files/default/static/js/manchesterio.js",
+                baseUrl: 'assets/js/',
+                name: 'project/main',
+                out: 'deploy/site-cookbooks/manchesterio/files/default/static/scripts/project.js',
                 paths: {
-                    requireLib: 'vendors/require'
+                    requireLib: '../../bower_components/requirejs/require'
                 },
                 include: ['requireLib']
-            },
-            dist: {},
-            dev: {
-                options: {
-                    optimize: "none"
-                }
             }
         },
-
-        jshint: {
-            all: ['manchesterio/assets/js/manchesterio/**']
-        },
-
-        karma: {
-            dev: {
-                options: {
-                    configFile: 'manchesterio/assets/js-test/karma.conf.js',
-                    browsers: ['PhantomJS'],
-                    singleRun: true
-                }
+        scsslint: {
+            all: ['assets/scss/**/*.scss'],
+            options: {
+                bundleExec: true
             }
         },
-
         watch: {
-            composer: {
-                files: 'manchesterio/composer.json',
-                tasks: 'composer:update'
+            grunt: {
+                files: ['Gruntfile.js'],
+                options: { reload: true }
             },
-            php: {
-                files: ['manchesterio/src/**/*.php', 'manchesterio/tests/**/*.php'],
-                tasks: ['phpunit', 'phpcs']
+            gemfile: {
+                files: ['Gemfile'],
+                tasks: ['boostrap-compass']
             },
-            sass: {
-                files: 'manchesterio/assets/scss/**',
-                tasks: 'compass:dev'
+            bower: {
+                files: ['bower.json'],
+                tasks: ['bower']
             },
-            js: {
-                files: ['manchesterio/assets/js/**', 'manchesterio/assets/js-test/**'],
-                tasks: ['requirejs:dev', 'karma:dev', 'jshint']
+            scripts: {
+                files: ['assets/js/**/*.js', 'assets/js-test/**/*.js'],
+                tasks: ['scripts-dev']
             },
-            images: {
-                files: ['manchesterio/assets/images/**'],
-                tasks: ['copy:images']
+            styles: {
+                files: ['assets/scss/compass_config.rb', 'assets/scss/**/*.scss'],
+                tasks: ['styles-dev']
             }
         }
     });
 
-    grunt.registerTask('dist', ['composer:install:no-dev:optimize-autoloader', 'copy:app', 'copy:images', 'compass:dist', 'requirejs:dist']);
-    grunt.registerTask('dev', ['composer:install', 'phpunit', 'phpcs', 'copy:images', 'compass:dev', 'requirejs:dev', 'karma:dev', 'jshint']);
-
-    grunt.loadNpmTasks('grunt-composer');
     grunt.loadNpmTasks('grunt-contrib-compass');
-    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-phpcs');
-    grunt.loadNpmTasks('grunt-phpunit');
+    grunt.loadNpmTasks('grunt-scss-lint');
+
+    grunt.registerTask('bower', function() {
+        shelljs.exec('node_modules/bower/bin/bower install');
+    });
+
+    grunt.registerTask('bootstrap-compass', function() {
+        shelljs.exec('bundle install');
+    });
+
+    grunt.registerTask('default', ['bower', 'bootstrap-compass', 'styles', 'scripts']);
+    grunt.registerTask('dev', ['bower', 'bootstrap-compass', 'styles-dev', 'scripts-dev', 'watch']);
+
+    grunt.registerTask('scripts', ['karma:unit', 'requirejs:compile', 'jshint:all']);
+    grunt.registerTask('scripts-dev', ['karma:unit', 'requirejs:dev', 'jshint:all']);
+
+    grunt.registerTask('styles', ['compass:compile', 'scsslint:all']);
+    grunt.registerTask('styles-dev', ['compass:dev', 'scsslint:all']);
 
 };

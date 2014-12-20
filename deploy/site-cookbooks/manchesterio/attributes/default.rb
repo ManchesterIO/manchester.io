@@ -1,9 +1,11 @@
 default['manchesterio']['root'] = '/srv/manchester.io'
+default['manchesterio']['user'] = 'manchesterio'
 default['manchesterio']['ui_hostname'] = 'manchester.io'
 default['manchesterio']['api_hostname'] = 'api.manchester.io'
 default['manchesterio']['graphite_hostname'] = 'graphite.manchester.io'
 default['manchesterio']['sentry_dsn'] = nil
 default['manchesterio']['ui_sentry_dsn'] = nil
+default['manchesterio']['vagrant'] = false
 
 default['sentry']['root'] = '/opt/sentry'
 default['sentry']['secret_key'] = nil

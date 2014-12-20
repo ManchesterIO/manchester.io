@@ -15,23 +15,17 @@ default_attributes 'ssh_keys' => {'manchesterio' => %w(chris)},
                        'web_server' => 'nginx'
                    },
                    'nginx' => {'default_site_enabled' => false},
-                   'mollyproject' => {
-                       'config' => '/srv/manchester.io/conf/manchesterio.conf',
-                       'ui' => {
-                           'settings' => '/srv/manchester.io/conf/uisettings.py'
-                       }
-                   },
-                   'rabbitmq' => {'local_erl_networking' => true},
-                   'sentry' => {'fixturefile' => 'sentry-fixtures.json.erb'}
+                   'rabbitmq' => {'kernel' => {'inet_dist_use_interface' => '127.0.0.1'},
+                                  'local_erl_networking' => true},
+                   'sentry' => {'fixturefile' => 'sentry-fixtures.json.erb'},
+                   'statsd' => {'nodejs_bin' => '/usr/bin/node'}
 
 run_list 'recipe[mongodb::10gen_repo]',
          'recipe[mongodb::default]',
-         'recipe[java]',
-         'recipe[elasticsearch]',
-         'recipe[memcached]',
          'recipe[statsd]',
          'recipe[graphite]',
          'recipe[manchesterio::sentry]',
          'recipe[manchesterio::nginx]',
          'recipe[rabbitmq]',
-         'recipe[manchesterio::molly]'
+         'recipe[manchesterio::medlock]',
+         'recipe[manchesterio::manchesterio]'

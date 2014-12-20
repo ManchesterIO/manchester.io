@@ -1,0 +1,7 @@
+{
+  "name": "build",
+  "private": true,
+  "dependencies": {
+    "requirejs": "~2.1.15"
+  }
+}

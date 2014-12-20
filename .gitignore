@@ -1,7 +1,9 @@
-deploy/cookbooks/
-.idea
-*.iml
+.sass-cache
+.vagrant
+bower_components
 encrypted_data_bag_secret
 node_modules
-.vagrant
-.sass-cache
+deploy/cookbooks/
+deploy/site-cookbooks/manchesterio/files/default/static/
+*.pyc
+*.pyo

@@ -1,7 +1,7 @@
-name "manchester.io"
+name "manchesterio"
 
 depends "firewall"
 depends "htpasswd"
-depends "mollyproject"
 depends "nginx"
 depends "python"
+depends "supervisor"

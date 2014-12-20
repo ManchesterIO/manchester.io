@@ -1,11 +1,7 @@
-language: php
-php:
-  - 5.5
+language: node_js
+node_js:
+  - "0.10"
 install:
-  - bundle
-  - npm install
-  - cd manchesterio
-  - composer install
-  - cd ..
-script:
-  - node_modules/grunt-cli/bin/grunt dev
+ - npm install -g grunt-cli
+ - npm install
+script: grunt

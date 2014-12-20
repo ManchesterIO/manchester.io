@@ -6,20 +6,25 @@ This project allows you to deploy manchester.io.
 Dependencies
 ------------
 
+* [Chef](https://downloads.chef.io/chef-dk/)
+* [NodeJS](http://nodejs.org/)
 * [RVM](https://rvm.io/)
 * [Vagrant](http://vagrantup.com/)
 
 Prepping
 --------
 
-manchester.io uses Chef to manage deployments, and Grunt/Compass to manage building of the static assets. If you've got
-RVM and NPM installed, then you should be able to go into the folder and run:
+manchester.io uses Grunt/Compass to manage building of the static assets:
 
-    bundle
     npm install
     npm install -g grunt-cli
 
-This will set up an environment ready for deployment or local development.
+This will set up an environment ready for local development.
+
+Deployment is done using Knife Solo:
+
+    cd deploy
+    bundle install
 
 Building assets
 ---------------
@@ -28,11 +33,11 @@ Building assets
 
 In order to build the development version of the assets, and then automatically recompile them on change, run:
 
-    grunt dev watch
+    grunt dev
 
 In order to build production-ready versions of the assets, then run:
 
-    grunt dist
+    grunt
 
 Deploying to sandbox
 --------------------
@@ -40,7 +45,7 @@ Deploying to sandbox
 Vagrant is used to manage pre-production environments. Simply install vagrant, and then use the following commands
 to start up a local machine:
 
-    cd deploy
+    vagrant plugin install vagrant-berkshelf # Only needed on first run
     vagrant up
 
 You will then be able to access manchester.io via the URLs: http://api.sandbox.manchester.io and http://www.sandbox.manchester.io
@@ -59,8 +64,6 @@ Well manchester.io hasn't quite reached production yet, but you can deploy to th
     cd deploy
     knife solo cook beta.manchester.io
     ssh manchesterio@beta.manchester.io sudo supervisorctl restart all
-
-(at the moment this always deploys the master of mollyproject-next, but in future that should change)
 
 ### Getting permission to deploy to production ###
 
