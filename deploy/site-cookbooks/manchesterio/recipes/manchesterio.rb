@@ -25,7 +25,8 @@ python_pip "#{node.manchesterio.root}/manchesterio/requirements.txt" do
 end
 
 supervisor_service "manchesterio" do
-  command "#{node.manchesterio.root}/bin/manchesterio/bin/gunicorn manchesterio:app -b 127.0.0.1:8000"
+  extra_args = "--reload" if node.manchesterio.debug
+  command "#{node.manchesterio.root}/bin/manchesterio/bin/gunicorn manchesterio:app -b 127.0.0.1:8000 -e DEBUG=#{node.manchesterio.debug} #{extra_args}"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/manchesterio"
 end

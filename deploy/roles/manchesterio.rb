@@ -15,8 +15,6 @@ default_attributes 'ssh_keys' => {'manchesterio' => %w(chris)},
                        'web_server' => 'nginx'
                    },
                    'nginx' => {'default_site_enabled' => false},
-                   'rabbitmq' => {'kernel' => {'inet_dist_use_interface' => '127.0.0.1'},
-                                  'local_erl_networking' => true},
                    'sentry' => {'fixturefile' => 'sentry-fixtures.json.erb'},
                    'statsd' => {'nodejs_bin' => '/usr/bin/node'}
 

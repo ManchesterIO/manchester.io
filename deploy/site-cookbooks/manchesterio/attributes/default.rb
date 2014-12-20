@@ -6,6 +6,7 @@ default['manchesterio']['graphite_hostname'] = 'graphite.manchester.io'
 default['manchesterio']['sentry_dsn'] = nil
 default['manchesterio']['ui_sentry_dsn'] = nil
 default['manchesterio']['vagrant'] = false
+default['manchesterio']['debug'] = false
 
 default['sentry']['root'] = '/opt/sentry'
 default['sentry']['secret_key'] = nil
