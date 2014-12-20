@@ -25,7 +25,6 @@
 
   @include media($large-screen) {
     @include span-columns(4);
-    height: 14em;
     padding: 2em;
   }
 
