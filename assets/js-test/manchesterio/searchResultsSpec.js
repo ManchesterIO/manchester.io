@@ -75,11 +75,46 @@ define(['manchesterio/searchResults', 'mockLeaflet'], function(SearchResults, mo
             );
         });
 
+        it('adds a popup with the station name', function() {
+            fakeResult();
+
+            searchResults.init();
+
+            expect(mockLeaflet.mockMarker.bindPopup).toHaveBeenCalledWith('Trumpton Station');
+        });
+
+        it('pops up the title on hover', function() {
+            var result = fakeResult();
+
+            searchResults.init();
+            var event = document.createEvent('MouseEvents');
+            event.initMouseEvent('mouseover');
+            result.dispatchEvent(event);
+
+            expect(mockLeaflet.mockMarker.openPopup).toHaveBeenCalled();
+        });
+
+        it('closes the popup when the mouse leaves', function() {
+            var result = fakeResult();
+
+            searchResults.init();
+            var event = document.createEvent('MouseEvents');
+            event.initMouseEvent('mouseout');
+            result.dispatchEvent(event);
+
+            expect(mockLeaflet.mockMarker.closePopup).toHaveBeenCalled();
+        });
+
         function fakeResult() {
             var result = document.createElement('div');
             result.dataset.lat = '7.89';
             result.dataset.lon = '10.1112';
+            var title = document.createElement('h2');
+            title.classList.add('search-result__title');
+            title.textContent = 'Trumpton Station';
+            result.appendChild(title);
             results.push(result);
+            return result;
         }
 
     });

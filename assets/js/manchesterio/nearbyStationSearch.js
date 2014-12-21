@@ -1,7 +1,6 @@
 define(['polyfills/bind'], function() {
     'use strict';
 
-
     function roundCoords(coords) {
         return {
             latitude: Math.round(coords.latitude * 100000) / 100000,

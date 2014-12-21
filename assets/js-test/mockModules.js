@@ -26,7 +26,10 @@ define('mockLeaflet', function() {
     };
 
     var mockMarker = {
-        addTo: jasmine.createSpy()
+        addTo: jasmine.createSpy(),
+        bindPopup: jasmine.createSpy(),
+        closePopup: jasmine.createSpy(),
+        openPopup: jasmine.createSpy()
     };
 
     var mockIcon = { };
