@@ -28,6 +28,7 @@
     padding: 2em;
   }
 
+  &:focus,
   &:hover {
     background: transparentize($base-font-color, .95);
   }
