@@ -3,15 +3,17 @@
 {% block page_header %}manchester.io{% endblock %}
 
 {% block body %}
-    <div class="action-grid">
-        <button class="action-grid__action nearby-station-search" disabled="true" data-href="/search/rail-stations/near/{lat},{lon}">
-            <h2 class="nearby-station-search__status" aria-role="status" aria-live="polite">Find nearby rail stations</h2>
-            <p class="no-js-warning"><em>Sorry, you need a modern browser with JavaScript to use this feature.</em></p>
-        </button>
-    </div>
+    <div class="container" role="main">
+        <div class="action-grid" role="navigation">
+            <button class="action-grid__action nearby-station-search" disabled="true" data-href="/search/rail-stations/near/{lat},{lon}">
+                <h2 class="nearby-station-search__status" aria-role="status" aria-live="polite">Find nearby rail stations</h2>
+                <p class="no-js-warning"><em>Sorry, you need a modern browser with JavaScript to use this feature.</em></p>
+            </button>
+        </div>
 
-    <div class="explainer">
-        <h2>Welcome to Manchester.IO</h2>
-        <p>Manchester.IO is the easiest way to get public transport information around Greater Manchester</p>
+        <div class="explainer">
+            <h2>Welcome to Manchester.IO</h2>
+            <p>Manchester.IO is the easiest way to get public transport information around Greater Manchester</p>
+        </div>
     </div>
 {% endblock %}

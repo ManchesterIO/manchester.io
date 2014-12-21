@@ -40,6 +40,7 @@ module.exports = function(grunt) {
                 name: 'manchesterio/main',
                 out: 'deploy/site-cookbooks/manchesterio/files/default/static/scripts/manchesterio.js',
                 paths: {
+                    leaflet: 'empty:',
                     requireLib: '../../bower_components/requirejs/require'
                 },
                 include: ['requireLib']

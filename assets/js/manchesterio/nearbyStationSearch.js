@@ -44,5 +44,5 @@ define(['polyfills/bind'], function() {
     };
 
     return NearbyStationSearch;
-    
+
 });

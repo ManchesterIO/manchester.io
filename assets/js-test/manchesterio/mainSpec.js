@@ -1,7 +1,8 @@
 require.config({
    map: {
        "manchesterio/main": {
-           "manchesterio/nearbyStationSearch": "mockNearbyStationSearch"
+           "manchesterio/nearbyStationSearch": "mockNearbyStationSearch",
+           "manchesterio/searchResults": "mockSearchResults"
        }
    }
 });

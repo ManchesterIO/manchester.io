@@ -6,3 +6,11 @@ define("mockNearbyStationSearch", function() {
 
     return NearbyStationSearch;
 });
+
+define("mockSearchResults", function() {
+    'use strict';
+
+    var SearchResults = jasmine.createSpy();
+
+    return SearchResults;
+});

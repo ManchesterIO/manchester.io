@@ -1,0 +1,38 @@
+.results-map {
+  @include span-columns(12);
+
+  min-height: 360px;
+
+  @include media($medium-screen) {
+    @include span-columns(6);
+
+    height: 100%;
+    position: absolute;
+  }
+
+  @include media($large-screen) {
+    @include span-columns(8);
+  }
+}
+
+.results-list {
+  @include span-columns(12);
+
+  @include media($medium-screen) {
+    @include span-columns(6);
+
+    float: right;
+  }
+
+  @include media($large-screen) {
+    @include span-columns(4);
+
+    float: right;
+    padding-right: flex-gutter();
+  }
+}
+
+.map {
+  height: 100%;
+  min-height: 360px;
+}

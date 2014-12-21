@@ -5,6 +5,7 @@
     <title>{% block page_title %}manchester.io{% endblock %}</title>
     <meta name="viewport" content="initial-scale=1">
     <link href="/static/styles/manchesterio.css" rel="stylesheet">
+    <link href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" rel="stylesheet">
 </head>
 <body>
 
@@ -18,10 +19,8 @@
     <h1 class="site-title"><a href="/" class="site-logo">manchester.io</a> {% block page_header %}{% endblock %}</h1>
 </header>
 
-<div class="container" role="main">
-    {% block body %}
-    {% endblock %}
-</div>
+{% block body %}
+{% endblock %}
 
 <footer class="footer">
     <p class="additional-attribution">{% block additional_attribution %}{% endblock %}</p>
@@ -33,6 +32,11 @@
 
 <script src="/static/scripts/manchesterio.js"></script>
 <script>
+    require.config({
+        paths: {
+            "leaflet": "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet"
+        }
+    });
     require(['manchesterio/main'], function(main) { main(document.body) });
 </script>
 

@@ -41,7 +41,16 @@ body {
 
 .container {
   @include outer-container;
+
   margin: 0 flex-gutter();
+  position: relative;
+}
+
+.container--full-width {
+  @include media($medium-screen) {
+    margin: 0;
+    max-width: 100%;
+  }
 }
 
 .footer {
