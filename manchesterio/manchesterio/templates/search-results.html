@@ -7,81 +7,24 @@
 {% block body %}
 
     <div class="container container--full-width">
-        <div class="results-map"><div class="map" id="map"></div></div>
-        <ul class="results-list" role="navigation">
-            <li>
+        <div class="results-map" data-starting-lat="{{ startingLat }}" data-starting-lon="{{ startingLon }}">
+            <p class="no-js-warning"><em>Sorry, you need a modern browser with JavaScript to use this feature.</em></p>
+        </div>
+
+        <ol class="results-list action-list" role="navigation">
+            <li class="action-list__action search-result" data-lat="53.4872" data-lon="-2.2424">
                 <a href="">
-                    <h2>Manchester Piccadilly</h2>
-                    <p>Mainline rail station, 0.8 mi west</p>
+                    <h2 class="action__title search-result__title">Manchester Victoria</h2>
+                    <p class="search-result__metadata">Mainline rail station, 0.8 mi north</p>
                 </a>
             </li>
-            <li>
+            <li class="action-list__action search-result" data-lat="53.477" data-lon="-2.230">
                 <a href="">
-                    <h2>Manchester Victoria</h2>
-                    <p>Mainline rail station, 1.2 mi north</p>
+                    <h2 class="action__title search-result__title">Manchester Piccadilly</h2>
+                    <p class="search-result__metadata">Mainline rail station, 0.8 mi west</p>
                 </a>
             </li>
-            <li>
-                <a href="">
-                    <h2>Ashburys</h2>
-                    <p>Mainline rail station, 1.4 mi south</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Ardwick</h2>
-                    <p>Mainline rail station, 1.6 mi south</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Manchester Oxford Road</h2>
-                    <p>Mainline rail station, 1.8 mi west</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Manchester Deansgate</h2>
-                    <p>Mainline rail station, 2.0 mi west</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Manchester Piccadilly</h2>
-                    <p>Mainline rail station, 0.8 mi west</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Manchester Victoria</h2>
-                    <p>Mainline rail station, 1.2 mi north</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Ashburys</h2>
-                    <p>Mainline rail station, 1.4 mi south</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Ardwick</h2>
-                    <p>Mainline rail station, 1.6 mi south</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Manchester Oxford Road</h2>
-                    <p>Mainline rail station, 1.8 mi west</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <h2>Manchester Deansgate</h2>
-                    <p>Mainline rail station, 2.0 mi west</p>
-                </a>
-            </li>
-        </ul>
+        </ol>
     </div>
 
 {% endblock %}

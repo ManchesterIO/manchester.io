@@ -1,0 +1,17 @@
+.nearby-station-search h2 {
+  &:before {
+    @include sprite-rail-station-small;
+
+    content: '';
+    display: inline-block;
+    margin-right: $base-spacing / 2;
+    vertical-align: middle;
+
+    @include media($large-screen) {
+      @include sprite-rail-station;
+
+      display: block;
+      margin: 0 auto $base-spacing / 2;
+    }
+  }
+}

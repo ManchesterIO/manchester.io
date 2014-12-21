@@ -96,7 +96,7 @@ module.exports = function(grunt) {
     grunt.registerTask('dev', ['bower', 'bootstrap-compass', 'styles-dev', 'scripts-dev', 'watch']);
 
     grunt.registerTask('scripts', ['karma:unit', 'requirejs:compile', 'jshint:all']);
-    grunt.registerTask('scripts-dev', ['karma:unit', 'requirejs:dev', 'jshint:all']);
+    grunt.registerTask('scripts-dev', ['requirejs:dev', 'karma:unit', 'jshint:all']);
 
     grunt.registerTask('styles', ['compass:compile', 'scsslint:all']);
     grunt.registerTask('styles-dev', ['compass:dev', 'scsslint:all']);

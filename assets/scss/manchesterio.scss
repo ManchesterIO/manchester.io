@@ -1,11 +1,12 @@
 // Utilities
 
 @import 'base/base';
-@import 'sprites';
+@import 'components/sprites';
 
 // Page furniture
-@import 'furniture';
+@import 'components/furniture';
+@import 'components/actions';
 
 // Individual components
-@import 'homepage';
-@import 'search-results';
+@import 'pages/homepage';
+@import 'pages/search-results';

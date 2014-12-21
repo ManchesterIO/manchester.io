@@ -1,0 +1,54 @@
+.action-list,
+.action-grid {
+  @include clearfix;
+
+  margin: $base-spacing 0;
+  position: relative;
+
+  a,
+  button {
+    color: $base-font-color;
+    white-space: normal;
+  }
+}
+
+.action-list {
+  list-style-position: inside;
+  list-style-type: decimal;
+}
+
+.action-list__action,
+.action-grid__action {
+  $grid-item-border: 1px solid transparentize($base-font-color, 0.8);
+
+  @include transition (all 0.2s ease-in-out);
+
+  background: $base-background-color;
+  border-bottom: $grid-item-border;
+  border-right: $grid-item-border;
+  cursor: pointer;
+  float: left;
+  overflow: hidden;
+  width: 100%;
+
+
+  a:focus,
+  button:focus,
+  &:hover {
+    background: transparentize($base-font-color, 0.95);
+  }
+}
+
+.action__title {
+  color: $base-font-color;
+  font-size: 1.3em;
+  margin-bottom: 0.4em;
+}
+
+@include media($large-screen) {
+  .action-grid__action {
+    @include span-columns(4);
+
+    padding: 2em;
+  }
+}

@@ -22,6 +22,7 @@
     @include span-columns(6);
 
     float: right;
+    min-height: 360px;
   }
 
   @include media($large-screen) {
@@ -30,6 +31,15 @@
     float: right;
     padding-right: flex-gutter();
   }
+}
+
+.search-result {
+  padding: $base-spacing / 2;
+}
+
+.search-result__metadata {
+  font-size: 0.9em;
+  line-height: 1.1em;
 }
 
 .map {

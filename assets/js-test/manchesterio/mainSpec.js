@@ -7,7 +7,7 @@ require.config({
    }
 });
 
-define(['manchesterio/main', 'mockNearbyStationSearch'], function(main, mockNearbyStationSearch) {
+define(['manchesterio/main', 'mockNearbyStationSearch', 'mockSearchResults'], function(main, mockNearbyStationSearch, mockSearchResults) {
     "use strict";
 
     var canvas;
@@ -25,6 +25,31 @@ define(['manchesterio/main', 'mockNearbyStationSearch'], function(main, mockNear
             main(canvas);
 
             expect(mockNearbyStationSearch.prototype.init).toHaveBeenCalled();
+        });
+
+        it("initialises the search result map", function() {
+            var mapCanvas = document.createElement('div'),
+                searchResults = [],
+                i;
+            mapCanvas.classList.add('results-map');
+            canvas.appendChild(mapCanvas);
+
+            for (i = 0; i < 5; ++i) {
+                var searchResult = document.createElement('div');
+                searchResult.classList.add('search-result');
+                canvas.appendChild(searchResult);
+                searchResults.push(searchResult);
+            }
+
+            main(canvas);
+
+            expect(mockSearchResults).toHaveBeenCalled();
+            expect(mockSearchResults.calls.mostRecent().args[0]).toBe(mapCanvas);
+            for (i = 0; i < 5; ++i) {
+                expect(mockSearchResults.calls.mostRecent().args[1][i]).toBe(searchResults[i]);
+            }
+
+            expect(mockSearchResults.prototype.init).toHaveBeenCalled();
         });
     });
 

@@ -10,7 +10,10 @@
 <body>
 
 <script>
-    if ('geolocation' in navigator && 'querySelector' in document && 'classList' in document.createElement('a')) {
+    function cutsMustard() {
+        return 'geolocation' in navigator && 'querySelector' in document && 'classList' in document.createElement('a');
+    }
+    if (cutsMustard()) {
         document.body.classList.add('js');
     }
 </script>
@@ -37,7 +40,9 @@
             "leaflet": "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet"
         }
     });
-    require(['manchesterio/main'], function(main) { main(document.body) });
+    if (cutsMustard()) {
+        require(['manchesterio/main'], function(main) { main(document.body) });
+    }
 </script>
 
 </body>
