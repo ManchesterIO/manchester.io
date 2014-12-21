@@ -1,7 +1,8 @@
 require.config({
     map: {
         "manchesterio/searchResults": {
-            "leaflet": "mockLeaflet"
+            "leaflet": "mockLeaflet",
+            'contrib/leaflet.numbered_markers': 'mockLeaflet'
         }
     }
 });
@@ -47,23 +48,39 @@ define(['manchesterio/searchResults', 'mockLeaflet'], function(SearchResults, mo
             expect(mockLeaflet.mockTileLayer.addTo).toHaveBeenCalledWith(mockLeaflet.mockMap);
         });
 
-        it("sets the view around the appropriate location", function() {
-            searchResults.init();
-
-            expect(mockLeaflet.mockMap.setView).toHaveBeenCalledWith([1.23, 4.56], 15);
-        });
-
-        it('creates a marker for each search result', function() {
-            var result = document.createElement('div');
-            result.dataset.lat = '1.23';
-            result.dataset.lon = '4.56';
-            results.push(result);
-
+        it("creates a marker for the current position", function() {
             searchResults.init();
 
             expect(mockLeaflet.marker).toHaveBeenCalledWith([1.23, 4.56]);
             expect(mockLeaflet.mockMarker.addTo).toHaveBeenCalledWith(mockLeaflet.mockMap);
         });
+
+        it('creates a marker for each search result', function() {
+            fakeResult();
+
+            searchResults.init();
+
+            expect(mockLeaflet.marker).toHaveBeenCalledWith([7.89, 10.1112], { icon: mockLeaflet.mockIcon });
+            expect(mockLeaflet.numberedIcon).toHaveBeenCalledWith({number: 1});
+            expect(mockLeaflet.mockMarker.addTo).toHaveBeenCalledWith(mockLeaflet.mockMap);
+        });
+
+        it("sets the map to fit all the markers on there", function() {
+            fakeResult();
+
+            searchResults.init();
+
+            expect(mockLeaflet.mockMap.fitBounds).toHaveBeenCalledWith(
+                [[1.23, 4.56], [7.89, 10.1112]], { padding: [32, 32] }
+            );
+        });
+
+        function fakeResult() {
+            var result = document.createElement('div');
+            result.dataset.lat = '7.89';
+            result.dataset.lon = '10.1112';
+            results.push(result);
+        }
 
     });
 

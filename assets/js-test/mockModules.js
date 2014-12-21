@@ -21,12 +21,15 @@ define('mockLeaflet', function() {
     'use strict';
 
     var mockMap = {
+        fitBounds: jasmine.createSpy(),
         setView: jasmine.createSpy()
     };
 
     var mockMarker = {
         addTo: jasmine.createSpy()
     };
+
+    var mockIcon = { };
 
     var mockTileLayer = {
         addTo: jasmine.createSpy()
@@ -39,12 +42,16 @@ define('mockLeaflet', function() {
         marker: jasmine.createSpy(),
         mockMarker: mockMarker,
 
+        numberedIcon: jasmine.createSpy(),
+        mockIcon: mockIcon,
+
         tileLayer: jasmine.createSpy(),
         mockTileLayer: mockTileLayer
     };
 
     L.map.and.returnValue(mockMap);
     L.marker.and.returnValue(mockMarker);
+    L.numberedIcon.and.returnValue(mockIcon);
     L.tileLayer.and.returnValue(mockTileLayer);
 
     return L;

@@ -1,4 +1,4 @@
-define(['leaflet'], function(L) {
+define(['leaflet', 'contrib/leaflet.numbered_markers'], function(L) {
 
     var mapIdCounter = 1;
 
@@ -21,16 +21,19 @@ define(['leaflet'], function(L) {
                 subdomains: '1234'
             }
         ).addTo(this._map);
-        this._map.setView(
-            [parseFloat(this._mapCanvas.dataset.startingLat), parseFloat(this._mapCanvas.dataset.startingLon)],
-            15
-        );
+
+        var currentLatLon = [parseFloat(this._mapCanvas.dataset.startingLat), parseFloat(this._mapCanvas.dataset.startingLon)];
+        L.marker(currentLatLon).addTo(this._map);
+
+        var latLons = [currentLatLon];
 
         for (var i = 0; i < this._resultNodes.length; ++i) {
-            L.marker(
-                [parseFloat(this._resultNodes[i].dataset.lat), parseFloat(this._resultNodes[i].dataset.lon)]
-            ).addTo(this._map);
+            var latLon = [parseFloat(this._resultNodes[i].dataset.lat), parseFloat(this._resultNodes[i].dataset.lon)];
+            latLons.push(latLon);
+            L.marker(latLon, { icon: L.numberedIcon({number: i + 1}) }).addTo(this._map);
         }
+
+        this._map.fitBounds(latLons, { padding: [32, 32] });
     };
 
     return SearchResults;
