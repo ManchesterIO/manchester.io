@@ -30,7 +30,7 @@ class NaptanImporter(object):
             LOGGER.info('ETag changed, starting import (was: %s, now: %s)',
                         response.headers['etag'],
                         self._metadata.get('last-etag'))
-            for chunk in response.iter_content():
+            for chunk in response.iter_content(chunk_size=512):
                 temp_file.write(chunk)
             self._metadata['last-etag'] = response.headers['etag']
             return ZipFile(temp_file).open('NaPTAN.xml')

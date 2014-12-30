@@ -26,7 +26,7 @@ location_service = LocationService(mongo)
 metadata_factory = ImporterMetadataFactory(mongo)
 naptan_importer = NaptanImporter(location_service,
                                  metadata_factory.build('naptan'),
-                                 ['180', '910', '940', 'MA'])
+                                 ['910', '940', 'MA'])
 celery.periodic_task(naptan_importer.load, crontab=naptan_importer.IMPORT_SCHEDULE)
 
 app.url_map.converters['float'] = NegativeFloatConverter
