@@ -9,9 +9,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :private_network, ip: "192.168.33.12"
 
+  config.vm.provider "virtualbox" do | vm |
+    vm.memory = 2048
+  end
+
   config.berkshelf.berksfile_path = "deploy/Berksfile"
 
-  config.vm.provision :chef_solo do |chef|
+  config.vm.provision :chef_solo do | chef |
     chef.node_name = 'sandbox.manchester.io'
     chef.cookbooks_path = "deploy/site-cookbooks"
     chef.roles_path = "deploy/roles"
@@ -33,10 +37,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             'superusers' => [{'username' => 'sandbox', 'password' => 'sandbox'}]
         }
     }
-
-    config.vm.synced_folder "deploy/site-cookbooks/manchesterio/files/default/static", "/srv/manchester.io/static"
-    config.vm.synced_folder "manchesterio", "/srv/manchester.io/manchesterio"
-    config.vm.synced_folder "medlock", "/srv/manchester.io/medlock"
   end
+
+  config.vm.synced_folder "deploy/site-cookbooks/manchesterio/files/default/static", "/srv/manchester.io/static"
+  config.vm.synced_folder "manchesterio", "/srv/manchester.io/manchesterio"
+  config.vm.synced_folder "medlock", "/srv/manchester.io/medlock"
 
 end

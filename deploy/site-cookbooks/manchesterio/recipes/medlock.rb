@@ -15,6 +15,8 @@ python_virtualenv "#{node.manchesterio.root}/bin/medlock" do
   group node.manchesterio.user
 end
 
+%w(libgeos-c1 libgeos-dev).each { | package | package package }
+
 python_pip "#{node.manchesterio.root}/medlock/requirements.txt" do
   options '-r'
   virtualenv "#{node.manchesterio.root}/bin/medlock"
