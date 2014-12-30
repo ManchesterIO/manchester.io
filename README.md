@@ -1,6 +1,8 @@
 manchester.io
 =============
 
+[![Build Status](https://travis-ci.org/ManchesterIO/manchester.io.svg?branch=master)](https://travis-ci.org/ManchesterIO/manchester.io)
+
 This project allows you to deploy manchester.io.
 
 Dependencies
