@@ -4,8 +4,10 @@ from flask import Flask
 from flask.ext.pymongo import PyMongo
 from raven.contrib.celery import register_signal
 
-from medlock.scheduler import Celery
+from medlock.endpoints.search import SearchResults
+from medlock.helpers.float_converter import NegativeFloatConverter
 from medlock.importers.naptan import NaptanImporter
+from medlock.scheduler import Celery
 from medlock.services.importer_metadata import ImporterMetadataFactory
 from medlock.services.locations import LocationService
 
@@ -26,6 +28,10 @@ naptan_importer = NaptanImporter(location_service,
                                  metadata_factory.build('naptan'),
                                  ['180', '910', '940', 'MA'])
 celery.periodic_task(naptan_importer.load, crontab=naptan_importer.IMPORT_SCHEDULE)
+
+app.url_map.converters['float'] = NegativeFloatConverter
+
+SearchResults(app).init()
 
 if __name__ == '__main__':
     app.run()

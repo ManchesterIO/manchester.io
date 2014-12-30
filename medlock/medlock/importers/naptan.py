@@ -21,7 +21,7 @@ class NaptanImporter(object):
 
     def __init__(self, location_service, metadata, interesting_areas):
         self._metadata = metadata
-        self.parser = NaptanParser(location_service, interesting_areas)
+        self._parser = NaptanParser(location_service, interesting_areas)
 
     def _get_file_from_url(self, temp_file):
         response = requests.get(self.NAPTAN_URL, timeout=5, stream=True)
@@ -32,9 +32,8 @@ class NaptanImporter(object):
                         self._metadata.get('last-etag'))
             for chunk in response.iter_content():
                 temp_file.write(chunk)
-            xml_file = ZipFile(temp_file).open('NaPTAN.xml')
             self._metadata['last-etag'] = response.headers['etag']
-            return xml_file
+            return ZipFile(temp_file).open('NaPTAN.xml')
         else:
             LOGGER.info('No change to ETag, not importing files')
 
@@ -42,4 +41,4 @@ class NaptanImporter(object):
         with TemporaryFile() as temp_file:
             naptan_file = self._get_file_from_url(temp_file)
             if naptan_file:
-                self.parser.import_from_file(naptan_file)
+                self._parser.import_from_file(naptan_file)

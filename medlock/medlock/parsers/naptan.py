@@ -71,5 +71,8 @@ class NaptanParser(object):
         else:
             return NAPTAN_STOP_TYPES_TO_CATEGORIES.get(stop_type)
 
+    def _process_stop(self, atco_code, category, elem):
+        pass
+
     def _xpath(self, elem, xpath):
         return elem.find(xpath).text
