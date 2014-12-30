@@ -28,3 +28,15 @@ supervisor_service "medlock" do
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock"
 end
+
+supervisor_service "medlock_taskbeat" do
+  command "#{node.manchesterio.root}/medlock/taskbeat.py"
+  user node.manchesterio.user
+  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "DEBUG" => node.manchesterio.debug
+end
+
+supervisor_service "medlock_taskworker" do
+  command "#{node.manchesterio.root}/medlock/taskworker.py"
+  user node.manchesterio.user
+  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "DEBUG" => node.manchesterio.debug
+end
