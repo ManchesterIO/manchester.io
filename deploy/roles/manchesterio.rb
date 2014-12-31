@@ -9,10 +9,12 @@ default_attributes 'ssh_keys' => {'manchesterio' => %w(chris)},
                        }
                    },
                    'graphite' => {
+                       'group-account' => 'www-data',
                        'listen_port' => '8100',
                        'timezone' => 'Europe/London',
-                       'uwsgi_socket' => '/opt/graphite/storage/uwsgi.sock',
-                       'web_server' => 'nginx'
+                       'user_account' => 'www-data',
+                       'uwsgi' => { 'socket' => '/opt/graphite/storage/uwsgi.sock' },
+                       'web_server' => 'uwsgi'
                    },
                    'nginx' => {'default_site_enabled' => false},
                    'sentry' => {'fixturefile' => 'sentry-fixtures.json.erb'},

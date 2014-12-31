@@ -9,7 +9,7 @@ include_recipe "nginx"
               "ui_hostname" => node.manchesterio.ui_hostname,
               "graphite_hostname" => node.manchesterio.graphite_hostname,
               "sentry_hostname" => node.sentry.hostname,
-              "graphite_sock" => node.graphite.uwsgi_socket
+              "graphite_sock" => node.graphite.uwsgi.socket
     notifies :reload, "service[nginx]"
   end
 

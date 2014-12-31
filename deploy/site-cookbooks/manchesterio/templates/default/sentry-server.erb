@@ -4,7 +4,7 @@ server {
 
     location / {
         proxy_pass        http://localhost:9000;
-        auth_basic "<%= @graphite_hostname %>";
+        auth_basic "<%= @sentry_hostname %>";
         auth_basic_user_file "/opt/sentry/htpasswd";
         proxy_set_header REMOTE_USER $remote_user;
         proxy_set_header   Host                 $host;
