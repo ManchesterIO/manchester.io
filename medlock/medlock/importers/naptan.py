@@ -26,7 +26,7 @@ class NaptanImporter(object):
     def _get_file_from_url(self, temp_file):
         response = requests.get(self.NAPTAN_URL, timeout=5, stream=True)
 
-        if response.headers['etag'] != self._metadata.get('last-etag') or True:
+        if response.headers['etag'] != self._metadata.get('last-etag'):
             LOGGER.info('ETag changed, starting import (was: %s, now: %s)',
                         response.headers['etag'],
                         self._metadata.get('last-etag'))
