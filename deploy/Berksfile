@@ -1,7 +1,7 @@
 source "https://supermarket.getchef.com"
 
 cookbook 'chef-client'
-cookbook 'graphite', "~> 0.4.3"
+cookbook 'graphite'
 cookbook 'manchesterio', path: './site-cookbooks/manchesterio'
 cookbook 'mongodb', git: 'https://github.com/edelight/chef-mongodb.git'
 cookbook 'rabbitmq'

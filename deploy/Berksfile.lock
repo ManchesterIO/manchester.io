@@ -1,6 +1,6 @@
 DEPENDENCIES
   chef-client
-  graphite (~> 0.4.3)
+  graphite
   manchesterio
     path: site-cookbooks/manchesterio
   mongodb
@@ -16,9 +16,6 @@ DEPENDENCIES
 GRAPH
   7-zip (1.0.2)
     windows (>= 1.2.2)
-  apache2 (3.0.0)
-    iptables (>= 0.0.0)
-    logrotate (>= 0.0.0)
   apt (2.6.1)
   ark (0.9.0)
     7-zip (>= 0.0.0)
@@ -47,14 +44,14 @@ GRAPH
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
-  graphite (0.4.8)
-    apache2 (>= 0.0.0)
+  graphite (1.0.2)
+    build-essential (>= 0.0.0)
     memcached (>= 0.0.0)
     python (>= 0.0.0)
     runit (~> 1.0)
+    yum-epel (>= 0.0.0)
   htpasswd (0.2.4)
     python (>= 0.0.0)
-  iptables (0.14.0)
   logrotate (1.7.0)
   manchesterio (0.0.0)
     firewall (>= 0.0.0)
