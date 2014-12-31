@@ -2,7 +2,8 @@ import os
 
 from flask import Flask
 from flask.ext.pymongo import PyMongo
-from raven.contrib.celery import register_signal
+from raven.contrib.celery import register_signal, register_logger_signal
+from raven.contrib.flask import Sentry
 
 from medlock.endpoints.search import SearchResults
 from medlock.helpers.float_converter import NegativeFloatConverter
@@ -19,8 +20,11 @@ app.config.update({
 
 mongo = PyMongo(app)
 
+sentry = Sentry(app)
+
 celery = Celery(app)
-register_signal(celery)
+register_signal(sentry.client)
+register_logger_signal(sentry.client)
 
 location_service = LocationService(mongo)
 metadata_factory = ImporterMetadataFactory(mongo)

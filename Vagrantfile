@@ -26,8 +26,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             'ui_hostname' => 'www.sandbox.manchester.io',
             'api_hostname' => 'api.sandbox.manchester.io',
             'graphite_hostname' => 'graphite.sandbox.manchester.io',
-            'sentry_dsn' => 'http://4b91300f9bde4fccacac0971f2ec6eda:486cd1193e554d42b2164044b49d6922@localhost:9000/3',
-            'ui_sentry_dsn' => 'http://3f76c69909cb4191a5fc02cc32d283e6:770bfa446b59413da819804958a60448@localhost:9000/2',
+            'sentry_dsn' => 'http://3f76c69909cb4191a5fc02cc32d283e6:770bfa446b59413da819804958a60448@localhost:9000/3',
+            'ui_sentry_dsn' => 'http://4b91300f9bde4fccacac0971f2ec6eda:486cd1193e554d42b2164044b49d6922@localhost:9000/2',
             'debug' => true,
             'vagrant' => true
         },

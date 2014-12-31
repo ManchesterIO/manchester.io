@@ -65,24 +65,24 @@
         "pk": 1,
         "model": "sentry.projectkey",
         "fields": {
-            "public_key": "<%= @api_key %>",
+            "public_key": "<%= @ui_key %>",
             "project": 2,
             "user": null,
             "user_added": null,
             "date_added": "2013-10-13T18:49:42.161Z",
-            "secret_key": "<%= @api_secret %>"
+            "secret_key": "<%= @ui_secret %>"
         }
     },
     {
         "pk": 2,
         "model": "sentry.projectkey",
         "fields": {
-            "public_key": "<%= @ui_key %>",
+            "public_key": "<%= @api_key %>",
             "project": 3,
             "user": null,
             "user_added": null,
             "date_added": "2013-10-13T18:50:14.493Z",
-            "secret_key": "<%= @ui_secret %>"
+            "secret_key": "<%= @api_secret %>"
         }
     },
     {
