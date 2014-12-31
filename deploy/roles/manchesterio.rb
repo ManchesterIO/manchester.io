@@ -9,7 +9,7 @@ default_attributes 'ssh_keys' => {'deploy' => %w(chris)},
                        }
                    },
                    'graphite' => {
-                       'group-account' => 'www-data',
+                       'group_account' => 'www-data',
                        'listen_port' => '8100',
                        'timezone' => 'Europe/London',
                        'user_account' => 'www-data',
