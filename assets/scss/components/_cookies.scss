@@ -1,0 +1,34 @@
+.analytics-opt-out {
+  background-color: darken($dark-gray, 10);
+  color: #f3f3f3;
+  display: none;
+  padding: $base-spacing / 2 $base-spacing;
+
+  &.first-run {
+    display: block;
+  }
+}
+
+.analytics-opt-out__body {
+  @include outer-container;
+}
+
+.analytics-opt-out__message {
+  @include span-columns(9);
+  line-height: 40px;
+  margin: 0;
+}
+
+.analytics-opt-out__action {
+  @include span-columns(3);
+
+  background-color: #f3f3f3;
+  color: darken($dark-gray, 10);
+  white-space: normal;
+
+  &:focus,
+  &:hover {
+    background-color: $dark-gray;
+    color: #f3f3f3;
+  }
+}

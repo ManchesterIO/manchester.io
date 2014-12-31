@@ -14,7 +14,10 @@
     requirejs.config({
         baseUrl: '/base/assets/js',
         deps: tests,
-        callback: window.__karma__.start
+        callback: window.__karma__.start,
+        paths: {
+            cookies: '/base/bower_components/cookies-js/dist/cookies.min'
+        }
     });
 
 })();

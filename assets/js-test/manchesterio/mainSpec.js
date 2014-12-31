@@ -17,6 +17,7 @@ define(['manchesterio/main', 'mockNearbyStationSearch', 'mockSearchResults'], fu
     });
 
     describe("page initialisation", function() {
+
         it("initialises the nearby search buttons", function() {
             var button = document.createElement('button');
             button.classList.add('nearby-station-search');
@@ -51,6 +52,7 @@ define(['manchesterio/main', 'mockNearbyStationSearch', 'mockSearchResults'], fu
 
             expect(mockSearchResults.prototype.init).toHaveBeenCalled();
         });
+
     });
 
 });
