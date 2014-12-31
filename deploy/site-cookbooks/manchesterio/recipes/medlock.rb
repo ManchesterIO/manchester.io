@@ -23,8 +23,11 @@ python_pip "#{node.manchesterio.root}/medlock/requirements.txt" do
 end
 
 supervisor_service "medlock" do
-  extra_args = "--reload" if node.manchesterio.debug
-  command "#{node.manchesterio.root}/bin/medlock/bin/gunicorn medlock.app:app -b 127.0.0.1:8010 -e DEBUG=#{node.manchesterio.debug} #{extra_args}"
+  if node.manchesterio.debug
+    command "#{node.manchesterio.root}/bin/medlock/bin/python #{node.manchesterio.root}/medlock/medlock/app.py"
+  else
+    command "#{node.manchesterio.root}/bin/medlock/bin/gunicorn medlock.app:app -b 127.0.0.1:8010"
+  end
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock"
 end

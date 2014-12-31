@@ -18,7 +18,7 @@ class LocationService(object):
     def delete(self, stop_type, identifier):
         self._collection.remove({'stop-type': stop_type, 'identifier': identifier})
 
-    def search_nearby(self, point, stop_type, radius):
+    def search_nearby(self, point, stop_type, radius=None):
         query = {
             'location': {'$near': {'$geometry': geojson.GeoJSONEncoder().default(point)}},
             'stop-type': stop_type

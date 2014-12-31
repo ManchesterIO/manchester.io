@@ -11,7 +11,7 @@ from medlock.scheduler import Celery
 from medlock.services.importer_metadata import ImporterMetadataFactory
 from medlock.services.locations import LocationService
 
-app = Flask(__name__.split('.')[0])
+app = Flask('medlock')
 app.debug = os.environ.get('DEBUG', 'false') == 'true'
 app.config.update({
     'CELERYBEAT_SCHEDULE_FILENAME': "/srv/manchester.io/data/celery-schedule"
@@ -31,7 +31,8 @@ celery.periodic_task(naptan_importer.load, crontab=naptan_importer.IMPORT_SCHEDU
 
 app.url_map.converters['float'] = NegativeFloatConverter
 
-SearchResults(app).init()
+SearchResults(app, location_service).init()
 
 if __name__ == '__main__':
-    app.run()
+    app.debug = True
+    app.run(port=8010)

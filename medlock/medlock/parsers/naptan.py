@@ -94,8 +94,8 @@ class NaptanParser(object):
 
     def _get_name(self, category, elem):
         namer = {
-            'rail-station': self._common_name(strip=' (Manchester Metrolink)'),
-            'metrolink-station': self._common_name(strip=' Rail Station')
+            'rail-station': self._common_name(strip=' Rail Station'),
+            'metrolink-station': self._common_name(strip=' (Manchester Metrolink)')
         }.get(category)
         if namer is None:
             LOGGER.warn('Attemping to name %s which is an unknown category %s',
