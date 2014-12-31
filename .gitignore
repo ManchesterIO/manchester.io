@@ -1,9 +1,9 @@
 .sass-cache
 .vagrant
 bower_components
-encrypted_data_bag_secret
 node_modules
 deploy/cookbooks/
+deploy/encrypted_data_bag_secret
 deploy/site-cookbooks/manchesterio/files/default/static/
 *.pyc
 *.pyo

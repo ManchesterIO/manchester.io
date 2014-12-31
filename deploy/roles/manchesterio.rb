@@ -1,10 +1,10 @@
 name 'manchesterio'
 description 'manchester.io full stack'
 
-default_attributes 'ssh_keys' => {'manchesterio' => %w(chris)},
+default_attributes 'ssh_keys' => {'deploy' => %w(chris)},
                    'authorization' => {
                        'sudo' => {
-                           'users' => ["manchesterio"],
+                           'users' => ["deploy"],
                            'passwordless' => true
                        }
                    },

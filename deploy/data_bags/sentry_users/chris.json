@@ -1,21 +1,15 @@
 {
-  "name": "data_bag_item_sentry_users_chris",
-  "json_class": "Chef::DataBagItem",
-  "chef_type": "data_bag_item",
-  "data_bag": "sentry_users",
-  "raw_data": {
-    "id": "chris",
-    "username": {
-      "encrypted_data": "0hIByqoxPcSG+Iz8izfI/E1kTbNLwPS2DBJEzQ2Ue90=\n",
-      "iv": "OE5LSEA5k1zEgBh9hw+oXQ==\n",
-      "version": 1,
-      "cipher": "aes-256-cbc"
-    },
-    "password": {
-      "encrypted_data": "Z0qNuwvKnP0rgI/7m+h/XP1Wvkm9RvfCR/kyZ/sH7mlXX1gIK0+tDIx9u1J5\nox5U\n",
-      "iv": "H5J9ipLvz58R8Xlpzrxt3g==\n",
-      "version": 1,
-      "cipher": "aes-256-cbc"
-    }
+  "id": "chris",
+  "username": {
+    "encrypted_data": "Aan6VCrj84IaBs/2R49OIYrZHX9vwiFEpZtVjWbMDiE=\n",
+    "iv": "aO6Y1NbKWuUqu5OR937Uwg==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "password": {
+    "encrypted_data": "Xbgct1P8m11MMgnMxl8qwrEwZ/j/CkYveKlgw2BdMyT4KjTjEMVWp+JfrXLW\n/07S\n",
+    "iv": "/jWV+Tv3ju07hCcYBjWbVw==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
   }
 }
