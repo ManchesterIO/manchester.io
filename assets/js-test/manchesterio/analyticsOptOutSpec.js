@@ -14,7 +14,7 @@ define(['manchesterio/analyticsOptOut', 'cookies'], function(AnalyticsOptOut, co
             analyticsBanner.appendChild(optOutButton);
             analyticsOptOut = new AnalyticsOptOut(analyticsBanner);
             cookies.expire('analytics_opt_out');
-            window['ga-disable-UA-1234-1'] = undefined;
+            window['ga-disable-UA-427161-9'] = undefined;
         });
 
         it("shows the banner when the user has not yet made a choice", function() {

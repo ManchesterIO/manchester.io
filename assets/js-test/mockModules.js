@@ -59,3 +59,7 @@ define('mockLeaflet', function() {
 
     return L;
 });
+
+define('mockGoogleAnalytics', function() {
+    return jasmine.createSpy();
+});

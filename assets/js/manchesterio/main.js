@@ -1,4 +1,5 @@
-define(['manchesterio/nearbyStationSearch', 'manchesterio/searchResults'], function(NearbyStationSearch, SearchResults) {
+define(['manchesterio/nearbyStationSearch', 'manchesterio/searchResults', 'contrib/google-analytics'],
+    function(NearbyStationSearch, SearchResults, ga) {
 
     var canvas;
 
@@ -6,6 +7,7 @@ define(['manchesterio/nearbyStationSearch', 'manchesterio/searchResults'], funct
         canvas = _canvas;
         initNearbyStationSearch();
         initSearchResults();
+        initGoogleAnalytics();
     }
 
     function initNearbyStationSearch() {
@@ -25,6 +27,11 @@ define(['manchesterio/nearbyStationSearch', 'manchesterio/searchResults'], funct
             searchResults.init();
         }
 
+    }
+
+    function initGoogleAnalytics() {
+        ga('create', 'UA-427161-9', 'auto');
+        ga('send', 'pageview');
     }
 
     return init;

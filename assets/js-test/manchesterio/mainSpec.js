@@ -1,13 +1,17 @@
 require.config({
    map: {
        "manchesterio/main": {
+           'contrib/google-analytics': 'mockGoogleAnalytics',
            "manchesterio/nearbyStationSearch": "mockNearbyStationSearch",
            "manchesterio/searchResults": "mockSearchResults"
        }
    }
 });
 
-define(['manchesterio/main', 'mockNearbyStationSearch', 'mockSearchResults'], function(main, mockNearbyStationSearch, mockSearchResults) {
+define(
+    ['manchesterio/main', 'mockNearbyStationSearch', 'mockSearchResults', 'mockGoogleAnalytics'],
+    function(main, mockNearbyStationSearch, mockSearchResults, mockGA) {
+
     "use strict";
 
     var canvas;
@@ -51,6 +55,13 @@ define(['manchesterio/main', 'mockNearbyStationSearch', 'mockSearchResults'], fu
             }
 
             expect(mockSearchResults.prototype.init).toHaveBeenCalled();
+        });
+
+        it("initialises Google Analytics", function() {
+            main(canvas);
+
+            expect(mockGA).toHaveBeenCalledWith('create', 'UA-427161-9', 'auto');
+            expect(mockGA).toHaveBeenCalledWith('send', 'pageview');
         });
 
     });
