@@ -27,6 +27,9 @@ class NaptanParser(object):
     _CRS_CODE_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}OffStreet/' \
                       '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
                       '{http://www.naptan.org.uk/}CrsRef'
+    _TIPLOC_XPATH = './{http://www.naptan.org.uk/}StopClassification/{http://www.naptan.org.uk/}OffStreet/' \
+                    '{http://www.naptan.org.uk/}Rail/{http://www.naptan.org.uk/}AnnotatedRailRef/' \
+                    '{http://www.naptan.org.uk/}TiplocRef'
     _NAPTAN_CODE_XPATH = './{http://www.naptan.org.uk/}NaptanCode'
     _LONGITUDE_XPATH = './{http://www.naptan.org.uk/}Place/{http://www.naptan.org.uk/}Location/' \
                          '{http://www.naptan.org.uk/}Translation/{http://www.naptan.org.uk/}Longitude'
@@ -85,11 +88,13 @@ class NaptanParser(object):
             self._location_service.delete(category, identifier)
         else:
             LOGGER.info("Updating %s %s", category, identifier)
+            additional_identifiers = self._get_additional_identifiers(elem)
             self._location_service.update(
                 stop_type=category,
                 identifier=identifier,
                 name=self._get_name(category, elem),
-                location=GeoJSONEncoder().default(self._get_location(elem))
+                location=GeoJSONEncoder().default(self._get_location(elem)),
+                **additional_identifiers
             )
 
     def _get_name(self, category, elem):
@@ -118,6 +123,13 @@ class NaptanParser(object):
             float(self._xpath(elem, self._LONGITUDE_XPATH)),
             float(self._xpath(elem, self._LATITUDE_XPATH))
         )
+
+    def _get_additional_identifiers(self, elem):
+        additional_identifiers = {}
+        tiploc = self._xpath(elem, self._TIPLOC_XPATH)
+        if tiploc:
+            additional_identifiers['tiploc'] = tiploc
+        return additional_identifiers
 
     def _xpath(self, elem, xpath):
         node = elem.find(xpath)
