@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask
 from raven.contrib.flask import Sentry
 
@@ -8,7 +6,7 @@ from manchesterio.controllers.search import SearchResults
 from manchesterio.helpers.float_converter import NegativeFloatConverter
 
 app = Flask('manchesterio')
-app.config['API_BASE_URL'] = os.environ['API_BASE_URL']
+app.config.from_envvar('CONFIG')
 
 sentry = Sentry(app)
 

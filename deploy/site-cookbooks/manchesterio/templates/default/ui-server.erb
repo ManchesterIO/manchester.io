@@ -5,13 +5,13 @@ upstream ui_server {
 server {
     listen 80;
     client_max_body_size 4G;
-    server_name <%= @ui_hostname %>;
+    server_name <%= node.manchesterio.ui_hostname %>;
 
     keepalive_timeout 5;
 
     # path for static files
     location /static/ {
-        alias <%= @root %>/static/;
+        alias <%= node.manchesterio.root %>/static/;
     }
 
     location / {

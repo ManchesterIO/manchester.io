@@ -8,7 +8,7 @@ import os.path
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '<%= @sentry_db %>',
+        'NAME': '<%= node.sentry.db_file %>',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': '',
@@ -21,8 +21,8 @@ DATABASES = {
 ################
 
 # You MUST configure the absolute URI root for Sentry:
-SENTRY_URL_PREFIX = 'http://<%= @sentry_hostname %>'  # No trailing slash!
-ALLOWED_HOSTS = ("<%= @sentry_hostname %>", "localhost")
+SENTRY_URL_PREFIX = 'http://<%= node.sentry.hostname %>'  # No trailing slash!
+ALLOWED_HOSTS = ("<%= node.sentry.hostname %>", "localhost")
 
 # If you're using a reverse proxy, you should enable the X-Forwarded-Proto
 # header, and uncomment the following setting
@@ -51,7 +51,7 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 
 # The email address to send on behalf of
-SERVER_EMAIL = '<%= @sentry_email %>'
+SERVER_EMAIL = '<%= node.sentry.email %>'
 
 ###########
 ## etc. ##

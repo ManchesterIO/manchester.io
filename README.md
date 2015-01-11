@@ -58,6 +58,14 @@ The sandbox should be configured to fully replicate a production environment. Yo
 http://sentry.sandbox.manchester.io and your sandbox should be configured to send events to it. Graphite is available at
 http://graphite.sandbox.manchester.io
 
+### API keys on the sandbox ###
+
+By default the API keys are encrypted, but you can provide your own credentials to override these. Take
+care not to commit them. Simply add the following keys to the Vagrantfile in the chef.json block:
+
+* manchesterio.network_rail_creds.user - username for Network Rail Open Data feeds
+* manchesterio.network_rail_creds.pass - password for Network Rail Open Data feeds
+
 Deploying to production
 -----------------------
 

@@ -22,29 +22,44 @@ python_pip "#{node.manchesterio.root}/medlock/requirements.txt" do
   virtualenv "#{node.manchesterio.root}/bin/medlock"
 end
 
+template "#{node.manchesterio.root}/medlock.cfg" do
+  source "medlock.cfg.erb"
+  mode "0644"
+  network_rail_creds = node.manchesterio.network_rail_credentials
+  network_rail_creds = Chef::EncryptedDataBagItem.load('secrets', 'network_rail') if network_rail_creds.user.nil?
+  variables "network_rail" => network_rail_creds
+end
+
 supervisor_service "medlock" do
   if node.manchesterio.debug
-    command "#{node.manchesterio.root}/bin/medlock/bin/python #{node.manchesterio.root}/medlock/medlock/app.py"
+    command "#{node.manchesterio.root}/bin/medlock/bin/python #{node.manchesterio.root}/medlock/medlock/app.py -e CONFIG=#{node.manchesterio.root}/medlock.cfg"
   else
-    command "#{node.manchesterio.root}/bin/medlock/bin/gunicorn medlock.app:app -b 127.0.0.1:8010 -e SENTRY_DSN=#{node.manchesterio.sentry_dsn}"
+    command "#{node.manchesterio.root}/bin/medlock/bin/gunicorn medlock.app:app -b 127.0.0.1:8010"
   end
   user node.manchesterio.user
-  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock",
-              "SENTRY_DSN" => node.manchesterio.sentry_dsn
+  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
+end
+
+file "#{node.manchesterio.root}/medlock/taskbeat.py" do
+  user node.manchesterio.user
+  group node.manchesterio.user
+  mode '0755'
 end
 
 supervisor_service "medlock_taskbeat" do
   command "#{node.manchesterio.root}/medlock/taskbeat.py"
   user node.manchesterio.user
-  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock",
-              "DEBUG" => node.manchesterio.debug,
-              "SENTRY_DSN" => node.manchesterio.sentry_dsn
+  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
+end
+
+file "#{node.manchesterio.root}/medlock/taskworker.py" do
+  user node.manchesterio.user
+  group node.manchesterio.user
+  mode '0755'
 end
 
 supervisor_service "medlock_taskworker" do
   command "#{node.manchesterio.root}/medlock/taskworker.py"
   user node.manchesterio.user
-  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock",
-              "DEBUG" => node.manchesterio.debug,
-              "SENTRY_DSN" => node.manchesterio.sentry_dsn
+  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
 end

@@ -7,6 +7,7 @@ default['manchesterio']['sentry_dsn'] = nil
 default['manchesterio']['ui_sentry_dsn'] = nil
 default['manchesterio']['vagrant'] = false
 default['manchesterio']['debug'] = false
+default['manchesterio']['network_rail_credentials'] = { 'user' => nil, 'pass' => nil }
 
 default['sentry']['root'] = '/opt/sentry'
 default['sentry']['secret_key'] = nil

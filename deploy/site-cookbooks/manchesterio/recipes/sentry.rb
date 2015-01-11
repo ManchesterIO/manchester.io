@@ -30,10 +30,7 @@ template "/etc/sentry.conf.py" do
   mode "0644"
   secret_key = node.sentry.secret_key
   secret_key = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['secret_key'] if secret_key.nil?
-  variables "sentry_db" => node.sentry.db_file,
-            "sentry_hostname" => node.sentry.hostname,
-            "sentry_email" => node.sentry.email,
-            "secret_key" => secret_key
+  variables "secret_key" => secret_key
 end
 
 bash "running db upgrade for sentry" do

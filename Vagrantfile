@@ -18,6 +18,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :chef_solo do | chef |
     chef.node_name = 'sandbox.manchester.io'
     chef.cookbooks_path = "deploy/site-cookbooks"
+    chef.data_bags_path = "deploy/data_bags"
+    chef.encrypted_data_bag_secret_key_path = 'deploy/encrypted_data_bag_secret'
     chef.roles_path = "deploy/roles"
     chef.add_role "manchesterio"
 

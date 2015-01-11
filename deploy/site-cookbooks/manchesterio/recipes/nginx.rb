@@ -4,12 +4,6 @@ include_recipe "nginx"
   template "#{node.nginx.dir}/sites-available/#{server_config}" do
     source "#{server_config}.erb"
     mode "0644"
-    variables "root" => node.manchesterio.root,
-              "api_hostname" => node.manchesterio.api_hostname,
-              "ui_hostname" => node.manchesterio.ui_hostname,
-              "graphite_hostname" => node.manchesterio.graphite_hostname,
-              "sentry_hostname" => node.sentry.hostname,
-              "graphite_sock" => node.graphite.uwsgi.socket
     notifies :reload, "service[nginx]"
   end
 
