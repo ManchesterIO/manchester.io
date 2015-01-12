@@ -9,6 +9,8 @@ from celery.exceptions import Retry
 from celery.schedules import crontab
 import requests
 
+from medlock.parsers.network_rail import NetworkRailScheduleParser
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -18,19 +20,23 @@ class NetworkRailScheduleImporter(object):
 
     _FULL_URL = 'https://datafeeds.networkrail.co.uk/ntrod/CifFileAuthenticate?type=CIF_ALL_FULL_DAILY&day=toc-full'
     _DAY_URL = 'https://datafeeds.networkrail.co.uk/ntrod/CifFileAuthenticate?type=CIF_ALL_UPDATE_DAILY&day=toc-update-{}'
+    _IMPORTER_VERSION = 1
 
     def __init__(self, schedule_service, metadata, network_rail_auth):
         self._schedule_service = schedule_service
         self._metadata = metadata
         self._network_rail_auth = network_rail_auth
+        self._parser = NetworkRailScheduleParser(self._schedule_service, source='nrod-schedule')
 
     def load(self):
         last_import = self._metadata.get('last-import-date')
         if last_import is not None:
             last_import = date.fromtimestamp(last_import)
-        if last_import is None or date.today() - last_import > timedelta(days=7):
+        if last_import is None or date.today() - last_import > timedelta(days=7) \
+                or self._metadata.get('last-version') != self._IMPORTER_VERSION:
             LOGGER.error("Unable to find an appropriate partial update, falling back to full")
             self._full_update()
+            self._metadata['last-version'] = self._IMPORTER_VERSION
         else:
             day_to_import = last_import + timedelta(days=1)
             while day_to_import < date.today():
@@ -41,7 +47,8 @@ class NetworkRailScheduleImporter(object):
         schedule = self._fetch_json(self._FULL_URL)
         timestamp = schedule.next()['JsonTimetableV1']['timestamp']
 
-        self._schedule_service.delete(source='nrod-schedule')
+        self._schedule_service.reset(source='nrod-schedule')
+        self._parser.parse(schedule)
 
         self._metadata['last-import-date'] = timestamp
 
@@ -56,6 +63,7 @@ class NetworkRailScheduleImporter(object):
             LOGGER.error("Looking for update file for %s, but got %s", expected_date, schedule_date)
             raise Retry('Network Rail file might be late', when=datetime.now() + timedelta(hours=1))
 
+        self._parser.parse(schedule)
         self._metadata['last-import-date'] = timestamp
 
     def _fetch_json(self, url):

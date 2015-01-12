@@ -1,3 +1,4 @@
 DEBUG = <%= node.manchesterio.debug.to_s.capitalize %>
 SENTRY_DSN = "<%= node.manchesterio.sentry_dsn %>"
 NETWORK_RAIL_AUTH = ("<%= @network_rail['user'] %>", "<%= @network_rail['pass'] %>")
+CELERYBEAT_SCHEDULE_FILENAME = "<%= node.manchesterio.root %>/data/celerybeat"

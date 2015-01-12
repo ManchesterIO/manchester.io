@@ -13,6 +13,7 @@ class Celery(celery.Celery):
         crontab = kwargs.pop('crontab')
         task = self.task(*args, **kwargs)
         self.periodic_tasks[task.name] = {'task': task, 'schedule': crontab}
+        print task.name
         return task
 
 

@@ -1,5 +1,6 @@
 import logging
 import geojson
+from pymongo import GEOSPHERE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,5 +34,5 @@ class LocationService(object):
             self._kv_collection = self._kv_store.db.locations
             self._kv_collection.ensure_index('stop-type')
             self._kv_collection.ensure_index('identifier')
-            self._kv_collection.ensure_index({'location': '2dsphere'}.items())
+            self._kv_collection.ensure_index({'location': GEOSPHERE}.items())
         return self._kv_collection
