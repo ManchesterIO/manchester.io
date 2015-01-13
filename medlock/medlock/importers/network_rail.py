@@ -39,7 +39,7 @@ class NetworkRailScheduleImporter(object):
             self._metadata['last-version'] = self._IMPORTER_VERSION
         else:
             day_to_import = last_import + timedelta(days=1)
-            while day_to_import < date.today():
+            while day_to_import <= date.today():
                 self._day_update(day_to_import)
                 day_to_import += timedelta(days=1)
 
@@ -54,7 +54,8 @@ class NetworkRailScheduleImporter(object):
 
     def _day_update(self, expected_date):
         LOGGER.info("Starting Network Rail partial update for %s", expected_date)
-        day = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'][expected_date.weekday()]
+        # Today's updates are available under the key for yesterday's name
+        day = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][expected_date.weekday()]
         schedule = self._fetch_json(self._DAY_URL.format(day))
         timestamp = schedule.next()['JsonTimetableV1']['timestamp']
         schedule_date = date.fromtimestamp(int(timestamp))
