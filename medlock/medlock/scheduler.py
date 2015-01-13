@@ -5,15 +5,15 @@ import celery.beat
 class Celery(celery.Celery):
 
     def __init__(self, app):
-        super(Celery, self).__init__(__package__, loader='default')
+        super(Celery, self).__init__()
         self.config_from_object(app.config)
         self.periodic_tasks = {}
 
-    def periodic_task(self, *args, **kwargs):
-        crontab = kwargs.pop('crontab')
-        task = self.task(*args, **kwargs)
-        self.periodic_tasks[task.name] = {'task': task, 'schedule': crontab}
-        print task.name
+    def task(self, *args, **kwargs):
+        crontab = kwargs.pop('crontab', None)
+        task = super(Celery, self).task(*args, **kwargs)
+        if crontab:
+            self.periodic_tasks[task.name] = {'task': task.name, 'schedule': crontab}
         return task
 
 

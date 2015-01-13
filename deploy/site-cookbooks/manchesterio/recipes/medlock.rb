@@ -47,7 +47,7 @@ file "#{node.manchesterio.root}/medlock/taskbeat.py" do
 end
 
 supervisor_service "medlock_taskbeat" do
-  command "#{node.manchesterio.root}/medlock/taskbeat.py"
+  command "#{node.manchesterio.root}/bin/medlock/bin/celery beat -A medlock.app:celery -S medlock.scheduler.Scheduler"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
 end
@@ -59,7 +59,7 @@ file "#{node.manchesterio.root}/medlock/taskworker.py" do
 end
 
 supervisor_service "medlock_taskworker" do
-  command "#{node.manchesterio.root}/medlock/taskworker.py"
+  command "#{node.manchesterio.root}/bin/medlock/bin/celery worker -A medlock.app:celery"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
 end

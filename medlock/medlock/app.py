@@ -30,16 +30,27 @@ metadata_factory = ImporterMetadataFactory(mongo)
 naptan_importer = NaptanImporter(location_service,
                                  metadata_factory.build('naptan'),
                                  ['910', '940', 'MA'])
-celery.periodic_task(naptan_importer.load, crontab=naptan_importer.IMPORT_SCHEDULE)
 
 network_rail_schedule_importer = NetworkRailScheduleImporter(schedule_service,
                                                              metadata_factory.build('network-rail-schedule'),
                                                              app.config['NETWORK_RAIL_AUTH'])
-celery.periodic_task(network_rail_schedule_importer.load, crontab=network_rail_schedule_importer.IMPORT_SCHEDULE)
 
 app.url_map.converters['float'] = NegativeFloatConverter
 
 SearchResults(app, location_service).init()
+
+
+def import_naptan():
+    with app.app_context():
+        naptan_importer.load()
+celery.task(import_naptan, crontab=naptan_importer.IMPORT_SCHEDULE)
+
+
+def import_network_rail_schedule():
+    with app.app_context():
+        network_rail_schedule_importer.load()
+celery.task(import_network_rail_schedule, crontab=network_rail_schedule_importer.IMPORT_SCHEDULE)
+
 
 if __name__ == '__main__':
     app.debug = True
