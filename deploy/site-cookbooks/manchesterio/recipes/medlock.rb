@@ -53,3 +53,15 @@ supervisor_service "medlock_taskworker" do
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
 end
+
+file "#{node.manchesterio.root}/medlock/consumer.py" do
+  user node.manchesterio.user
+  group node.manchesterio.user
+  mode '0755'
+end
+
+supervisor_service "medlock_nrod_consumer" do
+  command "#{node.manchesterio.root}/medlock/consumer.py"
+  user node.manchesterio.user
+  environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock"
+end

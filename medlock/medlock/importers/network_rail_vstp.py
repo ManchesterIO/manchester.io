@@ -8,7 +8,8 @@ LOGGER = logging.getLogger(__name__)
 
 class NetworkRailVstpImporter(object):
 
-    def __init__(self, schedule_service, mq):
+    def __init__(self, app, schedule_service, mq):
+        self._app = app
         self._parser = NetworkRailScheduleParser(schedule_service, source='nrod-vstp')
         self._mq = mq
 
@@ -18,9 +19,7 @@ class NetworkRailVstpImporter(object):
         except ValueError:
             LOGGER.exception("Failed to decode JSON in Network Rail feed")
         else:
-            if self._is_vstp_message(body):
-                self._parser.parse([{'JsonScheduleV1': body['VSTPCIFMsgV1']['schedule']}])
+            if self._parser.is_vstp_message(body):
+                with self._app.app_context():
+                    self._parser.parse([body])
                 self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])
-
-    def _is_vstp_message(self, body):
-        return 'VSTPCIFMsgV1' in body

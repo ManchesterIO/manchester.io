@@ -28,7 +28,7 @@ register_logger_signal(sentry.client)
 mq = stomp.Connection(host_and_ports=[('datafeeds.networkrail.co.uk', 61618)],
                       keepalive=True,
                       vhost='datafeeds.networkrail.co.uk',
-                      heartbeats=(5000, 10000))
+                      heartbeats=(10000, 5000))
 
 location_service = LocationService(mongo)
 schedule_service = ScheduleService(mongo)
@@ -42,7 +42,7 @@ network_rail_schedule_importer = NetworkRailScheduleImporter(schedule_service,
                                                              metadata_factory.build('network-rail-schedule'),
                                                              app.config['NETWORK_RAIL_AUTH'])
 
-network_rail_vstp_importer = NetworkRailVstpImporter(schedule_service, mq)
+network_rail_vstp_importer = NetworkRailVstpImporter(app, schedule_service, mq)
 mq.set_listener('', network_rail_vstp_importer)
 
 app.url_map.converters['float'] = NegativeFloatConverter
