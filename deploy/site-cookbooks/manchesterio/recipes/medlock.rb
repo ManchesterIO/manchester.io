@@ -47,7 +47,7 @@ file "#{node.manchesterio.root}/medlock/taskbeat.py" do
 end
 
 supervisor_service "medlock_taskbeat" do
-  command "#{node.manchesterio.root}/bin/medlock/bin/celery beat -A medlock.app:celery -S medlock.scheduler.Scheduler"
+  command "#{node.manchesterio.root}/bin/medlock/bin/celery beat -A medlock.app:celery -S medlock.scheduler.Scheduler --pidfile=#{node.manchesterio.root}/data/celerybeat.pid"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
 end
