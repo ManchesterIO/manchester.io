@@ -27,6 +27,9 @@ end
 template "#{node.manchesterio.root}/manchesterio.cfg" do
   source "manchesterio.cfg.erb"
   mode "0644"
+  sentry_dsn = node.manchesterio.ui_sentry_dsn
+  sentry_dsn = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['ui_dsn'] if sentry_dsn.nil?
+  variables 'sentry_dsn' => sentry_dsn
 end
 
 supervisor_service "manchesterio" do
