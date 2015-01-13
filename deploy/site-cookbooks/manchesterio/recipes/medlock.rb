@@ -42,22 +42,10 @@ supervisor_service "medlock" do
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
 end
 
-file "#{node.manchesterio.root}/medlock/taskbeat.py" do
-  user node.manchesterio.user
-  group node.manchesterio.user
-  mode '0755'
-end
-
 supervisor_service "medlock_taskbeat" do
   command "#{node.manchesterio.root}/bin/medlock/bin/celery beat -A medlock.app:celery -S medlock.scheduler.Scheduler --pidfile=#{node.manchesterio.root}/data/celerybeat.pid"
   user node.manchesterio.user
   environment "PYTHONPATH" => "#{node.manchesterio.root}/medlock", "CONFIG" => "#{node.manchesterio.root}/medlock.cfg"
-end
-
-file "#{node.manchesterio.root}/medlock/taskworker.py" do
-  user node.manchesterio.user
-  group node.manchesterio.user
-  mode '0755'
 end
 
 supervisor_service "medlock_taskworker" do
