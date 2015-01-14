@@ -27,8 +27,11 @@ class ScheduleService(object):
         self._schedule_collection.remove({'source': source})
 
     def remove_expired(self, today, source):
-        self._association_collection.remove({'source': source, 'association_end': {'$lt': today}})
-        self._schedule_collection.remove({'source': source, 'service_end': {'$lt': today}})
+        self._association_collection.remove({'source': source, 'association_end': {'$lt': today.isoformat()}})
+        self._schedule_collection.remove({'source': source, 'service_end': {'$lt': today.isoformat()}})
+        self._activations_collection.remove(
+            {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
+        )
 
     def activate_schedule(self, activation_id, activation_date, service_id, schedule_start):
         schedule = self._get_schedule_to_activate(service_id, schedule_start)
@@ -47,14 +50,15 @@ class ScheduleService(object):
         else:
             return None
 
-    def _create_activation(self, activation_id, activation_date, schedule):
+    def _create_activation(self, activation_id, activation_time, schedule):
         activation = {
+            'activated_on': activation_time,
             'calling_points': []
         }
         last_time = '0000'
         for calling_point in schedule['calling_points']:
-            activation_date, last_time = self._convert_to_datetime(activation_date, calling_point, last_time, 'arrival')
-            activation_date, last_time = self._convert_to_datetime(activation_date, calling_point, last_time, 'departure')
+            activation_date, last_time = self._convert_to_datetime(activation_time.date(), calling_point, last_time, 'arrival')
+            activation_date, last_time = self._convert_to_datetime(activation_time.date(), calling_point, last_time, 'departure')
             activation['calling_points'].append(calling_point)
 
         self._activations_collection.update({'activation_id': activation_id},

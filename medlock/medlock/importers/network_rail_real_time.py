@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import date
+from datetime import datetime
 
 
 LOGGER = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class NetworkRailRealTimeImporter(object):
     def _handle_activation(self, body):
         with self._app.app_context():
             if self._schedule_service.activate_schedule(body['train_id'],
-                                                        date.fromtimestamp(int(body['origin_dep_timestamp']) / 1000),
+                                                        datetime.fromtimestamp(int(body['origin_dep_timestamp']) / 1000),
                                                         body['train_uid'],
                                                         body['schedule_start_date']):
                 LOGGER.info("Activated %s as %s", body['train_uid'], body['train_id'])

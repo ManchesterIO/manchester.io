@@ -87,6 +87,5 @@ class NetworkRailScheduleImporter(object):
             os.unlink(tmp.name)
 
     def _prune_expired_schedules(self):
-        today = date.today().isoformat()
-        self._schedule_service.remove_expired(today, source='nrod-schedule')
-        self._schedule_service.remove_expired(today, source='nrod-vstp')
+        self._schedule_service.remove_expired(date.today(), source='nrod-schedule')
+        self._schedule_service.remove_expired(date.today(), source='nrod-vstp')
