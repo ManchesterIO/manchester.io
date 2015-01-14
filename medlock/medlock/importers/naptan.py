@@ -19,7 +19,7 @@ class NaptanImporter(object):
     IMPORT_SCHEDULE = schedule(run_every=timedelta(hours=6))
 
     _NAPTAN_URL = "https://www.dft.gov.uk/NaPTAN/snapshot/NaPTANxml.zip"
-    _IMPORTER_VERSION = 1
+    _IMPORTER_VERSION = 2
 
     def __init__(self, location_service, metadata, interesting_areas):
         self._metadata = metadata

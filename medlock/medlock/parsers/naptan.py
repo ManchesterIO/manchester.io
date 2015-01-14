@@ -42,6 +42,7 @@ class NaptanParser(object):
         self._interesting_codes = set(interesting_codes)
 
     def import_from_file(self, xml_file):
+        self._seen_stops = set()
         for event, elem in iterparse(xml_file, events=('end',)):
             if elem.tag == self._STOP_POINT_ELEM:
                 category = self._get_category(
@@ -88,17 +89,22 @@ class NaptanParser(object):
             self._location_service.delete(category, identifier)
         else:
             LOGGER.info("Updating %s %s", category, identifier)
-            additional_identifiers = self._get_additional_identifiers(elem)
-            self._location_service.update(
-                stop_type=category,
-                identifier=identifier,
-                name=self._get_name(category, elem),
-                location=GeoJSONEncoder().default(self._get_location(elem)),
-                **additional_identifiers
-            )
+            if (category, identifier) not in self._seen_stops:
+                self._location_service.update(
+                    stop_type=category,
+                    identifier=identifier,
+                    name=self._get_name(category, elem),
+                    location=GeoJSONEncoder().default(self._get_location(elem)),
+                )
+                self._seen_stops.add((category, identifier))
+            self._location_service.add_additional_identifier(category,
+                                                             identifier,
+                                                             **self._get_additional_identifiers(elem))
+
 
     def _get_name(self, category, elem):
         namer = {
+            'bus-stop': self._common_name(),
             'rail-station': self._common_name(strip=' Rail Station'),
             'metrolink-station': self._common_name(strip=' (Manchester Metrolink)')
         }.get(category)
@@ -126,9 +132,12 @@ class NaptanParser(object):
 
     def _get_additional_identifiers(self, elem):
         additional_identifiers = {}
+        atco_code = self._xpath(elem, self._ATCO_CODE_XPATH)
         tiploc = self._xpath(elem, self._TIPLOC_XPATH)
         if tiploc:
             additional_identifiers['tiploc'] = tiploc
+        elif atco_code.startswith('9400'):
+            additional_identifiers['tiploc'] = atco_code[4:]
         return additional_identifiers
 
     def _xpath(self, elem, xpath):

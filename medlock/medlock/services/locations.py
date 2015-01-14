@@ -16,6 +16,11 @@ class LocationService(object):
                                 {'$set': kwargs},
                                 upsert=True)
 
+    def add_additional_identifier(self, stop_type, identifier, **kwargs):
+        if kwargs:
+            self._collection.update({'stop-type': stop_type, 'identifier': identifier},
+                                    {'$addToSet': kwargs})
+
     def delete(self, stop_type, identifier):
         self._collection.remove({'stop-type': stop_type, 'identifier': identifier})
 
