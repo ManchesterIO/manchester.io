@@ -117,9 +117,14 @@ class NetworkRailScheduleParser(object):
         }
 
     def _build_vstp_calling_point(self, location):
-        return {
+        calling_point = {
             'tiploc': location['location']['tiploc']['tiploc_id'],
-            'platform': location['CIF_platform'],
-            'arrival': location.get('public_arrival_time'),
-            'departure': location.get('public_departure_time')
+            'platform': location['CIF_platform'].strip(),
+            'arrival': location['scheduled_arrival_time'][:4],
+            'departure': location['public_departure_time'][:4]
         }
+        if calling_point['arrival'].strip() == '':
+            calling_point['arrival'] = None
+        if calling_point['departure'].strip() == '':
+            calling_point['departure'] = None
+        return calling_point

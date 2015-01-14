@@ -49,6 +49,7 @@ class NetworkRailScheduleImporter(object):
 
         self._schedule_service.reset(source='nrod-schedule')
         self._parser.parse(schedule)
+        self._prune_expired_schedules()
 
         self._metadata['last-import-date'] = timestamp
 
@@ -65,6 +66,7 @@ class NetworkRailScheduleImporter(object):
             raise Retry('Network Rail file might be late', when=datetime.now() + timedelta(hours=1))
 
         self._parser.parse(schedule)
+        self._prune_expired_schedules()
         self._metadata['last-import-date'] = timestamp
 
     def _fetch_json(self, url):
@@ -83,3 +85,8 @@ class NetworkRailScheduleImporter(object):
             if not tmp.closed:
                 tmp.close()
             os.unlink(tmp.name)
+
+    def _prune_expired_schedules(self):
+        today = date.today().isoformat()
+        self._schedule_service.remove_expired(today, source='nrod-schedule')
+        self._schedule_service.remove_expired(today, source='nrod-vstp')

@@ -24,11 +24,16 @@ class ScheduleService(object):
         self._association_collection.remove({'source': source})
         self._schedule_collection.remove({'source': source})
 
+    def remove_expired(self, today, source):
+        self._association_collection.remove({'source': source, 'association_end': {'$lt': today}})
+        self._schedule_collection.remove({'source': source, 'service_end': {'$lt': today}})
+
     @property
     def _schedule_collection(self):
         if self._kv_schedule_collection is None:
             self._kv_schedule_collection = self._kv_store.db.schedules
             self._kv_schedule_collection.ensure_index('source')
+            self._kv_schedule_collection.ensure_index({'source': ASCENDING, 'service_end': ASCENDING})
             self._kv_schedule_collection.ensure_index({'service_id': ASCENDING,
                                                        'schedule_priority': ASCENDING,
                                                        'schedule_start': ASCENDING,
@@ -41,6 +46,7 @@ class ScheduleService(object):
         if self._kv_association_collection is None:
             self._kv_association_collection = self._kv_store.db.associations
             self._kv_association_collection.ensure_index('source')
+            self._kv_association_collection.ensure_index({'source': ASCENDING, 'association_end': ASCENDING})
             self._kv_association_collection.ensure_index({'service_id': ASCENDING,
                                                           'schedule_priority': ASCENDING,
                                                           'association_start': ASCENDING,
