@@ -7,6 +7,7 @@ import stomp
 from medlock.endpoints.search import SearchResults
 from medlock.helpers.float_converter import NegativeFloatConverter
 from medlock.importers.naptan import NaptanImporter
+from medlock.importers.network_rail_real_time import NetworkRailRealTimeImporter
 from medlock.importers.network_rail_schedule import NetworkRailScheduleImporter
 from medlock.importers.network_rail_vstp import NetworkRailVstpImporter
 from medlock.scheduler import Celery
@@ -43,11 +44,10 @@ network_rail_schedule_importer = NetworkRailScheduleImporter(schedule_service,
                                                              app.config['NETWORK_RAIL_AUTH'])
 
 network_rail_vstp_importer = NetworkRailVstpImporter(app, schedule_service, mq)
-mq.set_listener('', network_rail_vstp_importer)
+mq.set_listener('vstp', network_rail_vstp_importer)
 
-app.url_map.converters['float'] = NegativeFloatConverter
-
-SearchResults(app, location_service).init()
+network_rail_real_time_importer = NetworkRailRealTimeImporter(app, schedule_service, mq)
+mq.set_listener('movements', network_rail_real_time_importer)
 
 
 def import_naptan():
@@ -61,6 +61,9 @@ def import_network_rail_schedule():
         network_rail_schedule_importer.load()
 celery.task(import_network_rail_schedule, crontab=network_rail_schedule_importer.IMPORT_SCHEDULE)
 
+app.url_map.converters['float'] = NegativeFloatConverter
+
+SearchResults(app, location_service).init()
 
 if __name__ == '__main__':
     app.debug = True

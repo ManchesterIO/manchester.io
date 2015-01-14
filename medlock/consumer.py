@@ -20,6 +20,8 @@ mq.connect(username=app.config['NETWORK_RAIL_AUTH'][0],
 
 mq.subscribe('/topic/VSTP_ALL', '{}-vstp'.format(app.config['NETWORK_RAIL_CONSUMER_ID']),
              ack='client-individual')
+mq.subscribe('/topic/TRAIN_MVT_ALL_TOC', '{}-mvt'.format(app.config['NETWORK_RAIL_CONSUMER_ID']),
+             ack='client-individual')
 
 while mq.is_connected():
     sleep(1)
