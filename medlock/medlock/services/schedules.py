@@ -45,10 +45,13 @@ class ScheduleService(object):
         schedules = self._schedule_collection.find(
             {'service_id': service_id, 'schedule_start': schedule_start}
         ).sort('schedule_priority')
-        if schedules.count() > 0:
+        if schedules.count() > 0 and not self._is_planned_cancellation(schedules[0]):
             return schedules[0]
         else:
             return None
+
+    def _is_planned_cancellation(self, schedule):
+        return schedule['schedule_priority'] == 'C'
 
     def _create_activation(self, activation_id, activation_time, schedule):
         activation = {
@@ -107,4 +110,5 @@ class ScheduleService(object):
     def _activations_collection(self):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
+            self._kv_association_collection.ensure_index('activated_on')
         return self._kv_activations_collection
