@@ -93,20 +93,17 @@ class NetworkRailScheduleParser(object):
 
         if vstp:
             schedule['calling_points'] = map(self._build_vstp_calling_point,
-                                             filter(self._is_passenger_calling_point(vstp),
-                                                    service['schedule_segment'][0]['schedule_location']))
+                                             service['schedule_segment'][0]['schedule_location'])
         else:
             schedule['calling_points'] = map(self._build_calling_point,
-                                             filter(self._is_passenger_calling_point(vstp),
-                                                    service['schedule_segment']['schedule_location']))
+                                             service['schedule_segment']['schedule_location'])
+
+        schedule['calling_points'] = filter(self._service_actually_calls, schedule['calling_points'])
 
         return schedule
 
-    def _is_passenger_calling_point(self, vstp):
-        if vstp:
-            return lambda location: location.get('scheduled_pass_time', '').strip() == ''
-        else:
-            return lambda location: location.get('pass') is None
+    def _service_actually_calls(self, calling_point):
+        return calling_point['arrival'] is not None and calling_point['departure'] is not None
 
     def _build_calling_point(self, location):
         return {

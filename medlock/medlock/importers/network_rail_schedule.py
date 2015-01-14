@@ -20,7 +20,7 @@ class NetworkRailScheduleImporter(object):
 
     _FULL_URL = 'https://datafeeds.networkrail.co.uk/ntrod/CifFileAuthenticate?type=CIF_ALL_FULL_DAILY&day=toc-full'
     _DAY_URL = 'https://datafeeds.networkrail.co.uk/ntrod/CifFileAuthenticate?type=CIF_ALL_UPDATE_DAILY&day=toc-update-{}'
-    _IMPORTER_VERSION = 1
+    _IMPORTER_VERSION = 2
 
     def __init__(self, schedule_service, metadata, network_rail_auth):
         self._schedule_service = schedule_service

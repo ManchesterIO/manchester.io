@@ -62,6 +62,14 @@ class ScheduleService(object):
         for calling_point in schedule['calling_points']:
             activation_date, last_time = self._convert_to_datetime(activation_time.date(), calling_point, last_time, 'arrival')
             activation_date, last_time = self._convert_to_datetime(activation_time.date(), calling_point, last_time, 'departure')
+            calling_point.update({
+                'predicted_arrival': calling_point['arrival'],
+                'predicted_departure': calling_point['departure'],
+                'actual_arrival': None,
+                'actual_departure': None,
+                'platform_alteration': None,
+                'cancelled': None
+            })
             activation['calling_points'].append(calling_point)
 
         self._activations_collection.update({'activation_id': activation_id},
@@ -110,5 +118,5 @@ class ScheduleService(object):
     def _activations_collection(self):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
-            self._kv_association_collection.ensure_index('activated_on')
+            self._kv_activations_collection.ensure_index('activated_on')
         return self._kv_activations_collection
