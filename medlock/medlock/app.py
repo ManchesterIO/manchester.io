@@ -1,5 +1,6 @@
 from flask import Flask
 from flask.ext.pymongo import PyMongo
+from flask.ext.statsd import StatsD
 from raven.contrib.celery import register_signal, register_logger_signal
 from raven.contrib.flask import Sentry
 import stomp
@@ -26,13 +27,15 @@ celery = Celery(app)
 register_signal(sentry.client)
 register_logger_signal(sentry.client)
 
+statsd = StatsD(app)
+
 mq = stomp.Connection(host_and_ports=[('datafeeds.networkrail.co.uk', 61618)],
                       keepalive=True,
                       vhost='datafeeds.networkrail.co.uk',
                       heartbeats=(10000, 5000))
 
-location_service = LocationService(mongo)
-schedule_service = ScheduleService(mongo)
+location_service = LocationService(statsd, mongo)
+schedule_service = ScheduleService(statsd, mongo)
 metadata_factory = ImporterMetadataFactory(mongo)
 
 naptan_importer = NaptanImporter(location_service,
@@ -43,10 +46,10 @@ network_rail_schedule_importer = NetworkRailScheduleImporter(schedule_service,
                                                              metadata_factory.build('network-rail-schedule'),
                                                              app.config['NETWORK_RAIL_AUTH'])
 
-network_rail_vstp_importer = NetworkRailVstpImporter(app, schedule_service, mq)
+network_rail_vstp_importer = NetworkRailVstpImporter(app, statsd, schedule_service, mq)
 mq.set_listener('vstp', network_rail_vstp_importer)
 
-network_rail_real_time_importer = NetworkRailRealTimeImporter(app, schedule_service, mq)
+network_rail_real_time_importer = NetworkRailRealTimeImporter(app, statsd, schedule_service, mq)
 mq.set_listener('movements', network_rail_real_time_importer)
 
 
@@ -63,7 +66,7 @@ celery.task(import_network_rail_schedule, crontab=network_rail_schedule_importer
 
 app.url_map.converters['float'] = NegativeFloatConverter
 
-SearchResults(app, location_service).init()
+SearchResults(app, statsd, location_service).init()
 
 if __name__ == '__main__':
     app.debug = True

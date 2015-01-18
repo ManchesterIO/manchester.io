@@ -1,5 +1,6 @@
 Flask==0.10.1
 Flask-PyMongo==0.3.0
+Flask-StatsD==0.1.1
 Jinja2==2.7.3
 MarkupSafe==0.23
 Shapely==1.5.1
@@ -18,5 +19,6 @@ pymongo==2.7.2
 pytz==2014.10
 raven==5.1.1
 requests==2.5.1
+statsd==3.0.1
 stomp.py==4.0.13
 wsgiref==0.1.2

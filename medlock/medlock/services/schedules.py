@@ -11,22 +11,27 @@ class ScheduleService(object):
     ARRIVAL_EVENT = 'arrival'
     DEPARTURE_EVENT = 'departure'
 
-    def __init__(self, mongo):
+    def __init__(self, statsd, mongo):
+        self._statsd = statsd
         self._kv_store = mongo
         self._kv_schedule_collection = None
         self._kv_association_collection = None
         self._kv_activations_collection = None
 
     def insert(self, **kwargs):
+        self._statsd.incr(__name__ + '.insert')
         self._schedule_collection.insert(kwargs)
 
     def delete(self, **kwargs):
+        self._statsd.incr(__name__ + '.delete')
         self._schedule_collection.remove(kwargs)
 
     def create_association(self, **kwargs):
+        self._statsd.incr(__name__ + '.create_association')
         self._association_collection.insert(kwargs)
 
     def delete_association(self, **kwargs):
+        self._statsd.incr(__name__ + '.delete_association')
         self._association_collection.remove(kwargs)
 
     def reset(self, source):
@@ -41,21 +46,27 @@ class ScheduleService(object):
         )
 
     def activate_schedule(self, activation_id, activation_date, service_id, schedule_start):
+        self._statsd.incr(__name__ + '.activate_schedule')
         schedule = self._get_schedule_to_activate(service_id, schedule_start)
         if schedule:
             self._create_activation(activation_id, activation_date, schedule)
+            self._statsd.incr(__name__ + '.activate_schedule_success')
             return True
         else:
+            self._statsd.incr(__name__ + '.activate_schedule_no_schedule')
             return False
 
     def update_activation(self, activation_id, calling_point_planned_timestamp, event, actual_timestamp):
         if event == self.ARRIVAL_EVENT:
+            self._statsd.incr(__name__ + '.movements.arrival')
             query_field = 'calling_points.arrival'
             update_field = 'calling_points.$.actual_arrival'
         elif event == self.DEPARTURE_EVENT:
+            self._statsd.incr(__name__ + '.movements.departure')
             query_field = 'calling_points.departure'
             update_field = 'calling_points.$.actual_departure'
         else:
+            self._statsd.incr(__name__ + '.movements.invalid')
             LOGGER.error("Attempted to update activation %s with invalid event %s", activation_id, event)
             return False
 
@@ -65,10 +76,13 @@ class ScheduleService(object):
         )
         if not result['updatedExisting']:
             if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
+                self._statsd.incr(__name__ + '.movements.invalid')
                 return False
             else:
+                self._statsd.incr(__name__ + '.movements.no_activation')
                 return None
         else:
+            self._statsd.incr(__name__ + '.movements.success')
             return True
 
 
@@ -162,5 +176,9 @@ class ScheduleService(object):
     def _activations_collection(self):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
+            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
+                                                          'calling_points.arrival': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
+                                                          'calling_points.departure': ASCENDING}.items())
             self._kv_activations_collection.ensure_index('activated_on')
         return self._kv_activations_collection
