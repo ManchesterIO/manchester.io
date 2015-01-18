@@ -1,4 +1,5 @@
 from flask import Flask
+from flask.ext.statsd import StatsD
 from raven.contrib.flask import Sentry
 
 from manchesterio.controllers.homepage import Homepage
@@ -10,10 +11,12 @@ app.config.from_envvar('CONFIG')
 
 sentry = Sentry(app)
 
+statsd = StatsD(app)
+
 app.url_map.converters['float'] = NegativeFloatConverter
 
-Homepage(app).init()
-SearchResults(app).init()
+Homepage(app, statsd).init()
+SearchResults(app, statsd).init()
 
 if __name__ == '__main__':
     app.debug = True

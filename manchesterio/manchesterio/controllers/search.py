@@ -7,17 +7,20 @@ import requests
 
 class SearchResults(object):
 
-    def __init__(self, app):
+    def __init__(self, app, statsd):
         self._app = app
+        self._statsd = statsd
 
     def init(self):
         self._app.add_url_rule('/search/rail-stations/near/<float:lat>,<float:lon>', 'rail-search', self.render)
 
     def render(self, lat, lon):
+        self._statsd.incr('render')
         stations = []
         for station in self._fetch_results(lat, lon).get('results', []):
             stations.append(self._station_to_template(station, (lat, lon)))
         if len(stations) == 0:
+            self._statsd.incr('no_results')
             abort(404)
 
         return render_template('search-results.html',
@@ -30,7 +33,8 @@ class SearchResults(object):
             lat=lat,
             lon=lon
         )
-        return requests.get(url, timeout=5).json()
+        with self._statsd.timer(__name__ + '.request_time'):
+            return requests.get(url, timeout=5).json()
 
     def _station_to_template(self, station, origin):
         lat = station['location']['coordinates'][1]
