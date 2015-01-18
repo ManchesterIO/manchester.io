@@ -21,5 +21,8 @@ class NetworkRailVstpImporter(object):
         else:
             if self._parser.is_vstp_message(body):
                 with self._app.app_context():
-                    self._parser.parse([body])
+                    try:
+                        self._parser.parse([body])
+                    except:
+                        LOGGER.exception("Failed to handle a VSTP message")
                 self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])

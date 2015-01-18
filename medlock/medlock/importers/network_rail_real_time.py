@@ -31,10 +31,13 @@ class NetworkRailRealTimeImporter(object):
                 self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])
 
     def _handle_message(self, movement):
-        if movement['header']['msg_type'] == '0001':
-            self._handle_activation(movement['body'])
-        if movement['header']['msg_type'] == '0003':
-            self._handle_movement(movement['body'])
+        try:
+            if movement['header']['msg_type'] == '0001':
+                self._handle_activation(movement['body'])
+            elif movement['header']['msg_type'] == '0003':
+                self._handle_movement(movement['body'])
+        except:
+            LOGGER.exception("Failed to handle a movement message")
 
     def _handle_activation(self, body):
         with self._app.app_context():
