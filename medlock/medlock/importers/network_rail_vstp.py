@@ -22,11 +22,11 @@ class NetworkRailVstpImporter(object):
             LOGGER.exception("Failed to decode JSON in Network Rail feed")
         else:
             if self._parser.is_vstp_message(body):
-                self._statsd.increment(__name__ + '.vstp_message')
+                self._statsd.incr(__name__ + '.vstp_message')
                 with self._app.app_context():
                     try:
                         self._parser.parse([body])
                     except:
-                        self._statsd.increment(__name__ + '.vstp_message_failed')
+                        self._statsd.incr(__name__ + '.vstp_message_failed')
                         LOGGER.exception("Failed to handle a VSTP message")
                 self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])
