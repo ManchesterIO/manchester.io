@@ -45,6 +45,13 @@ class ScheduleService(object):
             {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
         )
 
+    def activations_at(self, **kwargs):
+        query = {}
+        for namespace, value in kwargs.items():
+            query['calling_points.{}'.format(namespace)] = value
+        self._statsd.incr(__name__ + '.activations_search')
+        return self._activations_collection.find(query)
+
     def activate_schedule(self, activation_id, activation_date, service_id, schedule_start):
         self._statsd.incr(__name__ + '.activate_schedule')
         schedule = self._get_schedule_to_activate(service_id, schedule_start)

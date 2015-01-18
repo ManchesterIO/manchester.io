@@ -1,6 +1,6 @@
 import logging
 import geojson
-from pymongo import GEOSPHERE
+from pymongo import GEOSPHERE, ASCENDING
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,6 +27,9 @@ class LocationService(object):
         self._statsd.incr(__name__ + '.delete')
         self._collection.remove({'stop-type': stop_type, 'identifier': identifier})
 
+    def find(self, stop_type, identifier):
+        return self._collection.find_one({'stop-type': stop_type, 'identifier': identifier})
+
     def search_nearby(self, point, stop_type, radius=None):
         self._statsd.incr(__name__ + '.search_nearby_requests')
         query = {
@@ -42,7 +45,6 @@ class LocationService(object):
     def _collection(self):
         if self._kv_collection is None:
             self._kv_collection = self._kv_store.db.locations
-            self._kv_collection.ensure_index('stop-type')
-            self._kv_collection.ensure_index('identifier')
+            self._kv_collection.ensure_index({'stop-type': ASCENDING, 'identifier': ASCENDING}.items())
             self._kv_collection.ensure_index({'location': GEOSPHERE}.items())
         return self._kv_collection
