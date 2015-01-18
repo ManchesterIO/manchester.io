@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask
 from flask.ext.statsd import StatsD
 from raven.contrib.flask import Sentry
@@ -9,7 +11,7 @@ from manchesterio.helpers.float_converter import NegativeFloatConverter
 app = Flask('manchesterio')
 app.config.from_envvar('CONFIG')
 
-sentry = Sentry(app)
+sentry = Sentry(app, logging=True, level=logging.WARNING)
 
 statsd = StatsD(app)
 

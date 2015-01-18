@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask.ext.pymongo import PyMongo
 from flask.ext.statsd import StatsD
@@ -22,7 +23,7 @@ app.config.from_envvar('CONFIG')
 
 mongo = PyMongo(app)
 
-sentry = Sentry(app)
+sentry = Sentry(app, logging=True, level=logging.WARNING)
 
 celery = Celery(app)
 register_signal(sentry.client)
