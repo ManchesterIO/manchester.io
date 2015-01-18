@@ -1,4 +1,5 @@
 import logging
+from datetime import time, timedelta
 
 LOGGER = logging.getLogger(__name__)
 
@@ -98,30 +99,69 @@ class NetworkRailScheduleParser(object):
             schedule['calling_points'] = map(self._build_calling_point,
                                              service['schedule_segment']['schedule_location'])
 
-        schedule['calling_points'] = filter(self._service_actually_calls, schedule['calling_points'])
-
         return schedule
 
-    def _service_actually_calls(self, calling_point):
-        return calling_point['arrival'] is not None and calling_point['departure'] is not None
-
     def _build_calling_point(self, location):
+        if location.get('pass') is not None:
+            arrival = location['pass']
+            departure = location['pass']
+        else:
+            arrival = location.get('arrival')
+            departure = location.get('departure')
+
+        arrival = self._convert_half_minutes(arrival)
+        departure = self._convert_half_minutes(departure)
+
         return {
             'tiploc': location['tiploc_code'],
             'platform': location['platform'],
-            'arrival': location.get('public_arrival'),
-            'departure': location.get('public_departure')
+            'public_arrival': location.get('public_arrival'),
+            'public_departure': location.get('public_departure'),
+            'arrival': arrival,
+            'departure': departure,
+            'allowances': 0
         }
 
+    def _convert_half_minutes(self, call_time):
+        if call_time is not None and call_time[-1] == 'H':
+            call_time = call_time[:-1] + '30'
+        return call_time
+
     def _build_vstp_calling_point(self, location):
-        calling_point = {
+        pass_time = self._convert_vstp_time(location['scheduled_pass_time'])
+
+        if pass_time is not None:
+            arrival = pass_time
+            departure = pass_time
+            public_arrival = None
+            public_departure = None
+        else:
+            arrival = self._convert_vstp_time(location['scheduled_arrival_time'])
+            departure = self._convert_vstp_time(location['scheduled_departure_time'])
+            public_arrival = self._convert_wtt_to_public(arrival)
+            public_departure = self._convert_wtt_to_public(departure)
+
+        return {
             'tiploc': location['location']['tiploc']['tiploc_id'],
             'platform': location['CIF_platform'].strip(),
-            'arrival': location['scheduled_arrival_time'][:4],
-            'departure': location['public_departure_time'][:4]
+            'public_arrival': public_arrival,
+            'public_departure': public_departure,
+            'arrival': arrival,
+            'departure': departure,
+            'allowances': 0
         }
-        if calling_point['arrival'].strip() == '':
-            calling_point['arrival'] = None
-        if calling_point['departure'].strip() == '':
-            calling_point['departure'] = None
-        return calling_point
+
+    def _convert_vstp_time(self, call_time):
+        if call_time.strip() == '':
+            return None
+        else:
+            return call_time
+
+    def _convert_wtt_to_public(self, call_time):
+        if call_time is not None:
+            call_time = time(int(call_time[:2]), int(call_time[2:4]), int(call_time[4:6]))
+            if call_time.second == 30:
+                call_time += timedelta(seconds=30)
+            return call_time.strftime('%H%M')
+        else:
+            return None

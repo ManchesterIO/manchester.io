@@ -20,7 +20,7 @@ class NetworkRailScheduleImporter(object):
 
     _FULL_URL = 'https://datafeeds.networkrail.co.uk/ntrod/CifFileAuthenticate?type=CIF_ALL_FULL_DAILY&day=toc-full'
     _DAY_URL = 'https://datafeeds.networkrail.co.uk/ntrod/CifFileAuthenticate?type=CIF_ALL_UPDATE_DAILY&day=toc-update-{}'
-    _IMPORTER_VERSION = 2
+    _IMPORTER_VERSION = 3
 
     def __init__(self, schedule_service, metadata, network_rail_auth):
         self._schedule_service = schedule_service
@@ -72,8 +72,7 @@ class NetworkRailScheduleImporter(object):
     def _fetch_json(self, url):
         tmp = NamedTemporaryFile(delete=False)
         try:
-            # TODO: Add SSL verify back in when NROD sort out their SSL cert.
-            response = requests.get(url, timeout=5, stream=True, auth=self._network_rail_auth, verify=False)
+            response = requests.get(url, timeout=5, stream=True, auth=self._network_rail_auth)
             for chunk in response.iter_content(chunk_size=512):
                 tmp.write(chunk)
             tmp.close()
