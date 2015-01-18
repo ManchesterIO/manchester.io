@@ -1,8 +1,15 @@
 from datetime import timedelta, datetime, time
+import logging
+
 from pymongo import ASCENDING
+
+LOGGER = logging.getLogger(__name__)
 
 
 class ScheduleService(object):
+
+    ARRIVAL_EVENT = 'arrival'
+    DEPARTURE_EVENT = 'departure'
 
     def __init__(self, mongo):
         self._kv_store = mongo
@@ -41,6 +48,30 @@ class ScheduleService(object):
         else:
             return False
 
+    def update_activation(self, activation_id, calling_point_planned_timestamp, event, actual_timestamp):
+        if event == self.ARRIVAL_EVENT:
+            query_field = 'calling_points.arrival'
+            update_field = 'calling_points.$.actual_arrival'
+        elif event == self.DEPARTURE_EVENT:
+            query_field = 'calling_points.departure'
+            update_field = 'calling_points.$.actual_departure'
+        else:
+            LOGGER.error("Attempted to update activation %s with invalid event %s", activation_id, event)
+            return False
+
+        result = self._activations_collection.update(
+            {'activation_id': activation_id, query_field: calling_point_planned_timestamp},
+            {'$set': { update_field: actual_timestamp}}
+        )
+        if not result['updatedExisting']:
+            if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
+                return False
+            else:
+                return None
+        else:
+            return True
+
+
     def _get_schedule_to_activate(self, service_id, schedule_start):
         schedules = self._schedule_collection.find(
             {'service_id': service_id, 'schedule_start': schedule_start}
@@ -58,16 +89,27 @@ class ScheduleService(object):
             'activated_on': activation_time,
             'calling_points': []
         }
-        last_time = '0000'
+        public_activation_date = activation_time.date()
+        planned_activation_date = activation_time.date()
+        last_public_time = time.min
+        last_planned_time = time.min
         for calling_point in schedule['calling_points']:
-            activation_date, last_time = self._convert_to_datetime(activation_time.date(), calling_point, last_time, 'arrival')
-            activation_date, last_time = self._convert_to_datetime(activation_time.date(), calling_point, last_time, 'departure')
+            public_activation_date, last_public_time = self._convert_to_datetime(
+                public_activation_date, calling_point, last_public_time, 'public_arrival')
+            public_activation_date, last_public_time = self._convert_to_datetime(
+                public_activation_date, calling_point, last_public_time, 'public_departure')
+
+            planned_activation_date, last_planned_time = self._convert_to_datetime(
+                planned_activation_date, calling_point, last_planned_time, 'arrival')
+            planned_activation_date, last_planned_time = self._convert_to_datetime(
+                planned_activation_date, calling_point, last_planned_time, 'departure')
+
             calling_point.update({
-                'predicted_arrival': calling_point['arrival'],
-                'predicted_departure': calling_point['departure'],
+                'predicted_arrival': calling_point['public_arrival'],
+                'predicted_departure': calling_point['public_departure'],
                 'actual_arrival': None,
                 'actual_departure': None,
-                'platform_alteration': None,
+                'predicted_platform': None,
                 'cancelled': None
             })
             activation['calling_points'].append(calling_point)
@@ -78,11 +120,13 @@ class ScheduleService(object):
 
     def _convert_to_datetime(self, activation_date, calling_point, last_time, event):
         if calling_point[event]:
-            if last_time > calling_point[event]:
+            calling_point_time = time(int(calling_point[event][:2]),
+                                      int(calling_point[event][2:4]),
+                                      int(calling_point[event][4:6] or 0))
+            if last_time > calling_point_time:
                 activation_date += timedelta(days=1)
-            last_time = calling_point[event]
-            calling_point[event] = datetime.combine(activation_date,
-                                                    time(int(calling_point[event][:2]), int(calling_point[event][2:4])))
+            last_time = calling_point_time
+            calling_point[event] = datetime.combine(activation_date, calling_point_time)
         return activation_date, last_time
 
     @property

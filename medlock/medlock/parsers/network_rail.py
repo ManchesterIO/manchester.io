@@ -123,8 +123,11 @@ class NetworkRailScheduleParser(object):
         }
 
     def _convert_half_minutes(self, call_time):
-        if call_time is not None and call_time[-1] == 'H':
-            call_time = call_time[:-1] + '30'
+        if call_time is not None:
+            if call_time[-1] == 'H':
+                call_time = call_time[:-1] + '30'
+            else:
+                call_time += '00'
         return call_time
 
     def _build_vstp_calling_point(self, location):
