@@ -69,17 +69,27 @@ class NetworkRailScheduleParser(object):
 
     def _handle_vstp(self, schedule):
         if schedule['transaction_type'] == 'Delete':
-            LOGGER.info("Deleting schedule for %s", schedule['CIF_train_uid'])
-            self._schedule_service.delete(service_id=schedule['CIF_train_uid'],
-                                          schedule_priority=schedule['CIF_stp_indicator'],
-                                          schedule_start=schedule['schedule_start_date'],
-                                          source=self._source)
+            self._handle_vstp_delete(schedule)
         elif schedule['transaction_type'] == 'Create':
-            if self._is_passenger_train(schedule['schedule_segment'][0]['CIF_train_category']):
-                LOGGER.info("Inserting schedule for %s", schedule['CIF_train_uid'])
-                self._schedule_service.insert(source=self._source, **self._build_schedule(schedule, vstp=True))
+            self._handle_vstp_create(schedule)
+        elif schedule['transaction_type'] == 'Update':
+            self._handle_vstp_delete(schedule)
+            self._handle_vstp_create(schedule)
+
         else:
             LOGGER.error("Encountered unexpected transaction_type %s: %s", schedule['transaction_type'], str(schedule))
+
+    def _handle_vstp_delete(self, schedule):
+        LOGGER.info("Deleting schedule for %s", schedule['CIF_train_uid'])
+        self._schedule_service.delete(service_id=schedule['CIF_train_uid'],
+                                      schedule_priority=schedule['CIF_stp_indicator'],
+                                      schedule_start=schedule['schedule_start_date'],
+                                      source=self._source)
+
+    def _handle_vstp_create(self, schedule):
+        if self._is_passenger_train(schedule['schedule_segment'][0]['CIF_train_category']):
+            LOGGER.info("Inserting schedule for %s", schedule['CIF_train_uid'])
+            self._schedule_service.insert(source=self._source, **self._build_schedule(schedule, vstp=True))
 
     def _is_passenger_train(self, category):
         return category is not None and (category[:1] in ['O', 'X'] or category in ['BR', 'BS'])
