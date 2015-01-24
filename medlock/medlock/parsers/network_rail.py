@@ -151,8 +151,8 @@ class NetworkRailScheduleParser(object):
         else:
             arrival = self._convert_vstp_time(location['scheduled_arrival_time'])
             departure = self._convert_vstp_time(location['scheduled_departure_time'])
-            public_arrival = self._convert_wtt_to_public(arrival)
-            public_departure = self._convert_wtt_to_public(departure)
+            public_arrival = self._convert_wtt_to_public(arrival, round_up=True)
+            public_departure = self._convert_wtt_to_public(departure, round_up=False)
 
         return {
             'tiploc': location['location']['tiploc']['tiploc_id'],
@@ -170,11 +170,15 @@ class NetworkRailScheduleParser(object):
         else:
             return call_time
 
-    def _convert_wtt_to_public(self, call_time):
+    def _convert_wtt_to_public(self, call_time, round_up):
         if call_time is not None:
             call_time = datetime.combine(date.today(), time(int(call_time[:2]), int(call_time[2:4]), int(call_time[4:6])))
             if call_time.second == 30:
-                call_time += timedelta(seconds=30)
+                if round_up:
+                    call_time += timedelta(seconds=30)
+                else:
+                    call_time -= timedelta(seconds=30)
+
             return call_time.strftime('%H%M')
         else:
             return None
