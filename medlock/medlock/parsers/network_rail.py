@@ -1,5 +1,5 @@
 import logging
-from datetime import time, timedelta
+from datetime import datetime, date, time, timedelta
 
 LOGGER = logging.getLogger(__name__)
 
@@ -172,7 +172,7 @@ class NetworkRailScheduleParser(object):
 
     def _convert_wtt_to_public(self, call_time):
         if call_time is not None:
-            call_time = time(int(call_time[:2]), int(call_time[2:4]), int(call_time[4:6]))
+            call_time = datetime.combine(date.today(), time(int(call_time[:2]), int(call_time[2:4]), int(call_time[4:6])))
             if call_time.second == 30:
                 call_time += timedelta(seconds=30)
             return call_time.strftime('%H%M')
