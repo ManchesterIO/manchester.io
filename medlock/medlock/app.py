@@ -72,5 +72,10 @@ Stations(app, statsd, location_service, schedule_service).init()
 SearchResults(app, statsd, location_service).init()
 
 if __name__ == '__main__':
+    console = logging.StreamHandler()
+    console.setFormatter(logging.Formatter('[%(asctime)s] %(name)-12s %(levelname)-8s %(message)s'))
+    logging.getLogger().addHandler(console)
+    logging.getLogger('medlock').setLevel(logging.INFO)
+
     app.debug = True
     app.run(port=8010)

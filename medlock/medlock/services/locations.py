@@ -30,6 +30,13 @@ class LocationService(object):
     def find(self, stop_type, identifier):
         return self._collection.find_one({'stop-type': stop_type, 'identifier': identifier})
 
+    def fetch_name(self, default, **identifiers):
+        location = self._collection.find_one(identifiers)
+        if location:
+            return location.get('name', default)
+        else:
+            return default
+
     def search_nearby(self, point, stop_type, radius=None):
         self._statsd.incr(__name__ + '.search_nearby_requests')
         query = {

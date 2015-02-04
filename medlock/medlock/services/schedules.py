@@ -45,12 +45,17 @@ class ScheduleService(object):
             {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
         )
 
-    def activations_at(self, **kwargs):
-        query = {}
-        for namespace, value in kwargs.items():
-            query['calling_points.{}'.format(namespace)] = value
+    def upcoming_departures(self, end_time, **kwargs):
         self._statsd.incr(__name__ + '.activations_search')
-        return self._activations_collection.find(query)
+        query = {
+            '$or': [
+                {'public_departure': {'$lt': end_time}},
+                {'predicted_departure': {'$lt': end_time}}
+            ],
+            'actual_departure': None
+        }
+        query.update(kwargs)
+        return self._activations_collection.find({'calling_points': {'$elemMatch': query}})
 
     def activate_schedule(self, activation_id, activation_date, service_id, schedule_start):
         self._statsd.incr(__name__ + '.activate_schedule')
