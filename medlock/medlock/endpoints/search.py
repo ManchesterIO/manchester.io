@@ -23,5 +23,6 @@ class SearchResults(object):
         return {
             'name': result['name'],
             'stop-type': result['stop-type'],
-            'location': result['location']
+            'location': result['location'],
+            'identifier': result['identifier']
         }

@@ -44,6 +44,7 @@ class SearchResults(object):
             'stop_type': self._STOP_TYPES.get(station['stop-type'], ''),
             'lat': lat,
             'lon': lon,
+            'url': '/rail-stations/{}'.format(station['identifier']),
             'distance_and_bearing': '{distance} {bearing}'.format(
                 distance=self._distance(origin, (lat, lon)),
                 bearing=self._bearing(origin, (lat, lon))

@@ -68,7 +68,7 @@ class Stations(object):
             friendly_destination = self._location_service.fetch_name(tiploc=destination, default=destination)
             routes[friendly_destination] = {}
             if len(sub_routes) == 1:
-                routes[friendly_destination][None] = sub_routes.popitem()[1]
+                routes[friendly_destination][''] = sub_routes.popitem()[1]
             else:
                 vias = self._make_friendly_vias(sub_routes.keys())
                 for sub_route, services in sub_routes.items():

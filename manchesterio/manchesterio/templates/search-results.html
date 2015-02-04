@@ -14,7 +14,7 @@
         <ol class="results-list action-list" role="navigation">
             {% for station in stations %}
             <li class="action-list__action search-result" data-lat="{{ station.lat }}" data-lon="{{ station.lon }}">
-                <a href="">
+                <a href="{{ station.url }}">
                     <h2 class="action__title search-result__title">{{ station.name }}</h2>
                     <p class="search-result__metadata">{{ station.stop_type }}, {{ station.distance_and_bearing }}</p>
                 </a>

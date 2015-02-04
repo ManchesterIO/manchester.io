@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block page_title %}Departures at {{ station.name }}{% endblock %}
+
+{% block page_header %}{{ station.name }}{% endblock %}
+
+{% block body %}
+
+    <div class="container container--full-width">
+        <ul class="results-list action-list" role="navigation">
+            {% for destination, routes in station.departures.items() %}
+                {% for via, services in routes.items() %}
+                    <li class="action-list__action search-result">
+                        <h2 class="action__title">{{ destination }}</h2>
+                        {% if via != None %}<h3>{{ via }}</h3>{% endif %}
+                        <ol>
+                            {% for service in services %}
+                                <li>
+                                    <a href="{{ service.url }}">
+                                        {{ service.public_departure }}
+                                        {% if service.predicted_departure > service.public_departure %}
+                                            - delayed until {{ service.predicted_departure }}
+                                        {% endif %}
+                                        {% if service.platform %}(Platform {{ service.platform }}){% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
