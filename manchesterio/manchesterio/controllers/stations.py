@@ -1,3 +1,5 @@
+from collections import OrderedDict
+from datetime import datetime
 from flask import abort, render_template
 import requests
 from requests.exceptions import HTTPError
@@ -19,7 +21,9 @@ class StationDisplay(object):
         except HTTPError as http_error:
             abort(http_error.response.status_code)
 
-        return render_template('station.html', station=station)
+        return render_template('station.html',
+                               station=station,
+                               departures=self._transform_departures(station['departures']))
 
     def _fetch_results(self, crs):
         url = 'http://{base_url}/rail-stations/{crs}'.format(
@@ -30,3 +34,23 @@ class StationDisplay(object):
             response = requests.get(url, timeout=5)
             response.raise_for_status()
             return response.json()
+
+    def _transform_departures(self, departures):
+        sorted_departures = OrderedDict()
+        for destination in sorted(departures):
+            sorted_departures[destination] = OrderedDict()
+            for route in sorted(departures[destination]):
+                sorted_departures[destination][route] = sorted(
+                    map(self._transform_service, departures[destination][route]),
+                    key=lambda service: service['public_departure']
+                )
+        return sorted_departures
+
+    def _transform_service(self, service):
+        return {
+            'url': '/service/{}'.format(service['service_id']),
+            'public_departure': datetime.strptime(service['public_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
+            'predicted_departure': datetime.strptime(service['predicted_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
+            'arrived': service['arrived'],
+            'platform': service['platform']
+        }

@@ -8,7 +8,7 @@
 
     <div class="container container--full-width">
         <ul class="results-list action-list" role="navigation">
-            {% for destination, routes in station.departures.items() %}
+            {% for destination, routes in departures.items() %}
                 {% for via, services in routes.items() %}
                     <li class="action-list__action search-result">
                         <h2 class="action__title">{{ destination }}</h2>
@@ -17,9 +17,9 @@
                             {% for service in services %}
                                 <li>
                                     <a href="{{ service.url }}">
-                                        {{ service.public_departure }}
+                                        {{ service.public_departure.time().strftime('%H:%M') }}
                                         {% if service.predicted_departure > service.public_departure %}
-                                            - delayed until {{ service.predicted_departure }}
+                                            - delayed until {{ service.predicted_departure.time().strftime('%H:%M') }}
                                         {% endif %}
                                         {% if service.platform %}(Platform {{ service.platform }}){% endif %}
                                     </a>
