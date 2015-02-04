@@ -45,7 +45,7 @@ class ScheduleService(object):
             {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
         )
 
-    def upcoming_departures(self, end_time, **kwargs):
+    def upcoming_departures(self, end_time, **identifiers):
         self._statsd.incr(__name__ + '.activations_search')
         query = {
             '$or': [
@@ -54,7 +54,8 @@ class ScheduleService(object):
             ],
             'actual_departure': None
         }
-        query.update(kwargs)
+        for identifier, values in identifiers.items():
+            query[identifier] = {'$in': values}
         return self._activations_collection.find({'calling_points': {'$elemMatch': query}})
 
     def activate_schedule(self, activation_id, activation_date, service_id, schedule_start):
