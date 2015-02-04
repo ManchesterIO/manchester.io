@@ -53,7 +53,11 @@ class Stations(object):
 
     def _get_route(self, service, routes_from):
         calling_points = self._get_public_calling_points(service['calling_points'])
-        return tuple(calling_points[calling_points.index(routes_from):])
+        i = 0
+        for tiploc in routes_from:
+            if tiploc in calling_points:
+                i = calling_points.index(routes_from)
+        return tuple(calling_points[i:])
 
     def _get_public_calling_points(self, calling_points):
         ids = []
@@ -101,7 +105,7 @@ class Stations(object):
 
     def _make_departures(self, service, at):
         for calling_point in service['calling_points']:
-            if calling_point['tiploc'] == at:
+            if calling_point['tiploc'] in at:
                 break
         return {
             'service_id': service['activation_id'],
