@@ -118,8 +118,7 @@ class ScheduleService(object):
             return True
 
     def cancel_activation(self, activation_id, service_type, cancelled_from):
-        self._statsd.incr(__name__ + '.cancellations')
-        self._activations_collection.update(
+        result = self._activations_collection.update(
             {
                 'activation_id': activation_id,
                 'service_type': service_type,
@@ -127,6 +126,17 @@ class ScheduleService(object):
             },
             {'$set': {'state': self.DEPARTURE_EVENT}}
         )
+        if not result['updatedExisting']:
+            if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
+                self._statsd.incr(__name__ + '.cancellations.invalid')
+                return False
+            else:
+                self._statsd.incr(__name__ + '.cancellations.no_activation')
+                return None
+        else:
+            self._statsd.incr(__name__ + '.cancellations.success')
+            self._update_missed_records(activation_id, service_type, cancelled_from)
+            return True
 
     def _update_missed_records(self, activation_id, service_type, planned_timestamp):
         self._activations_collection.update(

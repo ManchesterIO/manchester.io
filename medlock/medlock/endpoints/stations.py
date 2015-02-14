@@ -108,6 +108,7 @@ class Stations(object):
                 break
         return {
             'service_id': calling_point['activation_id'],
+            'service_type': calling_point['service_type'],
             'public_departure': calling_point['public_departure'],
             'predicted_departure': calling_point['predicted_departure'],
             'state': calling_point['state'],

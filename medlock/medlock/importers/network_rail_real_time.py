@@ -38,6 +38,9 @@ class NetworkRailRealTimeImporter(object):
             if movement['header']['msg_type'] == '0001':
                 self._statsd.incr(__name__ + '.messages.activation')
                 self._handle_activation(movement['body'])
+            elif movement['header']['msg_type'] == '0002':
+                self._statsd.incr(__name__ + '.messages.cancellation')
+                self._handle_cancellation(movement['body'])
             elif movement['header']['msg_type'] == '0003':
                 self._statsd.incr(__name__ + '.messages.movement')
                 self._handle_movement(movement['body'])
@@ -64,6 +67,23 @@ class NetworkRailRealTimeImporter(object):
                 self._statsd.incr(__name__ + '.activations.miss')
                 LOGGER.info("Failed to activate %s as %s", body['train_uid'], body['train_id'])
 
+    def _handle_cancellation(self, body):
+        with self._app.app_context():
+            cancellation_successful = self._schedule_service.cancel_activation(
+                body['train_id'],
+                'train',
+                datetime.fromtimestamp(int(body['dep_timestamp']) / 1000)
+            )
+
+            if cancellation_successful is True:
+                self._statsd.incr(__name__ + '.movements.update_success')
+                LOGGER.info("Recorded cancellation for %s at %s", body['train_id'], body['loc_stanox'])
+            elif cancellation_successful is False:
+                self._statsd.incr(__name__ + '.movements.update_failed')
+                LOGGER.info("Failed to record cancellation for %s at %s", body['train_id'], body['loc_stanox'])
+            else:
+                self._statsd.incr(__name__ + '.movements.missing_activation')
+
     def _handle_movement(self, body):
         with self._app.app_context():
             if body['variation_status'] != 'OFF ROUTE':
@@ -85,4 +105,3 @@ class NetworkRailRealTimeImporter(object):
                     self._statsd.incr(__name__ + '.movements.missing_activation')
             else:
                 self._statsd.incr(__name__ + '.movements.off_route')
-
