@@ -56,7 +56,7 @@ class Stations(object):
         i = 0
         for tiploc in routes_from:
             if tiploc in calling_points:
-                i = calling_points.index(routes_from)
+                i = calling_points.index(tiploc)
         return tuple(calling_points[i:])
 
     def _get_public_calling_points(self, calling_points):
