@@ -35,7 +35,6 @@ class Stations(object):
         services = []
         for service in self._schedule_service.upcoming_departures(end_time=datetime.now() + timedelta(minutes=90),
                                                                   tiploc=tiploc):
-            del service['_id']
             services.append(service)
         routes_by_destination = self._group_by_route(services, routes_from=tiploc)
         friendly_routes = self._make_routes_friendly(routes_by_destination)
@@ -108,9 +107,9 @@ class Stations(object):
             if calling_point['tiploc'] in at:
                 break
         return {
-            'service_id': service['activation_id'],
+            'service_id': calling_point['activation_id'],
             'public_departure': calling_point['public_departure'],
             'predicted_departure': calling_point['predicted_departure'],
-            'arrived': calling_point['actual_arrival'] is not None,
-            'platform': calling_point['platform']
+            'state': calling_point['state'],
+            'platform': calling_point['predicted_platform']
         }

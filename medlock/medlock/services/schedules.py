@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime, time
 import logging
 
+from bson.tz_util import utc
 from pymongo import ASCENDING
 
 LOGGER = logging.getLogger(__name__)
@@ -8,8 +9,10 @@ LOGGER = logging.getLogger(__name__)
 
 class ScheduleService(object):
 
+    EN_ROUTE_EVENT = 'en-route'
     ARRIVAL_EVENT = 'arrival'
     DEPARTURE_EVENT = 'departure'
+    CANCELLED_EVENT = 'cancelled'
 
     def __init__(self, statsd, mongo):
         self._statsd = statsd
@@ -46,46 +49,61 @@ class ScheduleService(object):
         )
 
     def upcoming_departures(self, end_time, **identifiers):
+        departures = []
         self._statsd.incr(__name__ + '.activations_search')
+
         query = {
             '$or': [
                 {'public_departure': {'$lt': end_time}},
                 {'predicted_departure': {'$lt': end_time}}
             ],
-            'actual_departure': None
+            'state': {'$in': [self.EN_ROUTE_EVENT, self.ARRIVAL_EVENT, self.CANCELLED_EVENT]}
         }
         for identifier, values in identifiers.items():
             query[identifier] = {'$in': values}
-        return self._activations_collection.find({'calling_points': {'$elemMatch': query}})
 
-    def activate_schedule(self, activation_id, activation_date, service_id, schedule_start):
+        for departure in self._activations_collection.find(query):
+            departures.append({
+                'calling_points': sorted(self._activations_collection.find({
+                    'activation_id': departure['activation_id'],
+                    'service_type': departure['service_type']
+                }), key=lambda activation: activation['arrival'] or datetime.min.replace(tzinfo=utc))
+            })
+
+        return departures
+
+    def activate_schedule(self, activation_id, service_type, activation_date, service_id, schedule_start):
         self._statsd.incr(__name__ + '.activate_schedule')
         schedule = self._get_schedule_to_activate(service_id, schedule_start)
         if schedule:
-            self._create_activation(activation_id, activation_date, schedule)
+            self._create_activation(activation_id, service_type, activation_date, schedule)
             self._statsd.incr(__name__ + '.activate_schedule_success')
             return True
         else:
             self._statsd.incr(__name__ + '.activate_schedule_no_schedule')
             return False
 
-    def update_activation(self, activation_id, calling_point_planned_timestamp, event, actual_timestamp):
+    def update_activation(self, activation_id, service_type, calling_point_planned_timestamp, event, actual_timestamp):
         if event == self.ARRIVAL_EVENT:
             self._statsd.incr(__name__ + '.movements.arrival')
-            query_field = 'calling_points.arrival'
-            update_field = 'calling_points.$.actual_arrival'
+            query_field = 'arrival'
+            update_field = 'actual_arrival'
         elif event == self.DEPARTURE_EVENT:
             self._statsd.incr(__name__ + '.movements.departure')
-            query_field = 'calling_points.departure'
-            update_field = 'calling_points.$.actual_departure'
+            query_field = 'departure'
+            update_field = 'actual_departure'
         else:
             self._statsd.incr(__name__ + '.movements.invalid')
             LOGGER.error("Attempted to update activation %s with invalid event %s", activation_id, event)
             return False
 
         result = self._activations_collection.update(
-            {'activation_id': activation_id, query_field: calling_point_planned_timestamp},
-            {'$set': { update_field: actual_timestamp}}
+            {
+                'activation_id': activation_id,
+                'service_type': service_type,
+                query_field: calling_point_planned_timestamp
+            },
+            {'$set': {update_field: actual_timestamp}}
         )
         if not result['updatedExisting']:
             if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
@@ -96,27 +114,32 @@ class ScheduleService(object):
                 return None
         else:
             self._statsd.incr(__name__ + '.movements.success')
-            self._update_missed_records(activation_id, calling_point_planned_timestamp)
+            self._update_missed_records(activation_id, service_type, calling_point_planned_timestamp)
             return True
 
-    def _update_missed_records(self, activation_id, planned_timestamp):
+    def cancel_activation(self, activation_id, service_type, cancelled_from):
+        self._statsd.incr(__name__ + '.cancellations')
         self._activations_collection.update(
-            {'activation_id': activation_id, 'calling_points': {
-                '$elemMatch': {
-                    'arrival': {'$lt': planned_timestamp},
-                    'actual_arrival': None
-                }
-            }},
-            {'$set': { 'calling_points.$.actual_arrival': datetime.min}}
+            {
+                'activation_id': activation_id,
+                'service_type': service_type,
+                'departure': {'$gte': cancelled_from},
+            },
+            {'$set': {'state': self.DEPARTURE_EVENT}}
         )
+
+    def _update_missed_records(self, activation_id, service_type, planned_timestamp):
         self._activations_collection.update(
-            {'activation_id': activation_id, 'calling_points': {
-                '$elemMatch': {
-                    'departure': {'$lt': planned_timestamp},
-                    'actual_departure': None
-                }
-            }},
-            {'$set': { 'calling_points.$.actual_departure': datetime.min}}
+            {
+                'activation_id': activation_id,
+                'service_type': service_type,
+                '$or': [
+                    {'arrival': {'$lt': planned_timestamp}},
+                    {'departure': {'$lt': planned_timestamp}},
+                ],
+                'state': {'$in': [self.EN_ROUTE_EVENT, self.ARRIVAL_EVENT]}
+            },
+            {'$set': {'state': self.DEPARTURE_EVENT}}
         )
 
     def _get_schedule_to_activate(self, service_id, schedule_start):
@@ -131,15 +154,18 @@ class ScheduleService(object):
     def _is_planned_cancellation(self, schedule):
         return schedule['schedule_priority'] == 'C'
 
-    def _create_activation(self, activation_id, activation_time, schedule):
-        activation = {
+    def _create_activation(self, activation_id, service_type, activation_time, schedule):
+        activations = []
+        metadata = {
+            'activation_id': activation_id,
             'activated_on': activation_time,
-            'calling_points': []
+            'service_type': service_type
         }
         public_activation_date = activation_time.date()
         planned_activation_date = activation_time.date()
         last_public_time = time.min
         last_planned_time = time.min
+
         for calling_point in schedule['calling_points']:
             public_activation_date, last_public_time = self._convert_to_datetime(
                 public_activation_date, calling_point, last_public_time, 'public_arrival')
@@ -156,14 +182,13 @@ class ScheduleService(object):
                 'predicted_departure': calling_point['public_departure'],
                 'actual_arrival': None,
                 'actual_departure': None,
-                'predicted_platform': None,
-                'cancelled': None
+                'predicted_platform': calling_point['platform'],
+                'state': self.EN_ROUTE_EVENT
             })
-            activation['calling_points'].append(calling_point)
+            calling_point.update(metadata)
+            activations.append(calling_point)
 
-        self._activations_collection.update({'activation_id': activation_id},
-                                            {'$set': activation},
-                                            upsert=True)
+        self._activations_collection.insert(activations)
 
     def _convert_to_datetime(self, activation_date, calling_point, last_time, event):
         if calling_point[event]:
@@ -210,8 +235,30 @@ class ScheduleService(object):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
             self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'calling_points.arrival': ASCENDING}.items())
+                                                          'service_type': ASCENDING,
+                                                          'arrival': ASCENDING}.items())
             self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'calling_points.departure': ASCENDING}.items())
+                                                          'service_type': ASCENDING,
+                                                          'departure': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'public_departure': ASCENDING,
+                                                          'tiploc': ASCENDING,
+                                                          'state': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'predicted_departure': ASCENDING,
+                                                          'tiploc': ASCENDING,
+                                                          'state': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
+                                                          'service_type': ASCENDING,
+                                                          'arrival': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
+                                                          'service_type': ASCENDING,
+                                                          'arrival': ASCENDING,
+                                                          'state': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
+                                                          'service_type': ASCENDING,
+                                                          'departure': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
+                                                          'service_type': ASCENDING,
+                                                          'departure': ASCENDING,
+                                                          'state': ASCENDING}.items())
             self._kv_activations_collection.ensure_index('activated_on')
         return self._kv_activations_collection

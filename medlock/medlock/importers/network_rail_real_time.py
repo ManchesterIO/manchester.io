@@ -51,9 +51,11 @@ class NetworkRailRealTimeImporter(object):
         with self._app.app_context():
             activation_successful = self._schedule_service.activate_schedule(
                 body['train_id'],
+                'train',
                 datetime.fromtimestamp(int(body['origin_dep_timestamp']) / 1000),
                 body['train_uid'],
-                body['schedule_start_date'])
+                body['schedule_start_date']
+            )
 
             if activation_successful:
                 self._statsd.incr(__name__ + '.activations.hit')
@@ -67,9 +69,11 @@ class NetworkRailRealTimeImporter(object):
             if body['variation_status'] != 'OFF ROUTE':
                 movement_successful = self._schedule_service.update_activation(
                     body['train_id'],
+                    'train',
                     datetime.fromtimestamp(int(body['planned_timestamp']) / 1000),
                     self._EVENTS.get(body['event_type']),
-                    datetime.fromtimestamp(int(body['actual_timestamp']) / 1000))
+                    datetime.fromtimestamp(int(body['actual_timestamp']) / 1000)
+                )
 
                 if movement_successful is True:
                     self._statsd.incr(__name__ + '.movements.update_success')
