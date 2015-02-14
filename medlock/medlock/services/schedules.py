@@ -96,8 +96,28 @@ class ScheduleService(object):
                 return None
         else:
             self._statsd.incr(__name__ + '.movements.success')
+            self._update_missed_records(activation_id, calling_point_planned_timestamp)
             return True
 
+    def _update_missed_records(self, activation_id, planned_timestamp):
+        self._activations_collection.update(
+            {'activation_id': activation_id, 'calling_points': {
+                '$elemMatch': {
+                    'arrival': {'$lt': planned_timestamp},
+                    'actual_arrival': None
+                }
+            }},
+            {'$set': { 'calling_points.$.actual_arrival': datetime.min}}
+        )
+        self._activations_collection.update(
+            {'activation_id': activation_id, 'calling_points': {
+                '$elemMatch': {
+                    'departure': {'$lt': planned_timestamp},
+                    'actual_departure': None
+                }
+            }},
+            {'$set': { 'calling_points.$.actual_departure': datetime.min}}
+        )
 
     def _get_schedule_to_activate(self, service_id, schedule_start):
         schedules = self._schedule_collection.find(
