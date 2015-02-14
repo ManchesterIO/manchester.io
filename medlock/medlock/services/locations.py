@@ -30,6 +30,9 @@ class LocationService(object):
     def find(self, stop_type, identifier):
         return self._collection.find_one({'stop-type': stop_type, 'identifier': identifier})
 
+    def find_by_additional_identifier(self, **kwargs):
+        return self._collection.find_one(kwargs)
+
     def fetch_name(self, default, **identifiers):
         location = self._collection.find_one(identifiers)
         if location:

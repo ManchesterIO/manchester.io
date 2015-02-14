@@ -51,6 +51,6 @@ class StationDisplay(object):
             'url': '/service/{}'.format(service['service_id']),
             'public_departure': datetime.strptime(service['public_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'predicted_departure': datetime.strptime(service['predicted_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
-            'arrived': service['arrived'],
+            'state': service['state'],
             'platform': service['platform']
         }

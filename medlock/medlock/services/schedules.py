@@ -67,10 +67,17 @@ class ScheduleService(object):
                 'calling_points': sorted(self._activations_collection.find({
                     'activation_id': departure['activation_id'],
                     'service_type': departure['service_type']
-                }), key=lambda activation: activation['arrival'] or datetime.min.replace(tzinfo=utc))
+                }), key=self._calling_point_sort_key)
             })
 
         return departures
+
+    def fetch_activation(self, activation_id, service_type):
+        calling_points = list(self._activations_collection.find({'activation_id': activation_id,
+                                                                 'service_type': service_type}))
+        for calling_point in calling_points:
+            del calling_point['_id']
+        return {'calling_points': sorted(calling_points, key=self._calling_point_sort_key)}
 
     def activate_schedule(self, activation_id, service_type, activation_date, service_id, schedule_start):
         self._statsd.incr(__name__ + '.activate_schedule')
@@ -210,6 +217,9 @@ class ScheduleService(object):
             last_time = calling_point_time
             calling_point[event] = datetime.combine(activation_date, calling_point_time)
         return activation_date, last_time
+
+    def _calling_point_sort_key(self, activation):
+        return activation['arrival'] or datetime.min.replace(tzinfo=utc)
 
     @property
     def _schedule_collection(self):

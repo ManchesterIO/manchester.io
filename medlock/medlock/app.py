@@ -7,6 +7,7 @@ from raven.contrib.flask import Sentry
 import stomp
 
 from medlock.endpoints.search import SearchResults
+from medlock.endpoints.services import Services
 from medlock.endpoints.stations import Stations
 from medlock.helpers.float_converter import NegativeFloatConverter
 from medlock.importers.naptan import NaptanImporter
@@ -68,8 +69,9 @@ celery.task(import_network_rail_schedule, crontab=network_rail_schedule_importer
 
 app.url_map.converters['float'] = NegativeFloatConverter
 
-Stations(app, statsd, location_service, schedule_service).init()
 SearchResults(app, statsd, location_service).init()
+Services(app, statsd, location_service, schedule_service).init()
+Stations(app, statsd, location_service, schedule_service).init()
 
 if __name__ == '__main__':
     console = logging.StreamHandler()

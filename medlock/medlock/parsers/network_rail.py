@@ -128,8 +128,7 @@ class NetworkRailScheduleParser(object):
             'public_arrival': location.get('public_arrival'),
             'public_departure': location.get('public_departure'),
             'arrival': arrival,
-            'departure': departure,
-            'allowances': 0
+            'departure': departure
         }
 
     def _convert_half_minutes(self, call_time):
@@ -160,8 +159,7 @@ class NetworkRailScheduleParser(object):
             'public_arrival': public_arrival,
             'public_departure': public_departure,
             'arrival': arrival,
-            'departure': departure,
-            'allowances': 0
+            'departure': departure
         }
 
     def _convert_vstp_time(self, call_time):
