@@ -10,6 +10,7 @@ from medlock.endpoints.search import SearchResults
 from medlock.endpoints.services import Services
 from medlock.endpoints.stations import Stations
 from medlock.helpers.float_converter import NegativeFloatConverter
+from medlock.importers.gmpte_cif import CifImporter
 from medlock.importers.naptan import NaptanImporter
 from medlock.importers.network_rail_real_time import NetworkRailRealTimeImporter
 from medlock.importers.network_rail_schedule import NetworkRailScheduleImporter
@@ -49,6 +50,8 @@ network_rail_schedule_importer = NetworkRailScheduleImporter(schedule_service,
                                                              metadata_factory.build('network-rail-schedule'),
                                                              app.config['NETWORK_RAIL_AUTH'])
 
+tfgm_schedule_importer = CifImporter(schedule_service, metadata_factory.build('tfgm-schedule'))
+
 network_rail_vstp_importer = NetworkRailVstpImporter(app, statsd, schedule_service, mq)
 mq.set_listener('vstp', network_rail_vstp_importer)
 
@@ -66,6 +69,12 @@ def import_network_rail_schedule():
     with app.app_context():
         network_rail_schedule_importer.load()
 celery.task(import_network_rail_schedule, crontab=network_rail_schedule_importer.IMPORT_SCHEDULE)
+
+
+def import_tfgm_schedule():
+    with app.app_context():
+        tfgm_schedule_importer.load()
+celery.task(import_tfgm_schedule, crontab=tfgm_schedule_importer.IMPORT_SCHEDULE)
 
 app.url_map.converters['float'] = NegativeFloatConverter
 

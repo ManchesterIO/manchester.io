@@ -6,7 +6,7 @@ import sys
 
 os.environ['CONFIG'] = '/srv/manchester.io/medlock.cfg'
 
-from medlock.app import app, import_naptan, import_network_rail_schedule
+from medlock.app import app, import_naptan, import_network_rail_schedule, import_tfgm_schedule
 
 console = logging.StreamHandler()
 console.setFormatter(logging.Formatter('[%(asctime)s] %(name)-12s %(levelname)-8s %(message)s'))
@@ -15,7 +15,8 @@ logging.getLogger('medlock').setLevel(logging.INFO)
 
 IMPORTERS = {
     'naptan': import_naptan,
-    'nrod-schedule': import_network_rail_schedule
+    'nrod-schedule': import_network_rail_schedule,
+    'tfgm': import_tfgm_schedule
 }
 
 if len(sys.argv) != 2 or not IMPORTERS.has_key(sys.argv[1]):
