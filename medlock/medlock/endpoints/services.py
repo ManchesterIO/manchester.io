@@ -13,7 +13,7 @@ class Services(object):
         self._schedule_service = schedule_service
 
     def init(self):
-        self._app.add_url_rule('/train/<service_id>', 'train', self.render)
+        self._app.add_url_rule('/trains/<service_id>', 'train', self.render)
 
     def render(self, service_id):
         self._statsd.incr(__name__ + '.requests')

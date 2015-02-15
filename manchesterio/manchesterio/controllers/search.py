@@ -15,12 +15,12 @@ class SearchResults(object):
         self._app.add_url_rule('/search/rail-stations/near/<float:lat>,<float:lon>', 'rail-search', self.render)
 
     def render(self, lat, lon):
-        self._statsd.incr('render')
+        self._statsd.incr(__name__ + 'render')
         stations = []
         for station in self._fetch_results(lat, lon).get('results', []):
             stations.append(self._station_to_template(station, (lat, lon)))
         if len(stations) == 0:
-            self._statsd.incr('no_results')
+            self._statsd.incr(__name__ + 'no_results')
             abort(404)
 
         return render_template('search-results.html',

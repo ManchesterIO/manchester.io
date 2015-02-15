@@ -6,6 +6,7 @@ from raven.contrib.flask import Sentry
 
 from manchesterio.controllers.homepage import Homepage
 from manchesterio.controllers.search import SearchResults
+from manchesterio.controllers.services import ServiceDisplay
 from manchesterio.controllers.stations import StationDisplay
 from manchesterio.helpers.float_converter import NegativeFloatConverter
 
@@ -21,6 +22,7 @@ app.url_map.converters['float'] = NegativeFloatConverter
 Homepage(app, statsd).init()
 SearchResults(app, statsd).init()
 StationDisplay(app, statsd).init()
+ServiceDisplay(app, statsd).init()
 
 if __name__ == '__main__':
     app.debug = True

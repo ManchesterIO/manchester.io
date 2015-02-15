@@ -8,6 +8,16 @@ $departures-foreground: #ffbf00;
   border: 2px solid $departures-foreground;
   border-radius: 0.5em;
   color: $departures-foreground;
+
+  a {
+    color: $departures-foreground;
+    text-decoration: underline;
+
+    &:focus,
+    &:hover {
+      color: lighten($departures-foreground, 15);
+    }
+  }
 }
 
 .departure {

@@ -15,7 +15,7 @@ class StationDisplay(object):
         self._app.add_url_rule('/rail-stations/<crs>', 'rail-station', self.render)
 
     def render(self, crs):
-        self._statsd.incr('render')
+        self._statsd.incr(__name__ + 'render')
         try:
             station = self._fetch_results(crs)
         except HTTPError as http_error:
@@ -46,7 +46,7 @@ class StationDisplay(object):
 
     def _transform_service(self, service):
         return {
-            'url': '/service/{}'.format(service['service_id']),
+            'url': '/trains/{}'.format(service['service_id']),
             'public_departure': datetime.strptime(service['public_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'predicted_departure': datetime.strptime(service['predicted_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'state': service['state'],

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ service.name}}{% endblock %}
+
+{% block page_header %}{{ service.name }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th scope="col">Station</th>
+            <th scope="col">Plat.</th>
+            <th scope="col">Arrival</th>
+            <th scope="col">Departure</th>
+            <th scope="col">State</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for calling_point in service.calling_points %}
+            {% if calling_point.public_arrival or calling_point.public_departure %}
+                <tr>
+                    <td>
+                        {% if calling_point.station_url %}
+                            <a href="{{ calling_point.station_url }}">{{ calling_point.station }}</a>
+                        {% else %}
+                            {{ calling_point.station }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if calling_point.platform %}{{ calling_point.platform }}{% else %}&mdash;{% endif %}
+                    </td>
+                    <td>
+                        {% if calling_point.public_arrival %}
+                            {{ calling_point.public_arrival.time().strftime('%H:%M') }}
+                        {% else %}
+                            &mdash;
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if calling_point.public_departure %}
+                            {{ calling_point.public_departure.time().strftime('%H:%M') }}
+                        {% else %}
+                            &mdash;
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if calling_point.state == 'cancelled' %}
+                            Cancelled
+                        {% else %}
+                            {% if calling_point.state == 'en-route' %}
+                                Arrival expected {% if calling_point.predicted_arrival == calling_point.public_arrival %}on time{% else %}{{ calling_point.predicted_arrival.strftime('%H:%M')}}{% endif %}<br>
+                            {% elif calling_point.state == 'arrival' or calling_point.state == 'departure' %}
+                                Arrived {% if calling_point.actual_arrival == calling_point.public_arrival %}on time{% else %}{{ calling_point.actual_arrival.strftime('%H:%M')}}{% endif %}<br>
+                            {% endif %}
+                            {% if calling_point.state == 'en-route' or calling_point.state == 'arrival' %}
+                                Departure expected {% if calling_point.predicted_departure == calling_point.public_departure %}on time{% else %}{{ calling_point.predicted_departure.strftime('%H:%M')}}{% endif %}
+                            {% else %}
+                                Departed {% if calling_point.actual_departure == calling_point.public_departure %}on time{% else %}{{ calling_point.actual_departure.strftime('%H:%M')}}{% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

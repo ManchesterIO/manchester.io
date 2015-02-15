@@ -31,7 +31,11 @@
                         <tbody>
                         {% for service in services %}
                         <tr>
-                            <td>{{ service.public_departure.time().strftime('%H:%M') }}</td>
+                            <td>
+                                <a href="{{ service.url }}">
+                                    {{ service.public_departure.time().strftime('%H:%M') }}
+                                </a>
+                            </td>
                             <td>
                                 {% if service.state == 'en-route' %}
                                     {% if service.public_departure <= service.predicted_departure %}
@@ -39,8 +43,10 @@
                                     {% else %}
                                         Delayed {{ service.predicted_departure.time().strftime('%H:%M') }}
                                     {% endif %}
-                                {% elif service.state == 'arrived' %}
+                                {% elif service.state == 'arrival' %}
                                     At platform
+                                {% elif service.state == 'departure' %}
+                                    Departed
                                 {% elif service.state == 'cancelled' %}
                                     Cancelled
                                 {% endif %}
