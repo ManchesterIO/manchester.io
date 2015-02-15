@@ -17,7 +17,7 @@ class CifParser(object):
     def _parse_file(self, cif_file):
         in_journey = False
         current_journey_lines = []
-        for line in cif_file:
+        for line_no, line in enumerate(cif_file):
             if line.startswith('QS'):
                 in_journey = True
                 current_journey_lines = []
@@ -27,11 +27,11 @@ class CifParser(object):
                 LOGGER.info('Ignoring non-journey line with header: {header}'.format(header=line[:2]))
             if line.startswith('QT'):
                 in_journey = False
-                journey = self._parse_journey(current_journey_lines)
+                journey = self._parse_journey(line_no, current_journey_lines)
                 if journey:
                     yield journey
 
-    def _parse_journey(self, journey_lines):
+    def _parse_journey(self, journey_id, journey_lines):
         journey = {
             'identifier': None,
             'schedule_start': None,
@@ -52,7 +52,7 @@ class CifParser(object):
 
         for line in journey_lines:
             if line.startswith('QS'):
-                journey['identifier'] = line[7:13]
+                journey['identifier'] = str(journey_id)
                 journey['schedule_start'] = line[13:21]
                 journey['schedule_end'] = line[21:29]
                 journey['activate_on']['monday'] = line[29]
