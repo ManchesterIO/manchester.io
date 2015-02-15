@@ -1,0 +1,10 @@
+{
+  "name": "data_bag_item_users_chris",
+  "json_class": "Chef::DataBagItem",
+  "chef_type": "data_bag_item",
+  "data_bag": "users",
+  "raw_data": {
+    "id": "simon",
+    "ssh_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvolagF3ilaQyW4r8acs/tT2vTN3GhU1cROwjXSQaJeTips5rQbckrPmie7cdnBrqHVsT22z2JxyxA3c5hWe1iPEmboevq2m3KHK3fVl+MBr5p6a2RhhjWrF5dOWJujapmTuRzKKQOb/5/gx/RuhV2KGuPY+5VYw6IqZLdf8rc9GGa8/k5FNJuwlxXX03JxXFH6e49QGFE0m6eYFoIgC/XVYDzE8ajFIgRP5lWWiT5YvfTc/I+SV5iD1AAjvlS3jLd6y2UMihJgNwJWQFg0ikA9BXwyt9Qn32AUvSeBcmASb7OjJ5BS9HIJ/NY/Jg+FE+so23JtMC822t174VzwYDAQ== simon@yuzuki"
+  }
+}
