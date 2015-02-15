@@ -14,6 +14,7 @@ NAPTAN_STOP_TYPES_TO_CATEGORIES = {
     'MET': {
         'MA': 'metrolink-station',
     },
+    'PLT': None,
     'RLY': 'rail-station'
 }
 
@@ -43,6 +44,7 @@ class NaptanParser(object):
 
     def import_from_file(self, xml_file):
         self._seen_stops = set()
+        self._stop_areas = dict()
         for event, elem in iterparse(xml_file, events=('end',)):
             if elem.tag == self._STOP_POINT_ELEM:
                 category = self._get_category(
@@ -59,7 +61,7 @@ class NaptanParser(object):
         if category == 'rail-station':
             preferred_identifier = self._xpath(elem, self._CRS_CODE_XPATH)
         elif category == 'metrolink-station':
-            preferred_identifier = self._xpath(elem, self._ATCO_CODE_XPATH)[8:]
+            preferred_identifier = self._xpath(elem, self._ATCO_CODE_XPATH)[8:11]
         elif category == 'bus-stop':
             preferred_identifier = self._xpath(elem, self._NAPTAN_CODE_XPATH)
         else:
@@ -74,22 +76,22 @@ class NaptanParser(object):
     def _get_category(self, stop_type, atco_code):
         if atco_code[:3] not in self._interesting_codes:
             return None
-        elif stop_type == 'MET':
+        elif stop_type in ['MET', 'PLT']:
             subtype = atco_code[6:8]
             if subtype in self._interesting_codes:
-                return NAPTAN_STOP_TYPES_TO_CATEGORIES[stop_type].get(subtype)
+                return NAPTAN_STOP_TYPES_TO_CATEGORIES['MET'].get(subtype)
             else:
                 return None
         else:
             return NAPTAN_STOP_TYPES_TO_CATEGORIES.get(stop_type)
 
     def _process_stop(self, category, identifier, elem):
-        if elem.attrib['Status'] != 'active':
-            LOGGER.info("Deleting %s %s a status is %s", category, identifier, elem.attrib['Status'])
-            self._location_service.delete(category, identifier)
-        else:
-            LOGGER.info("Updating %s %s", category, identifier)
-            if (category, identifier) not in self._seen_stops:
+        if (category, identifier) not in self._seen_stops:
+            if elem.attrib['Status'] != 'active':
+                LOGGER.info("Deleting %s %s a status is %s", category, identifier, elem.attrib['Status'])
+                self._location_service.delete(category, identifier)
+            else:
+                LOGGER.info("Updating %s %s", category, identifier)
                 self._location_service.update(
                     stop_type=category,
                     identifier=identifier,
@@ -97,10 +99,10 @@ class NaptanParser(object):
                     location=GeoJSONEncoder().default(self._get_location(elem)),
                 )
                 self._seen_stops.add((category, identifier))
-            self._location_service.add_additional_identifier(category,
-                                                             identifier,
-                                                             **self._get_additional_identifiers(elem))
 
+        if elem.attrib['Status'] == 'active':
+            self._location_service.add_additional_identifier(
+                category, identifier, **self._get_additional_identifiers(elem))
 
     def _get_name(self, category, elem):
         namer = {
@@ -131,12 +133,14 @@ class NaptanParser(object):
         )
 
     def _get_additional_identifiers(self, elem):
-        additional_identifiers = {}
         atco_code = self._xpath(elem, self._ATCO_CODE_XPATH)
+        additional_identifiers = {
+            'atco': atco_code
+        }
         tiploc = self._xpath(elem, self._TIPLOC_XPATH)
         if tiploc:
             additional_identifiers['tiploc'] = tiploc
-        elif atco_code.startswith('9400'):
+        elif atco_code.startswith('9100'):
             additional_identifiers['tiploc'] = atco_code[4:]
         return additional_identifiers
 
