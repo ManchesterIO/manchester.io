@@ -110,7 +110,7 @@ class ScheduleService(object):
                 'service_type': service_type,
                 query_field: calling_point_planned_timestamp
             },
-            {'$set': {update_field: actual_timestamp}}
+            {'$set': {update_field: actual_timestamp, 'state': event}}
         )
         if not result['updatedExisting']:
             if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
@@ -131,7 +131,7 @@ class ScheduleService(object):
                 'service_type': service_type,
                 'departure': {'$gte': cancelled_from},
             },
-            {'$set': {'state': self.DEPARTURE_EVENT}}
+            {'$set': {'state': self.CANCELLED_EVENT}}
         )
         if not result['updatedExisting']:
             if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
