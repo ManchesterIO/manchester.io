@@ -102,14 +102,14 @@ class CifParser(object):
             'schedule_expires': datetime.strptime(schedule['schedule_end'], '%Y%m%d').strftime('%Y-%m-%d'),
             'calling_points': map(self._build_calling_point, schedule['calling_points']),
             'activate_on': {
-                'monday': schedule['activate_on']['monday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'tuesday': schedule['activate_on']['tuesday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'wednesday': schedule['activate_on']['wednesday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'thursday': schedule['activate_on']['thursday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'friday': schedule['activate_on']['friday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'saturday': schedule['activate_on']['saturday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'sunday': schedule['activate_on']['sunday'] == '1' and schedule['activate_on']['bank-holidays'] != 'B',
-                'bank-holidays': {'X': False, 'A': True, 'B': True, ' ': None}[schedule['activate_on']['bank-holidays']],
+                'monday': schedule['activate_on']['monday'] == '1',
+                'tuesday': schedule['activate_on']['tuesday'] == '1',
+                'wednesday': schedule['activate_on']['wednesday'] == '1',
+                'thursday': schedule['activate_on']['thursday'] == '1',
+                'friday': schedule['activate_on']['friday'] == '1',
+                'saturday': schedule['activate_on']['saturday'] == '1',
+                'sunday': schedule['activate_on']['sunday'] == '1',
+                'bank-holidays': {'X': False, 'A': 'always', 'B': True, ' ': None}[schedule['activate_on']['bank-holidays']],
                 'school-holidays': {'S': False, 'H': True, '1': True, ' ': None, '0': None}[schedule['activate_on']['school-holidays']],
             }
         }

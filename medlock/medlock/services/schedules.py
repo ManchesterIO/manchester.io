@@ -48,6 +48,29 @@ class ScheduleService(object):
             {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
         )
 
+    def fetch_valid_schedules_for(self, day, service_type, bank_holiday, school_holiday):
+        day_string = datetime.combine(day, time.min).strftime('%Y-%m-%d')
+        weekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][day.weekday()]
+        query = {
+            'schedule_start': {'$lt': day_string},
+            'schedule_expires': {'$gt': day_string},
+            'service_type': service_type,
+            'activate_on.school-holidays': {'$in': [school_holiday, None]}
+        }
+
+        if bank_holiday:
+            query['$or'] = [
+                {'activate_on.{}'.format(weekday): True, 'activate_on.bank-holidays': {'$in': [True, None]}},
+                {'activate_on.bank-holidays': 'always'}
+            ]
+        else:
+            query['activate_on.{}'.format(weekday)] = True
+            query['activate_on.bank-holidays'] = {'$in': [False, None]}
+
+        return self._schedule_collection.find(query)
+
+
+
     def upcoming_departures(self, end_time, **identifiers):
         departures = []
         self._statsd.incr(__name__ + '.activations_search')
@@ -183,6 +206,11 @@ class ScheduleService(object):
         last_public_time = time.min
         last_planned_time = time.min
 
+        if int(schedule['calling_points'][0]['departure'][:2]) > 23:
+            planned_activation_date += timedelta(days=1)
+        if int(schedule['calling_points'][0]['public_departure'][:2]) > 23:
+            public_activation_date += timedelta(days=1)
+
         for calling_point in schedule['calling_points']:
             public_activation_date, last_public_time = self._convert_to_datetime(
                 public_activation_date, calling_point, last_public_time, 'public_arrival')
@@ -209,7 +237,10 @@ class ScheduleService(object):
 
     def _convert_to_datetime(self, activation_date, calling_point, last_time, event):
         if calling_point[event]:
-            calling_point_time = time(int(calling_point[event][:2]),
+            hour = int(calling_point[event][:2])
+            if hour > 23:
+                hour -= 24
+            calling_point_time = time(hour,
                                       int(calling_point[event][2:4]),
                                       int(calling_point[event][4:6] or 0))
             if last_time > calling_point_time:
