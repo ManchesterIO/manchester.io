@@ -1,0 +1,49 @@
+$departures-background: #121c28;
+$departures-foreground: #ffbf00;
+
+.departures-list {
+  @include row();
+
+  background: $departures-background;
+  border: 2px solid $departures-foreground;
+  border-radius: 0.5em;
+  color: $departures-foreground;
+}
+
+.departure {
+  @include pad();
+  @include span-columns(12);
+
+  @include media(max-width $medium-screen) {
+    @include omega();
+  }
+
+  @include media($medium-screen) {
+    @include span-columns(6);
+
+    @include media(max-width $large-screen) {
+      @include omega(2n);
+    }
+  }
+
+  @include media($large-screen) {
+    @include span-columns(4);
+    @include omega(3n);
+  }
+
+}
+
+.departure__table {
+  thead {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+.departure__destination {
+  text-align: left;
+}
+
+.departure__final-destination {
+  font-size: $base-font-size;
+}

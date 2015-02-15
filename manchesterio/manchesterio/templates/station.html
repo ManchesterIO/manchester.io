@@ -6,30 +6,65 @@
 
 {% block body %}
 
-    <div class="container container--full-width">
-        <ul class="results-list action-list" role="navigation">
-            {% for destination, routes in departures.items() %}
-                {% for via, services in routes.items() %}
-                    <li class="action-list__action search-result">
-                        <h2 class="action__title">{{ destination }}</h2>
-                        {% if via != None %}<h3>{{ via }}</h3>{% endif %}
-                        <ol>
-                            {% for service in services %}
-                                <li>
-                                    <a href="{{ service.url }}">
-                                        {{ service.public_departure.time().strftime('%H:%M') }}
-                                        {% if service.predicted_departure > service.public_departure %}
-                                            - delayed until {{ service.predicted_departure.time().strftime('%H:%M') }}
-                                        {% endif %}
-                                        {% if service.platform %}(Platform {{ service.platform }}){% endif %}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ol>
-                    </li>
-                {% endfor %}
+    <div class="container">
+        <p class="warning">
+            The data on this page show scheduled data only, not real-time. Please see
+            <a href="http://ojp.nationalrail.co.uk/service/ldbboard/dep/{{ station.identifier }}">National Rail Enquiries</a> for real-time running data.
+        </p>
+        <ul class="departures-list" role="navigation">
+            {% for destination, services in departures.items() %}
+                <li class="departure">
+                    <table class="departure__table">
+                        <caption class="departure__destination">
+                            <h2 class="departure__final-destination">{{ destination }}</h2>
+                        </caption>
+                        <thead>
+                        <tr>
+                            <th scope="col">Planned Departure</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Platform</th>
+                            {% if services.0.route_identifier %}
+                                <th scope="col">Via</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for service in services %}
+                        <tr>
+                            <td>{{ service.public_departure.time().strftime('%H:%M') }}</td>
+                            <td>
+                                {% if service.state == 'en-route' %}
+                                    {% if service.public_departure <= service.predicted_departure %}
+                                        On time
+                                    {% else %}
+                                        Delayed {{ service.predicted_departure.time().strftime('%H:%M') }}
+                                    {% endif %}
+                                {% elif service.state == 'arrived' %}
+                                    At platform
+                                {% elif service.state == 'cancelled' %}
+                                    Cancelled
+                                {% endif %}
+                            </td>
+                            <td>{% if service.platform %}Plat. {{ service.platform }}{% else %}&mdash;{% endif %}</td>
+                            {% if service.route_identifier %}
+                                <td>{{ service.route_identifier }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </li>
             {% endfor %}
         </ul>
+
+        <div class="location-map">
+            <p class="no-js-warning"><em>Sorry, you need a modern browser with JavaScript to use this feature.</em></p>
+        </div>
+
+        <dl class="location-metadata" role="navigation">
+            <dt>Station Type</dt>
+            <dd>{{ station['stop-type'] }}</dd>
+        </dl>
     </div>
 
 {% endblock %}

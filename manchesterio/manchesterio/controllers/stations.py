@@ -38,12 +38,10 @@ class StationDisplay(object):
     def _transform_departures(self, departures):
         sorted_departures = OrderedDict()
         for destination in sorted(departures):
-            sorted_departures[destination] = OrderedDict()
-            for route in sorted(departures[destination]):
-                sorted_departures[destination][route] = sorted(
-                    map(self._transform_service, departures[destination][route]),
-                    key=lambda service: service['public_departure']
-                )
+            sorted_departures[destination] = sorted(
+                map(self._transform_service, departures[destination]),
+                key=lambda service: service['public_departure']
+            )
         return sorted_departures
 
     def _transform_service(self, service):
@@ -52,5 +50,7 @@ class StationDisplay(object):
             'public_departure': datetime.strptime(service['public_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'predicted_departure': datetime.strptime(service['predicted_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'state': service['state'],
-            'platform': service['platform']
+            'platform': service['platform'],
+            'route': service['route'],
+            'route_identifier': service['route_identifier']
         }

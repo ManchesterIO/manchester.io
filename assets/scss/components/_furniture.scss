@@ -42,8 +42,11 @@ body {
 .container {
   @include outer-container;
 
-  margin: 0 flex-gutter();
   position: relative;
+
+  @include media(max-width $max-width) {
+    margin: 0 flex-gutter();
+  }
 }
 
 .container--full-width {

@@ -42,9 +42,10 @@ class Stations(object):
         return friendly_routes
 
     def _group_by_route(self, services, routes_from):
-        routes_by_destination = defaultdict(lambda: defaultdict(list))
+        routes_by_destination = defaultdict(list)
         for service in services:
-            routes_by_destination[self._get_destination(service)][self._get_route(service, routes_from)].append(service)
+            service['route'] = self._get_route(service, routes_from)
+            routes_by_destination[self._get_destination(service)].append(service)
         return routes_by_destination
 
     def _get_destination(self, service):
@@ -67,16 +68,21 @@ class Stations(object):
 
     def _make_routes_friendly(self, routes_by_destination):
         routes = {}
-        for destination, sub_routes in routes_by_destination.items():
-            friendly_destination = self._location_service.fetch_name(tiploc=destination, default=destination)
-            routes[friendly_destination] = {}
-            if len(sub_routes) == 1:
-                routes[friendly_destination][''] = sub_routes.popitem()[1]
+        for destination, services in routes_by_destination.items():
+            sub_routes = list({service['route'] for service in services})
+            friendly_destination = self._get_friendly_station(destination)
+            routes[friendly_destination] = services
+            if len(sub_routes) > 1:
+                vias = self._make_friendly_vias(sub_routes)
+                for service in services:
+                    service['route_identifier'] = vias[service['route']]
             else:
-                vias = self._make_friendly_vias(sub_routes.keys())
-                for sub_route, services in sub_routes.items():
-                    routes[friendly_destination][vias[sub_route]] = services
+                for service in services:
+                    service['route_identifier'] = ''
         return routes
+
+    def _get_friendly_station(self, tiploc):
+        return self._location_service.fetch_name(tiploc=tiploc, default=tiploc)
 
     def _make_friendly_vias(self, sub_routes):
         vias = {}
@@ -91,16 +97,13 @@ class Stations(object):
                 friendly_via = 'Stopping Service'
             else:
                 distinct_stop = distinct_stops.pop()
-                friendly_via = 'via {}'.format(
-                    self._location_service.fetch_name(tiploc=distinct_stop, default=distinct_stop))
+                friendly_via = 'via {}'.format(self._get_friendly_station(distinct_stop))
             vias[stations] = friendly_via
         return vias
 
     def _transform_services(self, services, at):
         for destination in services:
-            for route in services[destination]:
-                services[destination][route] = map(lambda service: self._make_departures(service, at),
-                                                   services[destination][route])
+            services[destination] = map(lambda service: self._make_departures(service, at), services[destination])
 
     def _make_departures(self, service, at):
         for calling_point in service['calling_points']:
@@ -112,5 +115,7 @@ class Stations(object):
             'public_departure': calling_point['public_departure'],
             'predicted_departure': calling_point['predicted_departure'],
             'state': calling_point['state'],
-            'platform': calling_point['predicted_platform']
+            'platform': calling_point['predicted_platform'],
+            'route': map(self._get_friendly_station, service['route']),
+            'route_identifier': service['route_identifier']
         }
