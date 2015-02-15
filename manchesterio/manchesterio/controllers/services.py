@@ -12,30 +12,35 @@ class ServiceDisplay(object):
         self._statsd = statsd
 
     def init(self):
-        self._app.add_url_rule('/trains/<service_id>', 'train', self.render)
+        self._app.add_url_rule('/trains/<service_id>', 'train', self.render,
+                               defaults={'service_type': 'trains', 'station_type': 'rail-stations'})
+        self._app.add_url_rule('/trams/<service_id>', 'tram', self.render,
+                               defaults={'service_type': 'trams', 'station_type': 'metrolink-stations'})
 
-    def render(self, service_id):
+    def render(self, service_id, service_type, station_type):
         self._statsd.incr(__name__ + 'render')
         try:
-            service = self._fetch_results(service_id)
+            service = self._fetch_results(service_id, service_type)
         except HTTPError as http_error:
             abort(http_error.response.status_code)
 
         return render_template('service.html',
-                               service=self._transform_service(service))
+                               service=self._transform_service(service, station_type))
 
-    def _fetch_results(self, service_id):
-        url = 'http://{base_url}/trains/{service_id}'.format(
+    def _fetch_results(self, service_id, service_type):
+        url = 'http://{base_url}/{service_type}/{service_id}'.format(
             base_url=self._app.config['API_BASE_URL'],
-            service_id=service_id
+            service_id=service_id,
+            service_type=service_type
         )
         with self._statsd.timer(__name__ + '.request_time'):
             response = requests.get(url, timeout=5)
             response.raise_for_status()
             return response.json()
 
-    def _transform_service(self, service):
-        calling_points = map(self._transform_calling_point, service['calling_points'])
+    def _transform_service(self, service, station_type):
+        calling_points = map(lambda calling_point: self._transform_calling_point(calling_point, station_type),
+                             service['calling_points'])
         return {
             'name': '{departure_time} {origin} to {destination}'.format(
                 departure_time=calling_points[0]['public_departure'].strftime('%H:%M'),
@@ -45,10 +50,10 @@ class ServiceDisplay(object):
             'calling_points': calling_points
         }
 
-    def _transform_calling_point(self, calling_point):
+    def _transform_calling_point(self, calling_point, station_type):
         if calling_point['station']:
             station_name = calling_point['station']['name']
-            station_url = '/rail-stations/{}'.format(calling_point['station']['identifier'])
+            station_url = '/{}/{}'.format(station_type, calling_point['station']['identifier'])
         else:
             station_name = calling_point['tiploc']
             station_url = None

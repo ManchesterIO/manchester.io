@@ -110,7 +110,8 @@ class Stations(object):
 
     def _transform_services(self, services, namespace, at):
         for destination in services:
-            services[destination] = map(lambda service: self._make_departures(service, namespace, at), services[destination])
+            services[destination] = map(lambda service: self._make_departures(service, namespace, at),
+                                        services[destination])[:5]
 
     def _make_departures(self, service, namespace, at):
         for calling_point in service['calling_points']:
