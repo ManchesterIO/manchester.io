@@ -76,10 +76,10 @@ class Stations(object):
     def _make_routes_friendly(self, routes_by_destination, namespace):
         routes = {}
         for destination, services in routes_by_destination.items():
-            sub_routes = list({service['route'] for service in services})
+            sub_routes = [service['route'] for service in services]
             friendly_destination = self._get_friendly_station(namespace, destination)
             routes[friendly_destination] = services
-            if len(sub_routes) > 1:
+            if len(set(sub_routes)) > 1:
                 vias = self._make_friendly_vias(sub_routes, namespace)
                 for service in services:
                     service['route_identifier'] = vias[service['route']]
@@ -93,17 +93,26 @@ class Stations(object):
 
     def _make_friendly_vias(self, sub_routes, namespace):
         vias = {}
+        shortest_stops = set(min(sub_routes, key=len))
+        if len(filter(lambda sr: len(sr) == len(shortest_stops) and set(sr) != shortest_stops, sub_routes)) > 0:
+            shortest_stops = None
+
         for i, stations in enumerate(sub_routes):
             all_stops = set(chain(*sub_routes))
             other_stops = set(chain(chain(*sub_routes[:i]), chain(*sub_routes[i+1:])))
             this_stops = set(stations)
-            distinct_stops = other_stops - this_stops
-            if len(distinct_stops) == 0:
+            distinct_stops = this_stops - other_stops
+            if not distinct_stops:
+                distinct_stops = this_stops - shortest_stops
+            if this_stops == shortest_stops:
                 friendly_via = 'Fast Service'
-            elif this_stops == all_stops:
+            elif this_stops == all_stops and len(this_stops) + 2 >= len(all_stops):
                 friendly_via = 'Stopping Service'
             else:
-                distinct_stop = distinct_stops.pop()
+                if distinct_stops:
+                    distinct_stop = distinct_stops.pop()
+                else:
+                    distinct_stop = this_stops.pop()
                 friendly_via = 'via {}'.format(self._get_friendly_station(namespace, distinct_stop))
             vias[stations] = friendly_via
         return vias
@@ -111,7 +120,7 @@ class Stations(object):
     def _transform_services(self, services, namespace, at):
         for destination in services:
             services[destination] = map(lambda service: self._make_departures(service, namespace, at),
-                                        services[destination])[:5]
+                                        services[destination])
 
     def _make_departures(self, service, namespace, at):
         for calling_point in service['calling_points']:
