@@ -147,6 +147,11 @@ class ScheduleService(object):
             self._update_missed_records(activation_id, service_type, calling_point_planned_timestamp)
             return True
 
+    def bulk_manual_update(self, event_type, timestamp, service_type):
+        self._activations_collection.update({'service_type': service_type, event_type: {'$lte': timestamp}},
+                                            {'$set': {'state': event_type}},
+                                            multi=True)
+
     def cancel_activation(self, activation_id, service_type, cancelled_from):
         result = self._activations_collection.update(
             {
@@ -154,7 +159,8 @@ class ScheduleService(object):
                 'service_type': service_type,
                 'departure': {'$gte': cancelled_from},
             },
-            {'$set': {'state': self.CANCELLED_EVENT}}
+            {'$set': {'state': self.CANCELLED_EVENT}},
+            multi=True
         )
         if not result['updatedExisting']:
             if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
@@ -179,7 +185,8 @@ class ScheduleService(object):
                 ],
                 'state': {'$in': [self.EN_ROUTE_EVENT, self.ARRIVAL_EVENT]}
             },
-            {'$set': {'state': self.DEPARTURE_EVENT}}
+            {'$set': {'state': self.DEPARTURE_EVENT}},
+            multi=True
         )
 
     def _get_schedule_to_activate(self, service_id, schedule_start):
@@ -297,6 +304,12 @@ class ScheduleService(object):
             self._kv_activations_collection.ensure_index({'predicted_departure': ASCENDING,
                                                           'tiploc': ASCENDING,
                                                           'state': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'public_departure': ASCENDING,
+                                                          'atco': ASCENDING,
+                                                          'state': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'predicted_departure': ASCENDING,
+                                                          'atco': ASCENDING,
+                                                          'state': ASCENDING}.items())
             self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
                                                           'service_type': ASCENDING,
                                                           'arrival': ASCENDING}.items())
@@ -311,5 +324,7 @@ class ScheduleService(object):
                                                           'service_type': ASCENDING,
                                                           'departure': ASCENDING,
                                                           'state': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index({'service_type': ASCENDING,
+                                                          'departure': ASCENDING}.items())
             self._kv_activations_collection.ensure_index('activated_on')
         return self._kv_activations_collection

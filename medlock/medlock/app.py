@@ -83,6 +83,13 @@ celery.task(import_tfgm_schedule, crontab=tfgm_schedule_importer.IMPORT_SCHEDULE
 def activate_metrolink():
     with app.app_context():
         metrolink_running_data_importer.activate()
+celery.task(activate_metrolink, crontab=metrolink_running_data_importer.IMPORT_SCHEDULE)
+
+
+def tick_metrolink():
+    with app.app_context():
+        metrolink_running_data_importer.on_tick()
+celery.task(tick_metrolink, crontab=metrolink_running_data_importer.TICK_SCHEDULE)
 
 app.url_map.converters['float'] = NegativeFloatConverter
 

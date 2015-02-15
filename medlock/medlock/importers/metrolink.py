@@ -1,9 +1,13 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import logging
+from celery.schedules import schedule
 
 LOGGER = logging.getLogger(__name__)
 
 class MetrolinkRunningDataImporter(object):
+
+    IMPORT_SCHEDULE = schedule(run_every=timedelta(hours=2))
+    TICK_SCHEDULE = schedule(run_every=timedelta(minutes=1))
 
     def __init__(self, schedule_service):
         self._schedule_service = schedule_service
@@ -26,4 +30,4 @@ class MetrolinkRunningDataImporter(object):
                                                          schedule['schedule_start'])
 
     def on_tick(self):
-        pass
+        self._schedule_service.bulk_manual_update('departure', datetime.now(), 'metrolink')
