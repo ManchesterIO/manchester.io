@@ -213,9 +213,9 @@ class ScheduleService(object):
         last_public_time = time.min
         last_planned_time = time.min
 
-        if int(schedule['calling_points'][0]['departure'][:2]) > 23:
+        if schedule['calling_points'] and int(schedule['calling_points'][0]['departure'][:2]) > 23:
             planned_activation_date += timedelta(days=1)
-        if int(schedule['calling_points'][0]['public_departure'][:2]) > 23:
+        if schedule['calling_points'] and int(schedule['calling_points'][0]['public_departure'][:2]) > 23:
             public_activation_date += timedelta(days=1)
 
         for calling_point in schedule['calling_points']:
