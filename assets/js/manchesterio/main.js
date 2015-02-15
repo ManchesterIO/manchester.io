@@ -11,9 +11,9 @@ define(['manchesterio/nearbyStationSearch', 'manchesterio/searchResults', 'contr
     }
 
     function initNearbyStationSearch() {
-        var searchButton = canvas.querySelector('.nearby-station-search');
-        if (searchButton) {
-            var nearbyStationSearch = new NearbyStationSearch(searchButton);
+        var searchButtons = canvas.querySelectorAll('.nearby-station-search');
+        for (var i = 0; i < searchButtons.length; ++i) {
+            var nearbyStationSearch = new NearbyStationSearch(searchButtons[i]);
             nearbyStationSearch.init();
         }
     }

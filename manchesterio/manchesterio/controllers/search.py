@@ -7,36 +7,46 @@ import requests
 
 class SearchResults(object):
 
+    _ACCEPTED_STATION_TYPES = {
+        'rail-stations': 'rail stations',
+        'metrolink-stations': 'Metrolink stations'
+    }
+
     def __init__(self, app, statsd):
         self._app = app
         self._statsd = statsd
 
     def init(self):
-        self._app.add_url_rule('/search/rail-stations/near/<float:lat>,<float:lon>', 'rail-search', self.render)
+        self._app.add_url_rule('/search/<station_type>/near/<float:lat>,<float:lon>', 'search', self.render)
 
-    def render(self, lat, lon):
+    def render(self, station_type, lat, lon):
+        if station_type not in self._ACCEPTED_STATION_TYPES:
+            abort(404)
+
         self._statsd.incr(__name__ + 'render')
         stations = []
-        for station in self._fetch_results(lat, lon).get('results', []):
-            stations.append(self._station_to_template(station, (lat, lon)))
+        for station in self._fetch_results(station_type, lat, lon).get('results', []):
+            stations.append(self._station_to_template(station, station_type, (lat, lon)))
         if len(stations) == 0:
             self._statsd.incr(__name__ + 'no_results')
             abort(404)
 
         return render_template('search-results.html',
+                               station_type=self._ACCEPTED_STATION_TYPES[station_type],
                                stations=stations,
                                starting_lat=lat, starting_lon=lon)
 
-    def _fetch_results(self, lat, lon):
-        url = 'http://{base_url}/search/rail-stations/near/{lat},{lon}'.format(
+    def _fetch_results(self, station_type, lat, lon):
+        url = 'http://{base_url}/search/{station_type}/near/{lat},{lon}'.format(
             base_url=self._app.config['API_BASE_URL'],
+            station_type=station_type,
             lat=lat,
             lon=lon
         )
         with self._statsd.timer(__name__ + '.request_time'):
             return requests.get(url, timeout=5).json()
 
-    def _station_to_template(self, station, origin):
+    def _station_to_template(self, station, station_type, origin):
         lat = station['location']['coordinates'][1]
         lon = station['location']['coordinates'][0]
         return {
@@ -44,7 +54,8 @@ class SearchResults(object):
             'stop_type': self._STOP_TYPES.get(station['stop-type'], ''),
             'lat': lat,
             'lon': lon,
-            'url': '/rail-stations/{}'.format(station['identifier']),
+            'url': '/{station_type}/{identifier}'.format(
+                station_type=station_type, identifier=station['identifier']),
             'distance_and_bearing': '{distance} {bearing}'.format(
                 distance=self._distance(origin, (lat, lon)),
                 bearing=self._bearing(origin, (lat, lon))
@@ -81,5 +92,6 @@ class SearchResults(object):
             return 'SW'
 
     _STOP_TYPES = {
-        'rail-station': 'Rail station'
+        'rail-station': 'Rail station',
+        'metrolink-station': 'Metrolink station'
     }

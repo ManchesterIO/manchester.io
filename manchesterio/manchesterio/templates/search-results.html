@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block page_title %}Rail stations nearby{% endblock %}
+{% block page_title %}{{ station_type|capitalize }} nearby{% endblock %}
 
-{% block page_header %}Nearby rail stations{% endblock %}
+{% block page_header %}Nearby {{ station_type }}{% endblock %}
 
 {% block body %}
 

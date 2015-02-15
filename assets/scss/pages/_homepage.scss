@@ -1,17 +1,18 @@
-.nearby-station-search h2 {
-  &:before {
-    @include sprite-rail-station-small;
+.nearby-station-search h2:before {
+  content: '';
+  display: inline-block;
+  margin-right: $base-spacing / 2;
+  vertical-align: middle;
 
-    content: '';
-    display: inline-block;
-    margin-right: $base-spacing / 2;
-    vertical-align: middle;
+  @include media($large-screen) {
+    display: block;
+    margin: 0 auto $base-spacing / 2;
+  }
+}
 
-    @include media($large-screen) {
-      @include sprite-rail-station;
-
-      display: block;
-      margin: 0 auto $base-spacing / 2;
-    }
+.nearby-station-search--rail h2:before {
+  @include sprite-rail-station-small;
+  @include media($large-screen) {
+    @include sprite-rail-station;
   }
 }
