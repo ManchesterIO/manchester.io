@@ -16,3 +16,10 @@
     @include sprite-rail-station;
   }
 }
+
+.nearby-station-search--metrolink h2:before {
+  @include sprite-tram-small;
+  @include media($large-screen) {
+    @include sprite-tram;
+  }
+}

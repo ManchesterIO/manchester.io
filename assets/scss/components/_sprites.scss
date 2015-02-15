@@ -25,3 +25,11 @@ $sprites: sprite-map('sprites/*.png');
 @mixin sprite-rail-station-small {
   @include sprite('rail-station-small');
 }
+
+@mixin sprite-tram {
+  @include sprite('tram');
+}
+
+@mixin sprite-tram-small {
+  @include sprite('tram-small');
+}

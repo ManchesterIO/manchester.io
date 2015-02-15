@@ -16,11 +16,18 @@ class Stations(object):
         self._schedule_service = schedule_service
 
     def init(self):
-        self._app.add_url_rule('/rail-stations/<crs>', 'rail-station', self.render)
+        self._app.add_url_rule('/rail-stations/<crs>',
+                               'rail-station',
+                               self.render,
+                               defaults={'station_type': 'rail-station'})
+        self._app.add_url_rule('/metrolink-stations/<crs>',
+                               'metrolink-station',
+                               self.render,
+                               defaults={'station_type': 'metrolink-station'})
 
-    def render(self, crs):
+    def render(self, station_type, crs):
         self._statsd.incr(__name__ + '.requests')
-        station = self._location_service.find('rail-station', crs)
+        station = self._location_service.find(station_type, crs)
         if station is None:
             abort(404)
 

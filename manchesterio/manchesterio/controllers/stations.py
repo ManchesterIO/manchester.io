@@ -12,12 +12,13 @@ class StationDisplay(object):
         self._statsd = statsd
 
     def init(self):
-        self._app.add_url_rule('/rail-stations/<crs>', 'rail-station', self.render)
+        self._app.add_url_rule('/rail-stations/<identifier>', 'rail-station', self.render, defaults={'stop_type': 'rail-stations'})
+        self._app.add_url_rule('/metrolink-stations/<identifier>', 'metrolink-station', self.render, defaults={'stop_type': 'metrolink-stations'})
 
-    def render(self, crs):
+    def render(self, stop_type, identifier):
         self._statsd.incr(__name__ + 'render')
         try:
-            station = self._fetch_results(crs)
+            station = self._fetch_results(stop_type, identifier)
         except HTTPError as http_error:
             abort(http_error.response.status_code)
 
@@ -25,10 +26,11 @@ class StationDisplay(object):
                                station=station,
                                departures=self._transform_departures(station['departures']))
 
-    def _fetch_results(self, crs):
-        url = 'http://{base_url}/rail-stations/{crs}'.format(
+    def _fetch_results(self, stop_type, identifier):
+        url = 'http://{base_url}/{stop_type}/{identifier}'.format(
             base_url=self._app.config['API_BASE_URL'],
-            crs=crs
+            stop_type=stop_type,
+            identifier=identifier
         )
         with self._statsd.timer(__name__ + '.request_time'):
             response = requests.get(url, timeout=5)
