@@ -12,10 +12,14 @@ class StationDisplay(object):
         self._statsd = statsd
 
     def init(self):
-        self._app.add_url_rule('/rail-stations/<identifier>', 'rail-station', self.render, defaults={'stop_type': 'rail-stations'})
-        self._app.add_url_rule('/metrolink-stations/<identifier>', 'metrolink-station', self.render, defaults={'stop_type': 'metrolink-stations'})
+        self._app.add_url_rule(
+            '/rail-stations/<identifier>', 'rail-station', self.render,
+            defaults={'stop_type': 'rail-stations', 'service_type': 'trains'})
+        self._app.add_url_rule(
+            '/metrolink-stations/<identifier>', 'metrolink-station', self.render,
+            defaults={'stop_type': 'metrolink-stations', 'service_type': 'trams'})
 
-    def render(self, stop_type, identifier):
+    def render(self, stop_type, identifier, service_type):
         self._statsd.incr(__name__ + 'render')
         try:
             station = self._fetch_results(stop_type, identifier)
@@ -24,7 +28,7 @@ class StationDisplay(object):
 
         return render_template('station.html',
                                station=station,
-                               departures=self._transform_departures(station['departures']))
+                               departures=self._transform_departures(station['departures'], service_type))
 
     def _fetch_results(self, stop_type, identifier):
         url = 'http://{base_url}/{stop_type}/{identifier}'.format(
@@ -37,18 +41,18 @@ class StationDisplay(object):
             response.raise_for_status()
             return response.json()
 
-    def _transform_departures(self, departures):
+    def _transform_departures(self, departures, service_type):
         sorted_departures = OrderedDict()
         for destination in sorted(departures):
             sorted_departures[destination] = sorted(
-                map(self._transform_service, departures[destination]),
+                map(lambda service: self._transform_service(service, service_type), departures[destination]),
                 key=lambda service: service['public_departure']
             )
         return sorted_departures
 
-    def _transform_service(self, service):
+    def _transform_service(self, service, service_type):
         return {
-            'url': '/trains/{}'.format(service['service_id']),
+            'url': '/{}/{}'.format(service_type, service['service_id']),
             'public_departure': datetime.strptime(service['public_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'predicted_departure': datetime.strptime(service['predicted_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'state': service['state'],
