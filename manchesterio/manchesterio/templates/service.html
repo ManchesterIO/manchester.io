@@ -47,14 +47,16 @@
                     <td>
                         {% if calling_point.state == 'cancelled' %}
                             Cancelled
-                        {% else %}
-                            {% if calling_point.state == 'en-route' %}
-                                Arrival expected {% if calling_point.predicted_arrival == calling_point.public_arrival %}on time{% else %}{{ calling_point.predicted_arrival.strftime('%H:%M')}}{% endif %}<br>
-                            {% elif calling_point.state == 'arrival' %}
-                                Arrived {% if calling_point.actual_arrival == calling_point.public_arrival %}on time{% else %}{{ calling_point.actual_arrival.strftime('%H:%M')}}{% endif %}<br>
+                        {% elif calling_point.state == 'en-route' %}
+                            {% if calling_point.public_arrival %}
+                                Expected {% if calling_point.predicted_arrival == calling_point.public_arrival %}on time{% else %}{{ calling_point.predicted_arrival.strftime('%H:%M')}}{% endif %}
                             {% else %}
-                                Departed {% if calling_point.actual_departure == calling_point.public_departure %}on time{% else %}{{ calling_point.actual_departure.strftime('%H:%M')}}{% endif %}
+                                Expected {% if calling_point.predicted_departure == calling_point.public_departure %}on time{% else %}{{ calling_point.predicted_departure.strftime('%H:%M')}}{% endif %}
                             {% endif %}
+                        {% elif calling_point.state == 'arrival' %}
+                            Arrived {% if calling_point.actual_arrival %}{% if calling_point.actual_arrival == calling_point.public_arrival %}on time{% else %}{{ calling_point.actual_arrival.strftime('%H:%M')}}{% endif %}{% endif %}
+                        {% else %}
+                            Departed {% if calling_point.actual_departure %}{% if calling_point.actual_departure == calling_point.public_departure %}on time{% else %}{{ calling_point.actual_departure.strftime('%H:%M')}}{% endif %}{% endif %}
                         {% endif %}
                     </td>
                 </tr>

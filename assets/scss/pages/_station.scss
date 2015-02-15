@@ -40,7 +40,13 @@ $departures-foreground: #ffbf00;
     @include span-columns(4);
     @include omega(3n);
   }
+}
 
+.departure--none {
+  @include pad();
+  @include span-columns(12);
+
+  text-align: center;
 }
 
 .departure__table {
