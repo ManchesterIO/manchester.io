@@ -1,8 +1,8 @@
 from cStringIO import StringIO
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from gzip import GzipFile
 import logging
-from xml.etree import cElementTree as ET
+from xml.etree.cElementTree import fromstring, ParseError
 
 from celery.schedules import schedule
 from stomp.listener import ConnectionListener
@@ -17,17 +17,38 @@ class DarwinPushPortImporter(ConnectionListener):
 
     def __init__(self, app, statsd, schedule_service, mq):
         self._app = app
+        self._statsd = statsd
         self._schedule_service = schedule_service
         self._mq = mq
-        self._parser = DarwinPushPortParser()
+        self._parser = DarwinPushPortParser(statsd)
 
     def on_message(self, headers, message):
-        body = ET.fromstring(GzipFile(fileobj=StringIO(message)).read())
+        try:
+            body = self._parse_message(message)
+        except ParseError:
+            self._statsd.incr(__name__ + '.xml_parse_error')
+        except IOError:
+            self._statsd.incr(__name__ + '.gzip_error')
+        else:
+            self._handle_response(body)
+            self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])
+
+    def cleanup(self):
+        self._schedule_service.remove_expired(date.today(), 'darwin')
+
+    def _parse_message(self, message):
+        return fromstring(GzipFile(fileobj=StringIO(message)).read())
+
+    def _handle_response(self, body):
         for event_type, event_body in self._parser.parse(body):
             if event_type == 'activation':
                 self._handle_activation(event_body)
-
-        self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])
+            elif event_type == 'deactivation':
+                self._handle_deactivation(event_body)
+            elif event_type == 'status':
+                self._handle_status(event_body)
+            elif event_type == 'association':
+                pass
 
     def _handle_activation(self, (activation_id, schedule)):
         with self._app.app_context():
@@ -41,5 +62,19 @@ class DarwinPushPortImporter(ConnectionListener):
                 schedule_start=schedule['schedule_start']
             )
 
-    def cleanup(self):
-        pass
+    def _handle_deactivation(self, activation_id):
+        LOGGER.info("Deactivated %s", activation_id)
+        self._schedule_service.remove_activation(activation_id=activation_id, service_type='train')
+
+    def _handle_status(self, (activation_id, updates)):
+        with self._app.app_context():
+            for expected, event, actual, actual_or_prediction in updates:
+                LOGGER.debug("Updated %s %s %s at %s", activation_id, actual_or_prediction, event, expected)
+                self._schedule_service.update_activation(
+                    activation_id=activation_id,
+                    service_type='train',
+                    calling_point_planned_timestamp=expected,
+                    event=event,
+                    actual_timestamp=actual,
+                    actual_or_predicted=actual_or_prediction
+                )

@@ -13,6 +13,8 @@ class ScheduleService(object):
     ARRIVAL_EVENT = 'arrival'
     DEPARTURE_EVENT = 'departure'
     CANCELLED_EVENT = 'cancelled'
+    PREDICTED = 'predicted'
+    ACTUAL = 'actual'
 
     def __init__(self, statsd, mongo):
         self._statsd = statsd
@@ -104,6 +106,7 @@ class ScheduleService(object):
         self._statsd.incr(__name__ + '.activate_schedule')
         schedule = self._get_schedule_to_activate(service_id, schedule_start)
         if schedule:
+            self._activations_collection.remove({'activation_id': activation_id})
             self._create_activation(activation_id, service_type, activation_date, schedule)
             self._statsd.incr(__name__ + '.activate_schedule_success')
             return True
@@ -111,19 +114,27 @@ class ScheduleService(object):
             self._statsd.incr(__name__ + '.activate_schedule_no_schedule')
             return False
 
-    def update_activation(self, activation_id, service_type, calling_point_planned_timestamp, event, actual_timestamp):
+    def update_activation(
+            self, activation_id, service_type, calling_point_planned_timestamp, event, actual_timestamp,
+            actual_or_predicted
+    ):
         if event == self.ARRIVAL_EVENT:
             self._statsd.incr(__name__ + '.movements.arrival')
             query_field = 'arrival'
-            update_field = 'actual_arrival'
         elif event == self.DEPARTURE_EVENT:
             self._statsd.incr(__name__ + '.movements.departure')
             query_field = 'departure'
-            update_field = 'actual_departure'
         else:
             self._statsd.incr(__name__ + '.movements.invalid')
             LOGGER.error("Attempted to update activation %s with invalid event %s", activation_id, event)
             return False
+
+        update = {
+            "{0}_{1}".format(actual_or_predicted, query_field): actual_timestamp
+        }
+
+        if actual_or_predicted == 'actual':
+            update['state'] = event
 
         result = self._activations_collection.update(
             {
@@ -131,7 +142,7 @@ class ScheduleService(object):
                 'service_type': service_type,
                 query_field: calling_point_planned_timestamp
             },
-            {'$set': {update_field: actual_timestamp, 'state': event}}
+            {'$set': update}
         )
         if not result['updatedExisting']:
             if self._activations_collection.find({'activation_id': activation_id}).count() > 0:
@@ -142,7 +153,8 @@ class ScheduleService(object):
                 return None
         else:
             self._statsd.incr(__name__ + '.movements.success')
-            self._update_missed_records(activation_id, service_type, calling_point_planned_timestamp)
+            if actual_or_predicted == self.ACTUAL:
+                self._update_missed_records(activation_id, service_type, calling_point_planned_timestamp)
             return True
 
     def bulk_manual_update(self, event_type, timestamp, service_type):
@@ -171,6 +183,12 @@ class ScheduleService(object):
             self._statsd.incr(__name__ + '.cancellations.success')
             self._update_missed_records(activation_id, service_type, cancelled_from)
             return True
+
+    def remove_activation(self, activation_id, service_type):
+        self._activations_collection.remove({
+            'activation_id': activation_id,
+            'service_type': service_type
+        })
 
     def _update_missed_records(self, activation_id, service_type, planned_timestamp):
         self._activations_collection.update(

@@ -23,7 +23,7 @@ class Services(object):
     def render(self, service_id, service_type, identifier_namespace):
         self._statsd.incr(__name__ + '.requests')
         service = self._schedule_service.fetch_activation(service_id, service_type)
-        if not service:
+        if not service.get('calling_points', []):
             abort(404)
 
         for calling_point in service['calling_points']:
