@@ -15,13 +15,11 @@ if app.debug:
     logging.getLogger('medlock').setLevel(logging.INFO)
 
 mq.start()
-mq.connect(username=app.config['NETWORK_RAIL_AUTH'][0],
-           passcode=app.config['NETWORK_RAIL_AUTH'][1],
+mq.connect(username='d3user',
+           passcode='d3password',
            wait=True)
 
-mq.subscribe('/topic/VSTP_ALL', '{}-vstp'.format(app.config['NETWORK_RAIL_CONSUMER_ID']),
-             ack='client-individual')
-mq.subscribe('/topic/TRAIN_MVT_ALL_TOC', '{}-mvt'.format(app.config['NETWORK_RAIL_CONSUMER_ID']),
+mq.subscribe(app.config['NATIONAL_RAIL_QUEUE_NAME'], app.config['NATIONAL_RAIL_CONSUMER_ID'],
              ack='client-individual')
 
 while mq.is_connected():

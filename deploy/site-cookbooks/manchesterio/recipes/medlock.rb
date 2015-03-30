@@ -25,11 +25,11 @@ end
 template "#{node.manchesterio.root}/medlock.cfg" do
   source "medlock.cfg.erb"
   mode "0644"
-  network_rail_creds = node.manchesterio.network_rail_credentials
-  network_rail_creds = Chef::EncryptedDataBagItem.load('secrets', 'network_rail') if network_rail_creds.user.nil?
+  national_rail_queue_name = node.manchesterio.national_rail_queue_name
+  national_rail_queue_name = Chef::EncryptedDataBagItem.load('secrets', 'national_rail')['queue_name'] if national_rail_queue_name.nil?
   sentry_dsn = node.manchesterio.sentry_dsn
   sentry_dsn = Chef::EncryptedDataBagItem.load('secrets', 'sentry')['api_dsn'] if sentry_dsn.nil?
-  variables "network_rail" => network_rail_creds, 'sentry_dsn' => sentry_dsn
+  variables "national_rail_queue_name" => national_rail_queue_name, 'sentry_dsn' => sentry_dsn
 end
 
 supervisor_service "medlock" do

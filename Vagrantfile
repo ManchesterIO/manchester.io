@@ -34,7 +34,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             'ui_sentry_dsn' => 'http://4b91300f9bde4fccacac0971f2ec6eda:486cd1193e554d42b2164044b49d6922@localhost:9000/2',
             'debug' => true,
             'vagrant' => true,
-            'network_rail_consumer_id' => Socket.gethostname
+            'national_rail_consumer_id' => Socket.gethostname
         },
         "sentry" => {
             'hostname' => 'sentry.sandbox.manchester.io',

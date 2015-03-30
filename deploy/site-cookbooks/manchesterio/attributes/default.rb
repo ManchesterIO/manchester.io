@@ -7,8 +7,8 @@ default['manchesterio']['sentry_dsn'] = nil
 default['manchesterio']['ui_sentry_dsn'] = nil
 default['manchesterio']['vagrant'] = false
 default['manchesterio']['debug'] = false
-default['manchesterio']['network_rail_credentials'] = { 'user' => nil, 'pass' => nil }
-default['manchesterio']['network_rail_consumer_id'] = 'manchester.io'
+default['manchesterio']['national_rail_queue_name'] = nil
+default['manchesterio']['national_rail_consumer_id'] = 'manchester.io'
 
 default['sentry']['root'] = '/opt/sentry'
 default['sentry']['secret_key'] = nil
