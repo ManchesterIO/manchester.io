@@ -69,8 +69,6 @@ class ScheduleService(object):
 
         return self._schedule_collection.find(query)
 
-
-
     def upcoming_departures(self, end_time, **identifiers):
         departures = []
         self._statsd.incr(__name__ + '.activations_search')
