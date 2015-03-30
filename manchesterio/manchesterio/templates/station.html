@@ -38,7 +38,7 @@
                             </td>
                             <td>
                                 {% if service.state == 'en-route' %}
-                                    {% if service.public_departure <= service.predicted_departure %}
+                                    {% if service.public_departure >= service.predicted_departure %}
                                         On time
                                     {% else %}
                                         Delayed {{ service.predicted_departure.time().strftime('%H:%M') }}
