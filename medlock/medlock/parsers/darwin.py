@@ -49,7 +49,6 @@ class DarwinPushPortParser(object):
         return {
             'source': 'darwin',
             'service_id': xml.attrib['uid'],
-            'schedule_priority': 'P',
             'schedule_start': xml.attrib['ssd'],
             'schedule_expires': xml.attrib['ssd'],
             'calling_points': [

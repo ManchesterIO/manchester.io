@@ -20,7 +20,6 @@ class ScheduleService(object):
         self._statsd = statsd
         self._kv_store = mongo
         self._kv_schedule_collection = None
-        self._kv_association_collection = None
         self._kv_activations_collection = None
 
     def insert(self, **kwargs):
@@ -31,21 +30,11 @@ class ScheduleService(object):
         self._statsd.incr(__name__ + '.delete')
         self._schedule_collection.remove(kwargs)
 
-    def create_association(self, **kwargs):
-        self._statsd.incr(__name__ + '.create_association')
-        self._association_collection.insert(kwargs)
-
-    def delete_association(self, **kwargs):
-        self._statsd.incr(__name__ + '.delete_association')
-        self._association_collection.remove(kwargs)
-
     def reset(self, source):
-        self._association_collection.remove({'source': source})
         self._schedule_collection.remove({'source': source})
 
     def remove_expired(self, today, source):
-        self._association_collection.remove({'source': source, 'association_end': {'$lt': today.isoformat()}})
-        self._schedule_collection.remove({'source': source, 'service_end': {'$lt': today.isoformat()}})
+        self._schedule_collection.remove({'source': source, 'schedule_expires': {'$lt': today.isoformat()}})
         self._activations_collection.remove(
             {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
         )
@@ -85,13 +74,15 @@ class ScheduleService(object):
         for identifier, values in identifiers.items():
             query[identifier] = {'$in': values}
 
-        for departure in self._activations_collection.find(query):
-            departures.append({
-                'calling_points': sorted(self._activations_collection.find({
-                    'activation_id': departure['activation_id'],
-                    'service_type': departure['service_type']
-                }), key=self._calling_point_sort_key)
-            })
+        for departure in self._activations_collection.find(
+                query,
+                projection={
+                    '_id': False,
+                    'activation_id': True,
+                    'service_type': True
+                }
+        ):
+            departures.append(self.fetch_activation(departure['activation_id'], departure['service_type']))
 
         return departures
 
@@ -206,16 +197,10 @@ class ScheduleService(object):
         )
 
     def _get_schedule_to_activate(self, service_id, schedule_start):
-        schedules = self._schedule_collection.find(
+        schedule = self._schedule_collection.find_one(
             {'service_id': service_id, 'schedule_start': schedule_start}
-        ).sort('schedule_priority')
-        if schedules.count() > 0 and not self._is_planned_cancellation(schedules[0]):
-            return schedules[0]
-        else:
-            return None
-
-    def _is_planned_cancellation(self, schedule):
-        return schedule['schedule_priority'] == 'C'
+        )
+        return schedule
 
     def _create_activation(self, activation_id, service_type, activation_time, schedule):
         activations = []
@@ -280,67 +265,28 @@ class ScheduleService(object):
         if self._kv_schedule_collection is None:
             self._kv_schedule_collection = self._kv_store.db.schedules
             self._kv_schedule_collection.ensure_index('source')
-            self._kv_schedule_collection.ensure_index({'source': ASCENDING, 'service_end': ASCENDING}.items())
-            self._kv_schedule_collection.ensure_index({'service_id': ASCENDING,
-                                                       'schedule_priority': ASCENDING,
-                                                       'schedule_start': ASCENDING,
-                                                       'source': ASCENDING}.items(),
-                                                      name='schedule_delete_lookup')
-            self._kv_schedule_collection.ensure_index({'service_id': ASCENDING, 'schedule_start': ASCENDING}.items())
         return self._kv_schedule_collection
-
-    @property
-    def _association_collection(self):
-        if self._kv_association_collection is None:
-            self._kv_association_collection = self._kv_store.db.associations
-            self._kv_association_collection.ensure_index('source')
-            self._kv_association_collection.ensure_index({'source': ASCENDING, 'association_end': ASCENDING}.items())
-            self._kv_association_collection.ensure_index({'service_id': ASCENDING,
-                                                          'schedule_priority': ASCENDING,
-                                                          'association_start': ASCENDING,
-                                                          'source': ASCENDING,
-                                                          'associated_service_id': ASCENDING,
-                                                          'associated_location': ASCENDING}.items(),
-                                                         name='association_delete_lookup')
-        return self._kv_association_collection
 
     @property
     def _activations_collection(self):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
-            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'service_type': ASCENDING,
-                                                          'arrival': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'service_type': ASCENDING,
-                                                          'departure': ASCENDING}.items())
+            self._kv_activations_collection.ensure_index('activation_id')
             self._kv_activations_collection.ensure_index({'public_departure': ASCENDING,
+                                                          'predicted_departure': ASCENDING,
                                                           'tiploc': ASCENDING,
-                                                          'state': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'predicted_departure': ASCENDING,
-                                                          'tiploc': ASCENDING,
-                                                          'state': ASCENDING}.items())
+                                                          'state': ASCENDING,
+                                                          'activation_id': ASCENDING,
+                                                          'service_type': ASCENDING}.items())
             self._kv_activations_collection.ensure_index({'public_departure': ASCENDING,
-                                                          'atco': ASCENDING,
-                                                          'state': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'predicted_departure': ASCENDING,
-                                                          'atco': ASCENDING,
-                                                          'state': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'service_type': ASCENDING,
-                                                          'arrival': ASCENDING}.items())
+                                                          'predicted_departure': ASCENDING,
+                                                          'atoc': ASCENDING,
+                                                          'state': ASCENDING,
+                                                          'activation_id': ASCENDING,
+                                                          'service_type': ASCENDING}.items())
             self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
                                                           'service_type': ASCENDING,
                                                           'arrival': ASCENDING,
-                                                          'state': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'service_type': ASCENDING,
-                                                          'departure': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'activation_id': ASCENDING,
-                                                          'service_type': ASCENDING,
                                                           'departure': ASCENDING,
                                                           'state': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index({'service_type': ASCENDING,
-                                                          'departure': ASCENDING}.items())
-            self._kv_activations_collection.ensure_index('activated_on')
         return self._kv_activations_collection

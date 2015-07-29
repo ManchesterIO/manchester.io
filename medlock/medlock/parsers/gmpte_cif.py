@@ -97,7 +97,6 @@ class CifParser(object):
             'service_id': service_key + schedule['identifier'].strip(),
             'service_type': {'METRO': 'metrolink', 'BUS': 'bus'}[schedule['vehicle_type'].strip()],
             'public_id': schedule['public_id'].strip(),
-            'schedule_priority': 'P',
             'schedule_start': datetime.strptime(schedule['schedule_start'], '%Y%m%d').strftime('%Y-%m-%d'),
             'schedule_expires': datetime.strptime(schedule['schedule_end'], '%Y%m%d').strftime('%Y-%m-%d'),
             'calling_points': map(self._build_calling_point, schedule['calling_points']),
