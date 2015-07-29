@@ -64,3 +64,15 @@ $departures-foreground: #ffbf00;
 .departure__final-destination {
   font-size: $base-font-size;
 }
+
+.calling-point__arrival-status,
+.calling-point__departure-status {
+  &--arrival {
+    font-weight: bold;
+  }
+
+  &--departure {
+    color: $dark-gray;
+    font-style: italic;
+  }
+}
