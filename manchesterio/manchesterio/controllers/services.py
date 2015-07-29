@@ -24,8 +24,18 @@ class ServiceDisplay(object):
         except HTTPError as http_error:
             abort(http_error.response.status_code)
 
+        service = self._transform_service(service, station_type)
+
         return render_template('service.html',
-                               service=self._transform_service(service, station_type))
+                               service=service,
+                               has_platform_information=self._has_platform_information(service))
+
+    def _has_platform_information(self, service):
+        has_platform_information = False
+        for calling_point in service['calling_points']:
+            if calling_point['platform']:
+                has_platform_information = True
+        return has_platform_information
 
     def _fetch_results(self, service_id, service_type):
         url = 'http://{base_url}/{service_type}/{service_id}'.format(

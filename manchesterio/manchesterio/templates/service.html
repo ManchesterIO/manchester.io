@@ -10,7 +10,7 @@
         <thead>
         <tr>
             <th scope="col">Station</th>
-            <th scope="col">Plat.</th>
+            {% if has_platform_information %}<th scope="col">Plat.</th>{% endif %}
             <th scope="col">Arrival</th>
             <th scope="col">Departure</th>
             <th scope="col">State</th>
@@ -27,9 +27,11 @@
                             {{ calling_point.station }}
                         {% endif %}
                     </td>
-                    <td>
-                        {% if calling_point.platform %}{{ calling_point.platform }}{% else %}&mdash;{% endif %}
-                    </td>
+                    {% if has_platform_information %}
+                        <td>
+                            {% if calling_point.platform %}{{ calling_point.platform }}{% else %}&mdash;{% endif %}
+                        </td>
+                    {% endif %}
                     <td>
                         {% if calling_point.public_arrival %}
                             {{ calling_point.public_arrival.time().strftime('%H:%M') }}

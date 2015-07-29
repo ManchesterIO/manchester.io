@@ -22,7 +22,7 @@
                         <tr>
                             <th scope="col">Planned Departure</th>
                             <th scope="col">State</th>
-                            <th scope="col">Platform</th>
+                            {% if has_platform_information %}<th scope="col">Platform</th>{% endif %}
                             {% if services.0.route_identifier %}
                                 <th scope="col">Via</th>
                             {% endif %}
@@ -51,7 +51,9 @@
                                     Cancelled
                                 {% endif %}
                             </td>
-                            <td>{% if service.platform %}Plat. {{ service.platform }}{% else %}&mdash;{% endif %}</td>
+                            {% if has_platform_information %}
+                                <td>{% if service.platform %}Plat. {{ service.platform }}{% else %}&mdash;{% endif %}</td>
+                            {% endif %}
                             {% if service.route_identifier %}
                                 <td>{{ service.route_identifier }}</td>
                             {% endif %}
@@ -69,9 +71,7 @@
             <p class="no-js-warning"><em>Sorry, you need a modern browser with JavaScript to use this feature.</em></p>
         </div>
 
-        <dl class="location-metadata" role="navigation">
-            <dt>Station Type</dt>
-            <dd>{{ station['stop-type'] }}</dd>
+        <dl class="location-metadata">
         </dl>
     </div>
 

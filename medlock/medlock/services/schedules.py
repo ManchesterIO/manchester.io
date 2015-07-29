@@ -258,14 +258,14 @@ class ScheduleService(object):
         if self._kv_schedule_collection is None:
             self._kv_schedule_collection = self._kv_store.db.schedules
             self._kv_schedule_collection.ensure_index('source')
-            self._kv_schedule_collection.ensure_index('schedule_expires', expire_after_seconds=48 * 60 * 60)
+            self._kv_schedule_collection.ensure_index('schedule_expires', expire_after_seconds=6*60*60)
         return self._kv_schedule_collection
 
     @property
     def _activations_collection(self):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
-            self._kv_activations_collection.ensure_index('activated_on', expire_after_seconds=36 * 60 * 60)
+            self._kv_activations_collection.ensure_index('activated_on', expire_after_seconds=36*60*60)
             self._kv_activations_collection.ensure_index('activation_id')
             self._kv_activations_collection.ensure_index({'public_departure': ASCENDING,
                                                           'predicted_departure': ASCENDING,

@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from datetime import datetime
+from itertools import chain
 from flask import abort, render_template
 import requests
 from requests.exceptions import HTTPError
@@ -26,9 +27,19 @@ class StationDisplay(object):
         except HTTPError as http_error:
             abort(http_error.response.status_code)
 
+        departures = self._transform_departures(station['departures'], service_type)
+
         return render_template('station.html',
                                station=station,
-                               departures=self._transform_departures(station['departures'], service_type))
+                               departures=departures,
+                               has_platform_information=self._has_platform_information(departures))
+
+    def _has_platform_information(self, departures):
+        has_platform_information = False
+        for service in chain(*departures.values()):
+            if service['platform']:
+                has_platform_information = True
+        return has_platform_information
 
     def _fetch_results(self, stop_type, identifier):
         url = 'http://{base_url}/{stop_type}/{identifier}'.format(
