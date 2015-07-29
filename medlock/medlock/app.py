@@ -53,12 +53,6 @@ darwin_push_port_importer = DarwinPushPortImporter(app, statsd, schedule_service
 mq.set_listener('darwin', darwin_push_port_importer)
 
 
-def cleanup_darwin():
-    with app.app_context():
-        darwin_push_port_importer.cleanup()
-celery.task(cleanup_darwin, crontab=darwin_push_port_importer.CLEANUP_SCHEDULE)
-
-
 def import_naptan():
     with app.app_context():
         naptan_importer.load()

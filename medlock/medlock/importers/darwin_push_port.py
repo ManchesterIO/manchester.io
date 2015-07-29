@@ -13,8 +13,6 @@ LOGGER = logging.getLogger(__name__)
 
 class DarwinPushPortImporter(ConnectionListener):
 
-    CLEANUP_SCHEDULE = schedule(run_every=timedelta(days=1))
-
     def __init__(self, app, statsd, schedule_service, mq):
         self._app = app
         self._statsd = statsd
@@ -32,9 +30,6 @@ class DarwinPushPortImporter(ConnectionListener):
         else:
             self._handle_response(body)
             self._mq.ack(id=headers['message-id'], subscription=headers['subscription'])
-
-    def cleanup(self):
-        self._schedule_service.remove_expired(date.today(), 'darwin')
 
     def _parse_message(self, message):
         return fromstring(GzipFile(fileobj=StringIO(message)).read())
@@ -57,7 +52,7 @@ class DarwinPushPortImporter(ConnectionListener):
             self._schedule_service.activate_schedule(
                 activation_id=activation_id,
                 service_type='train',
-                activation_date=datetime.strptime(schedule['schedule_start'], '%Y-%m-%d'),
+                activation_date=schedule['schedule_start'],
                 service_id=schedule['service_id'],
                 schedule_start=schedule['schedule_start']
             )

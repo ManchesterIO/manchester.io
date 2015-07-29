@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, time
 import logging
 from xml.etree.ElementTree import tostring
 
@@ -49,8 +49,8 @@ class DarwinPushPortParser(object):
         return {
             'source': 'darwin',
             'service_id': xml.attrib['uid'],
-            'schedule_start': xml.attrib['ssd'],
-            'schedule_expires': xml.attrib['ssd'],
+            'schedule_start': datetime.combine(datetime.strptime(xml.attrib['ssd'], '%Y-%m-%d'), time.min),
+            'schedule_expires': datetime.combine(datetime.strptime(xml.attrib['ssd'], '%Y-%m-%d'), time.max),
             'calling_points': [
                 self._build_calling_point(xml.find('{sched}OR'.format(**self._XML_NAMESPACES)))
             ] + map(self._build_calling_point, xml.findall('{sched}IP'.format(**self._XML_NAMESPACES))) + [
@@ -78,7 +78,6 @@ class DarwinPushPortParser(object):
         if len(timestamp) == 5:
             timestamp += ':00'
         return datetime.strptime(timestamp, '%H:%M:%S').time()
-
 
     def _parse_status(self, xml):
         updates = []

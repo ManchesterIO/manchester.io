@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time
 import logging
 
 LOGGER = logging.getLogger(__name__)
@@ -97,8 +97,8 @@ class CifParser(object):
             'service_id': service_key + schedule['identifier'].strip(),
             'service_type': {'METRO': 'metrolink', 'BUS': 'bus'}[schedule['vehicle_type'].strip()],
             'public_id': schedule['public_id'].strip(),
-            'schedule_start': datetime.strptime(schedule['schedule_start'], '%Y%m%d').strftime('%Y-%m-%d'),
-            'schedule_expires': datetime.strptime(schedule['schedule_end'], '%Y%m%d').strftime('%Y-%m-%d'),
+            'schedule_start': datetime.combine(datetime.strptime(schedule['schedule_start'], '%Y%m%d'), time.min),
+            'schedule_expires': datetime.combine(datetime.strptime(schedule['schedule_end'], '%Y%m%d'), time.max),
             'calling_points': map(self._build_calling_point, schedule['calling_points']),
             'activate_on': {
                 'monday': schedule['activate_on']['monday'] == '1',

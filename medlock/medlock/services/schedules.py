@@ -33,18 +33,11 @@ class ScheduleService(object):
     def reset(self, source):
         self._schedule_collection.remove({'source': source})
 
-    def remove_expired(self, today, source):
-        self._schedule_collection.remove({'source': source, 'schedule_expires': {'$lt': today.isoformat()}})
-        self._activations_collection.remove(
-            {'activated_on': {'$lt': datetime.combine(today - timedelta(days=1), time.min)}}
-        )
-
     def fetch_valid_schedules_for(self, day, service_type, bank_holiday, school_holiday):
-        day_string = datetime.combine(day, time.min).strftime('%Y-%m-%d')
         weekday = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][day.weekday()]
         query = {
-            'schedule_start': {'$lt': day_string},
-            'schedule_expires': {'$gt': day_string},
+            'schedule_start': {'$lt': day},
+            'schedule_expires': {'$gt': day},
             'service_type': service_type,
             'activate_on.school-holidays': {'$in': [school_holiday, None]}
         }
@@ -265,12 +258,14 @@ class ScheduleService(object):
         if self._kv_schedule_collection is None:
             self._kv_schedule_collection = self._kv_store.db.schedules
             self._kv_schedule_collection.ensure_index('source')
+            self._kv_schedule_collection.ensure_index('schedule_expires', expire_after_seconds=48 * 60 * 60)
         return self._kv_schedule_collection
 
     @property
     def _activations_collection(self):
         if self._kv_activations_collection is None:
             self._kv_activations_collection = self._kv_store.db.activations
+            self._kv_activations_collection.ensure_index('activated_on', expire_after_seconds=36 * 60 * 60)
             self._kv_activations_collection.ensure_index('activation_id')
             self._kv_activations_collection.ensure_index({'public_departure': ASCENDING,
                                                           'predicted_departure': ASCENDING,
