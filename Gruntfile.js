@@ -14,6 +14,13 @@ module.exports = function(grunt) {
                 config: 'assets/scss/compass_config.rb'
             }
         },
+        copy: {
+            images: {
+                files: [
+                    {expand: true, src: ['images/*'], dest: 'deploy/site-cookbooks/manchesterio/files/default/static/', cwd: 'assets/', filter: 'isFile'}
+                ]
+            }
+        },
         jshint: {
             all: ['assets/js/**/*.js', 'assets/js-test/**/*.js']
         },
@@ -74,11 +81,16 @@ module.exports = function(grunt) {
             styles: {
                 files: ['assets/scss/compass_config.rb', 'assets/scss/**/*.scss'],
                 tasks: ['styles-dev']
+            },
+            images: {
+                files: ['assets/images/*'],
+                tasks: ['images']
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -93,13 +105,15 @@ module.exports = function(grunt) {
         shelljs.exec('bundle install');
     });
 
-    grunt.registerTask('default', ['bower', 'bootstrap-compass', 'styles', 'scripts']);
-    grunt.registerTask('dev', ['bower', 'bootstrap-compass', 'styles-dev', 'scripts-dev', 'watch']);
+    grunt.registerTask('default', ['bower', 'bootstrap-compass', 'images', 'styles', 'scripts']);
+    grunt.registerTask('dev', ['bower', 'bootstrap-compass', 'images', 'styles-dev', 'scripts-dev', 'watch']);
 
     grunt.registerTask('scripts', ['karma:unit', 'requirejs:compile', 'jshint:all']);
     grunt.registerTask('scripts-dev', ['requirejs:dev', 'karma:unit', 'jshint:all']);
 
     grunt.registerTask('styles', ['compass:compile', 'scsslint:all']);
     grunt.registerTask('styles-dev', ['compass:dev', 'scsslint:all']);
+
+    grunt.registerTask('images', ['copy:images'])
 
 };

@@ -24,10 +24,12 @@ class ServiceDisplay(object):
         except HTTPError as http_error:
             abort(http_error.response.status_code)
 
+        service_type = service['calling_points'][0]['service_type']
         service = self._transform_service(service, station_type)
 
         return render_template('service.html',
                                service=service,
+                               service_type=service_type,
                                has_platform_information=self._has_platform_information(service))
 
     def _has_platform_information(self, service):

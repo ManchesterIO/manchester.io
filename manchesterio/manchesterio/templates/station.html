@@ -7,11 +7,12 @@
 {% block body %}
 
     <div class="container">
-        <p class="warning">
-            The data on this page show scheduled data only, not real-time. Please see
-            <a href="http://ojp.nationalrail.co.uk/service/ldbboard/dep/{{ station.identifier }}">National Rail Enquiries</a> for real-time running data.
-        </p>
         <ul class="departures-list" role="navigation">
+            {% if station['stop-type'] == 'metrolink-station' %}
+                <li class="departure--none">
+                    The information below is timetable only, real-time information is not yet available.
+                </li>
+            {% endif %}
             {% for destination, services in departures.items() %}
                 <li class="departure">
                     <table class="departure__table">
@@ -72,6 +73,10 @@
         </div>
 
         <dl class="location-metadata">
+            {% if station['stop-type'] == 'rail-station' %}
+                <dt>Real-time information</dt>
+                <dd><img src="/static/images/powered_by_nre.png" alt="Powered by National Rail Enquiries"></dd>
+            {% endif %}
         </dl>
     </div>
 

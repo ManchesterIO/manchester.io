@@ -66,5 +66,9 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% if service_type == 'train' %}
+        <img src="/static/images/powered_by_nre.png" alt="Powered by National Rail Enquiries">
+    {% endif %}
     </div>
 {% endblock %}
