@@ -58,7 +58,7 @@ define(['manchesterio/analyticsOptOut', 'cookies'], function(AnalyticsOptOut, co
 
             analyticsOptOut.init();
 
-            expect(window['ga-disable-UA-1234-1']).toBeTruthy();
+            expect(window['ga-disable-UA-427161-9']).toBeTruthy();
         });
 
     });
