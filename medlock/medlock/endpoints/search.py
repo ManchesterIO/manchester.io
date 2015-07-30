@@ -6,7 +6,8 @@ class SearchResults(object):
 
     _STATION_TYPES = {
         'rail-stations': ('rail-station', 5000),
-        'metrolink-stations': ('metrolink-station', 750)
+        'metrolink-stations': ('metrolink-station', 750),
+        'bus-stops': ('bus-stop', 350)
     }
 
     def __init__(self, app, statsd, location_service):

@@ -16,6 +16,8 @@ class ServiceDisplay(object):
                                defaults={'service_type': 'trains', 'station_type': 'rail-stations'})
         self._app.add_url_rule('/trams/<service_id>', 'tram', self.render,
                                defaults={'service_type': 'trams', 'station_type': 'metrolink-stations'})
+        self._app.add_url_rule('/buses/<service_id>', 'bus', self.render,
+                               defaults={'service_type': 'buses', 'station_type': 'bus-stops'})
 
     def render(self, service_id, service_type, station_type):
         self._statsd.incr(__name__ + 'render')

@@ -9,7 +9,8 @@ class SearchResults(object):
 
     _ACCEPTED_STATION_TYPES = {
         'rail-stations': 'rail stations',
-        'metrolink-stations': 'Metrolink stations'
+        'metrolink-stations': 'Metrolink stations',
+        'bus-stops': 'bus stops'
     }
 
     def __init__(self, app, statsd):
@@ -74,7 +75,7 @@ class SearchResults(object):
         y = sin(d_lon) * cos(lat2)
         x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(d_lon)
         bearing = degrees(atan2(y, x))
-        if bearing <  -157.5 or bearing >= 157.5:
+        if bearing < -157.5 or bearing >= 157.5:
             return 'S'
         elif -157.5 <= bearing < -112.5:
             return 'SE'
@@ -93,5 +94,6 @@ class SearchResults(object):
 
     _STOP_TYPES = {
         'rail-station': 'Rail station',
-        'metrolink-station': 'Metrolink station'
+        'metrolink-station': 'Metrolink station',
+        'bus-stop': 'bus stop'
     }

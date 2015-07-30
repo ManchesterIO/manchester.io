@@ -19,6 +19,9 @@ class Services(object):
         self._app.add_url_rule(
             '/trams/<service_id>', 'tram', self.render,
             defaults={'service_type': 'metrolink', 'identifier_namespace': 'atco'})
+        self._app.add_url_rule(
+            '/buses/<service_id>', 'bus', self.render,
+            defaults={'service_type': 'bus', 'identifier_namespace': 'atco'})
 
     def render(self, service_id, service_type, identifier_namespace):
         self._statsd.incr(__name__ + '.requests')

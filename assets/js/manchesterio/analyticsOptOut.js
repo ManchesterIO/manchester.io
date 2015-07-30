@@ -17,7 +17,7 @@ define(['cookies'], function(cookies) {
             this._analyticsBanner.classList.add('first-run');
             setOptOutCookie('false');
         } else if (cookies.get(cookieName) === 'true') {
-            window['ga-disable-UA-1234-1'] = true;
+            window['ga-disable-UA-427161-9'] = true;
         }
 
         this._optOutButton.addEventListener('click', this._optOut.bind(this));

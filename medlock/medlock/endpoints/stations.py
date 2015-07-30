@@ -24,6 +24,10 @@ class Stations(object):
                                'metrolink-station',
                                self.render,
                                defaults={'station_type': 'metrolink-station', 'timetable_identifier_namespace': 'atco'})
+        self._app.add_url_rule('/bus-stops/<preferred_identifier>',
+                               'bus-stop',
+                               self.render,
+                               defaults={'station_type': 'bus-stop', 'timetable_identifier_namespace': 'atco'})
 
     def render(self, station_type, preferred_identifier, timetable_identifier_namespace):
         self._statsd.incr(__name__ + '.requests')
@@ -133,6 +137,5 @@ class Stations(object):
             'predicted_departure': calling_point['predicted_departure'],
             'state': calling_point['state'],
             'platform': calling_point['predicted_platform'],
-            'route': map(lambda station_id: self._get_friendly_station(namespace, station_id), service['route']),
             'route_identifier': service['route_identifier']
         }

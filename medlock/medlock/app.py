@@ -43,7 +43,7 @@ metadata_factory = ImporterMetadataFactory(mongo)
 
 naptan_importer = NaptanImporter(location_service,
                                  metadata_factory.build('naptan'),
-                                 ['910', '940', 'MA'])
+                                 ['180', '910', '940', 'MA'])
 
 tfgm_schedule_importer = CifImporter(schedule_service, metadata_factory.build('tfgm-schedule'))
 

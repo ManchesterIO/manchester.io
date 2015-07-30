@@ -88,7 +88,7 @@ class NaptanParser(object):
     def _process_stop(self, category, identifier, elem):
         if (category, identifier) not in self._seen_stops:
             if elem.attrib['Status'] != 'active':
-                LOGGER.info("Deleting %s %s a status is %s", category, identifier, elem.attrib['Status'])
+                LOGGER.info("Deleting %s %s as status is %s", category, identifier, elem.attrib['Status'])
                 self._location_service.delete(category, identifier)
             else:
                 LOGGER.info("Updating %s %s", category, identifier)

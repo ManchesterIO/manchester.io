@@ -8,7 +8,7 @@
 
     <div class="container">
         <ul class="departures-list" role="navigation">
-            {% if station['stop-type'] == 'metrolink-station' %}
+            {% if station['stop-type'] in ['metrolink-station', 'bus-stop'] %}
                 <li class="departure--none">
                     The information below is timetable only, real-time information is not yet available.
                 </li>

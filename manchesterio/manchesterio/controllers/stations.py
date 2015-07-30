@@ -19,6 +19,9 @@ class StationDisplay(object):
         self._app.add_url_rule(
             '/metrolink-stations/<identifier>', 'metrolink-station', self.render,
             defaults={'stop_type': 'metrolink-stations', 'service_type': 'trams'})
+        self._app.add_url_rule(
+            '/bus-stops/<identifier>', 'bus-stop', self.render,
+            defaults={'stop_type': 'bus-stops', 'service_type': 'buses'})
 
     def render(self, stop_type, identifier, service_type):
         self._statsd.incr(__name__ + 'render')
@@ -48,7 +51,7 @@ class StationDisplay(object):
             identifier=identifier
         )
         with self._statsd.timer(__name__ + '.request_time'):
-            response = requests.get(url, timeout=5)
+            response = requests.get(url, timeout=15)
             response.raise_for_status()
             return response.json()
 
@@ -68,6 +71,5 @@ class StationDisplay(object):
             'predicted_departure': datetime.strptime(service['predicted_departure'], '%a, %d %b %Y %H:%M:%S %Z'),
             'state': service['state'],
             'platform': service['platform'],
-            'route': service['route'],
             'route_identifier': service['route_identifier']
         }

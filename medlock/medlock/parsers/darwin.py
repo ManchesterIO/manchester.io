@@ -35,6 +35,7 @@ class DarwinPushPortParser(object):
                 self._statsd.incr(__name__ + '.deactivation')
                 messages.append(('deactivation', self._parse_deactivated(child)))
             else:
+                # TODO: OW (station messages)
                 self._statsd.incr(__name__ + '.unknown')
                 LOGGER.warning('Unexpected message type %s', child.tag)
                 LOGGER.info(tostring(child))
@@ -46,6 +47,7 @@ class DarwinPushPortParser(object):
         return (activation_id, schedule)
 
     def _build_schedule(self, xml):
+        # TODO: cancellations
         return {
             'source': 'darwin',
             'service_id': xml.attrib['uid'],
@@ -80,6 +82,7 @@ class DarwinPushPortParser(object):
         return datetime.strptime(timestamp, '%H:%M:%S').time()
 
     def _parse_status(self, xml):
+        # TODO: Platform updates
         updates = []
         for location in xml.findall('{forecast}Location'.format(**self._XML_NAMESPACES)):
             expected_arrival = location.attrib.get('wta', None)
@@ -113,6 +116,7 @@ class DarwinPushPortParser(object):
         return datetime.combine(date.today(), self._convert_timestamp(timestamp))
 
     def _parse_association(self, xml):
+        # TODO
         return None
 
     def _parse_deactivated(self, xml):

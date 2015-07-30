@@ -34,7 +34,7 @@ class LocationService(object):
         return self._collection.find_one(kwargs)
 
     def fetch_name(self, default, **identifiers):
-        location = self._collection.find_one(identifiers)
+        location = self._collection.find_one(identifiers, projection={'name': True, '_id': False})
         if location:
             return location.get('name', default)
         else:
@@ -55,6 +55,6 @@ class LocationService(object):
     def _collection(self):
         if self._kv_collection is None:
             self._kv_collection = self._kv_store.db.locations
-            self._kv_collection.ensure_index({'stop-type': ASCENDING, 'identifier': ASCENDING}.items())
+            self._kv_collection.ensure_index({'stop-type': ASCENDING, 'identifier': ASCENDING, 'name': ASCENDING}.items())
             self._kv_collection.ensure_index({'location': GEOSPHERE}.items())
         return self._kv_collection
