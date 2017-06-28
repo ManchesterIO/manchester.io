@@ -1,0 +1,32 @@
+upstream server {
+    server 127.0.0.1:8080 fail_timeout=0;
+}
+
+server {
+    listen 80;
+    server_name <%= node['manchesterio']['hostname'] %>;
+
+    keepalive_timeout 5;
+
+    # path for static files
+    location /static/ {
+
+    <% if node['manchesterio']['vagrant'] %>
+        proxy_pass http://<%= node['manchesterio']['hostname'] %>:8090;
+    <% else %>
+        alias <%= node['manchesterio']['root'] %>/static/;
+    <% end %>
+    }
+
+    location / {
+        try_files $uri @proxy_to_app;
+    }
+
+    location @proxy_to_app {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+
+        proxy_pass   http://server;
+    }
+}

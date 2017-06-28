@@ -1,5 +1,0 @@
-linters:
-  SelectorFormat:
-    convention: hyphenated_BEM
-  LeadingZero:
-    style: include_zero

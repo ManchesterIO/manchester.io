@@ -1,10 +1,6 @@
 source "https://supermarket.getchef.com"
 
 cookbook 'chef-client'
-cookbook 'graphite'
-cookbook 'manchesterio', path: './site-cookbooks/manchesterio'
-cookbook 'mongodb', git: 'https://github.com/edelight/chef-mongodb.git'
-cookbook 'rabbitmq'
+cookbook 'manchesterio', path: './cookbook/manchesterio'
 cookbook 'ssh-keys'
-cookbook 'statsd', git: 'https://github.com/hectcastro/chef-statsd.git'
 cookbook 'sudo'

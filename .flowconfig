@@ -1,0 +1,4 @@
+[ignore]
+<PROJECT_ROOT>/build/.*
+<PROJECT_ROOT>/deploy/.*
+<PROJECT_ROOT>/node_modules/.*

@@ -1,0 +1,8 @@
+{
+  "collectCoverage": true,
+  "collectCoverageFrom": ["(client|server)/**/*.js?(x)"],
+  "coverageDirectory": "build/coverage/",
+  "testMatch": ["**/*((s|S)pec|(t|T)est).js?(x)"],
+  "testPathIgnorePatterns": ["<rootDir>/build/", "<rootDir>/node_modules/"],
+  "testResultsProcessor": "./node_modules/jest-junit-reporter"
+}
